@@ -1,0 +1,5 @@
+#NOTE: This is an Aether internal implementation file, its format can be changed without prior notice.
+#Tue Feb 27 14:04:52 CST 2018
+@default-central-https\://repo.maven.apache.org/maven2/.lastUpdated=1519710781695
+http\://maven.aliyun.com/nexus/content/groups/public/.lastUpdated=1519711492652
+https\://repo.maven.apache.org/maven2/.error=Could not transfer artifact io.jsonwebtoken\:jjwt\:pom\:0.9.0 from/to central (https\://repo.maven.apache.org/maven2)\: Connect to repo.maven.apache.org\:443 [repo.maven.apache.org/151.101.40.215] failed\: Read timed out

@@ -1,0 +1,6 @@
+#NOTE: This is an Aether internal implementation file, its format can be changed without prior notice.
+#Tue Feb 27 14:04:51 CST 2018
+carrier-1.5.pom>nexus=
+carrier-1.5.jar>nexus=
+carrier-1.5.jar>central=
+carrier-1.5.pom>central=

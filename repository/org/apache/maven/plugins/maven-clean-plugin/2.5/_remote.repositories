@@ -1,0 +1,6 @@
+#NOTE: This is an Aether internal implementation file, its format can be changed without prior notice.
+#Wed Feb 28 10:41:27 CST 2018
+maven-clean-plugin-2.5.jar>central=
+maven-clean-plugin-2.5.pom>central=
+maven-clean-plugin-2.5.pom>nexus=
+maven-clean-plugin-2.5.jar>nexus=

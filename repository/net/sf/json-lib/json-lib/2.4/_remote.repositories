@@ -1,0 +1,6 @@
+#NOTE: This is an Aether internal implementation file, its format can be changed without prior notice.
+#Tue Feb 27 14:04:51 CST 2018
+json-lib-2.4-jdk15.jar>central=
+json-lib-2.4.pom>nexus=
+json-lib-2.4-jdk15.jar>nexus=
+json-lib-2.4.pom>central=

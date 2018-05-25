@@ -1,0 +1,6 @@
+#NOTE: This is an Aether internal implementation file, its format can be changed without prior notice.
+#Tue Feb 27 15:53:00 CST 2018
+plexus-archiver-2.2.pom>nexus=
+plexus-archiver-2.2.jar>nexus=
+plexus-archiver-2.2.jar>central=
+plexus-archiver-2.2.pom>central=

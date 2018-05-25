@@ -1,0 +1,7 @@
+#NOTE: This is an Aether internal implementation file, its format can be changed without prior notice.
+#Thu Mar 08 19:24:33 CST 2018
+poi-3.9.pom>central=
+poi-3.9.pom>nexus=
+poi-3.9-sources.jar>nexus=
+poi-3.9.jar>nexus=
+poi-3.9.jar>central=

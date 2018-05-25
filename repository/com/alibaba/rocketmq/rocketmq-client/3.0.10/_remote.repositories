@@ -1,0 +1,5 @@
+#NOTE: This is an Aether internal implementation file, its format can be changed without prior notice.
+#Fri May 11 14:54:05 CST 2018
+rocketmq-client-3.0.10.jar>nexus=
+rocketmq-client-3.0.10-sources.jar>nexus=
+rocketmq-client-3.0.10.pom>nexus=

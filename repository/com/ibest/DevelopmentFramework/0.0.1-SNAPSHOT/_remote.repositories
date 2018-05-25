@@ -1,0 +1,5 @@
+#NOTE: This is an Aether internal implementation file, its format can be changed without prior notice.
+#Tue Mar 13 21:28:14 CST 2018
+DevelopmentFramework-0.0.1-SNAPSHOT.pom>=
+DevelopmentFramework-0.0.1-SNAPSHOT.war>=
+DevelopmentFramework-0.0.1-SNAPSHOT-basic.jar>=

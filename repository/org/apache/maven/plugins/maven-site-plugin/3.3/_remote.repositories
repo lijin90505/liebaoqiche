@@ -1,0 +1,5 @@
+#NOTE: This is an Aether internal implementation file, its format can be changed without prior notice.
+#Wed Feb 28 10:41:22 CST 2018
+maven-site-plugin-3.3.jar>nexus=
+maven-site-plugin-3.3.pom>central=
+maven-site-plugin-3.3.jar>central=

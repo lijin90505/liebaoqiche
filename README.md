@@ -1,2 +1,1 @@
-# liebaoqiche
-liebaoqiche
+#xxxx信息化平台 项目地址：https://github.com/papafly123/liebaoqiche提供用户鉴权、活动管理、积分管理、卡券管理、经验值等级管理、支付流水、支付退款管理、支付配置管理、支付对账管理、接入系统管理、监控系统管理、系统管理等功能。
