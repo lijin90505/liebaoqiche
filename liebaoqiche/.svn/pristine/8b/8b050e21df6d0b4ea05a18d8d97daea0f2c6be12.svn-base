@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ibest.activity.dao.UserActivityDao">
+	
+	<sql id="allColumns">
+    	lua.id as id,    	
+    	lua.user_id as userId,    	
+    	lua.vin_no as vinNo,    	
+    	lua.activity_system_id as activitySystemId,    	
+    	lua.access_system_id as accessSystemId,    	
+    	lua.app_id as appId,    	
+    	lua.participation_activity_time as participationActivityTime,
+    	lua.creater as creater,
+    	lua.create_time as createTime,    	
+    	lua.modifier as modifier,    	
+    	lua.modify_time as modifyTime,    	
+    	lua.version as version,    	
+    	lua.remarks as remarks    	
+    </sql>
+	
+	<sql id="joinOthers">
+	</sql>
+	
+	<sql id="searchWhere">
+		<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and lua.id = #{id}
+		</if>-->
+		<if test="userId != null and userId != ''">
+			and lua.user_id = #{userId}
+		</if>
+		<!--<if test="vinNo != null and vinNo != ''">
+			and lua.vin_no = #{vinNo}
+		</if>
+		<if test="activitySystemId != null and activitySystemId != ''">
+			and lua.activity_system_id = #{activitySystemId}
+		</if>-->
+		<if test="userName != null and userName != ''">
+			AND CONCAT(
+			IFNULL(username, '')
+			) LIKE CONCAT('%%', #{userName}, '%%')
+		</if>
+		<if test="activityName != null and activityName != ''">
+			AND CONCAT(
+			IFNULL(activity_name, '')
+			) LIKE CONCAT('%%', #{activityName}, '%%')
+		</if>
+		<if test="accessSystemId != null and accessSystemId != ''">
+			AND CONCAT(
+			IFNULL(access_system_id, '')
+			) LIKE CONCAT('%%', #{accessSystemId}, '%%')
+		</if>
+		<if test="appId != null and appId != ''">
+			and lua.app_id = #{appId}
+		</if>
+		<!--<if test="creater != null and creater != ''">
+			and lua.creater = #{creater}
+		</if>
+		<if test="createTime != null">
+			and lua.create_time = #{createTime}
+		</if>
+		<if test="modifier != null and modifier != ''">
+			and lua.modifier = #{modifier}
+		</if>
+		<if test="modifyTime != null">
+			and lua.modify_time = #{modifyTime}
+		</if>
+		<if test="version != null and version != ''">
+			and lua.version = #{version}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lua.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lua.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lua.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lua.UPDATE_DATE = #{updateDate}
+		</if>
+		<if test="isDelete != null">
+			and lua.IS_DELETE = #{isDelete}
+		</if>
+		-->
+	</sql>
+	
+	<sql id="searchOrder">
+		<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lua.${order} ${desc}
+		</if>
+	</sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_user_activity(
+			id,
+	    	user_id,	    	
+	    	vin_no,	    	
+	    	activity_system_id,	    	
+	    	access_system_id,	    	
+	    	app_id,
+	    	participation_activity_time,
+	    	creater,	    	
+	    	create_time,	    	
+	    	modifier,	    	
+	    	modify_time,	    	
+	    	version,	    	
+	    	remarks	    	
+		) values(
+			#{id},			 
+			#{userId},			 
+			#{vinNo},			 
+			#{activitySystemId},			 
+			#{accessSystemId},			 
+			#{appId},			 
+			#{participationActivityTime},
+			#{creater},
+			#{createTime},			 
+			#{modifier},			 
+			#{modifyTime},			 
+			#{version},			 
+			#{remarks}			 
+		)
+	</insert>
+	
+	<select id="findByAccessSystemId" resultType="UserActivity">
+		select 1 from liebao_user_activity where 
+			activity_system_id = #{activitySystemId}
+	</select>
+	
+	<select id="findById" resultType="UserActivity">
+		select
+		<include refid="allColumns"/>
+		from
+		liebao_user_activity lua
+		<include refid="joinOthers"/>
+		where
+		lua.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="UserActivity">
+		select
+		<include refid="allColumns"/>
+		from
+		liebao_user_activity lua
+		<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+		count(lua.id)
+		from
+		liebao_user_activity_view lua
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="UserActivity">
+		select
+			lua.id as id,
+			lua.access_system_id as accessSystemId,
+			lua.app_id as appId,
+			lua.user_id as userId,
+			lua.username as userName,
+			lua.vin_no as vinNo,
+			lua.activity_system_id as activitySystemId,
+			lua.activity_name as activityName,
+			lua.participation_activity_time as participationActivityTime,
+			lua.remarks as remarks
+		from liebao_user_activity_view lua
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		order by 
+			lua.participation_activity_time desc
+		<if test="limitStart != null and limitSize != null">
+			LIMIT #{limitStart},#{limitSize}
+		</if>
+		
+	</select>
+	
+	<update id="update">
+		update liebao_user_activity set
+			user_id=#{userId},			
+			vin_no=#{vinNo},			
+			activity_system_id=#{activitySystemId},			
+			access_system_id=#{accessSystemId},			
+			app_id=#{appId},
+			participation_activity_time=#{participationActivityTime},
+			creater=#{creater},
+			create_time=#{createTime},			
+			modifier=#{modifier},			
+			modify_time=#{modifyTime},			
+			version=#{version},			
+			remarks=#{remarks}			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_user_activity where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_user_activity where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<!-- <update id="deleteById">
+		update liebao_user_activity set is_delete = 1 where id = #{id}
+	</update> -->
+	
+	<!-- <update id="deleteByIds">
+		update liebao_user_activity set is_delete = 1 where id in
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update> -->
+</mapper>

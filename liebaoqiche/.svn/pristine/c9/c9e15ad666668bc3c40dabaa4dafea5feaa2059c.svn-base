@@ -1,0 +1,100 @@
+<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<!DOCTYPE>
+<html>
+<head>
+	<title>SysUser</title>
+	<%@ include file="/WEB-INF/views/include/head.jsp"%>
+	<!-- 首页css文件 -->
+	<link href="${ctxResources}/css/home.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="easyui-layout" data-options="fit:true">
+	<div data-options="region:'center'">
+		<div class="home_statistics">
+			<div class="statistics_con">
+				<div class="statistics_con_left">
+					<img src="${ctxResources}/images/index01.png" />
+				</div>
+				<div class="statistics_con_right">
+					<p class="sta_right_mes">今日交易额</p>
+					<p id="countAmt" class="sta_right_num"></p>
+				</div>
+			</div>
+			<div class="statistics_con">
+				<div class="statistics_con_left">
+					<img src="${ctxResources}/images/index02.png" />
+				</div>
+				<div class="statistics_con_right">
+					<p class="sta_right_mes">今日交易量</p>
+					<p id="countNum" class="sta_right_num"></p>
+				</div>
+			</div>
+			<div class="statistics_con">
+				<div class="statistics_con_left">
+					<img src="${ctxResources}/images/index03.png" />
+				</div>
+				<div class="statistics_con_right">
+					<p class="sta_right_mes">平均完成时间</p>
+					<p id="countTime" class="sta_right_num"></p>
+				</div>
+			</div>
+			<div class="statistics_con">
+				<div class="statistics_con_left">
+					<img src="${ctxResources}/images/index04.png" />
+				</div>
+				<div class="statistics_con_right">
+					<p class="sta_right_mes">支付成功转换率</p>
+					<p id="countRate" class="sta_right_num"></p>
+				</div>				
+			</div>
+		</div>
+		<div class="home_highcharts">
+			<div class="highcharts-cons">
+				
+			</div>
+			<div class="highcharts-cons">
+			
+			</div>
+			<div class="highcharts-cons">
+			
+			</div>
+			<div class="highcharts-cons">
+			
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+require(['jquery','common','highcharts'], function($){
+	$(document).ready(function(){
+		
+		$.post("${ctx}/pay/payInfo/countAmount",{beginTime:"",endTime:""},function(data){
+			if(data == ""){
+				data = 0;
+			}
+			$("#countAmt").html(data+"<b>元</b>");
+		});
+		$.post("${ctx}/pay/payInfo/countPayInfoNum",{beginTime:"",endTime:""},function(data){
+			if(data == ""){
+				data = 0;
+			}
+			$("#countNum").html(data+"<b>单</b>");
+		});
+		$.post("${ctx}/pay/payInfo/countTime",{beginTime:"",endTime:""},function(data){
+			if(data == ""){
+				data = 0;
+			}
+			$("#countTime").html(data+"<b>分钟</b>");
+		});
+		$.post("${ctx}/pay/payInfo/countPayInfoRate",{beginTime:"",endTime:""},function(data){
+			if(data == ""){
+				data = 0;
+			}
+			$("#countRate").html(data+"<b>%</b>");
+		});
+	});
+});
+</script>
+</body>
+</html>

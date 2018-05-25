@@ -1,0 +1,107 @@
+<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<!DOCTYPE>
+<html>
+<head>
+	<title>ActivityContent</title>
+	<%@ include file="/WEB-INF/views/include/head.jsp"%>
+</head>
+<body>
+<%@ include file="/WEB-INF/views/include/loading.jsp"%>
+<div class="easyui-layout" data-options="fit:true">
+	<div data-options="region:'center'">
+		<!-- 数据列表  -->
+		<div class="easyui-layout" data-options="fit:true,border:false">
+			<div data-options="region:'center'">
+				<table id="Grid" class="easyui-datagrid" title="" ctrlSelect="true" striped="true"
+				       rownumbers="true" pagination="true" fitColumns="true" toolbar="#Grid_Toolbar"
+				       loadMsg="正在加载数据，请稍等..." emptyMsg="没有找到符合条件的数据"
+				       data-options="url:'${ctx}/card/coupon/list',fit:true, fitColumns:true, checkOnSelect:true, selectOnCheck:true, border: false">
+					<thead>
+					<tr>
+						<th data-options="field:'ck',checkbox:true"></th>
+						<th data-options="field:'id',hidden:true">id</th>
+						<th data-options="field:'isDelete',hidden:true">是否删除；0未删除，1删除</th>
+						<th data-options="field:'couponName'">卡券名称</th>
+						<th data-options="field:'couponBuildName'">生成形式</th>
+						<th data-options="field:'couponGetName'">领取形式</th>
+						<th data-options="field:'couponUseName'">用途形式</th>
+					</tr>
+					</thead>
+				</table>
+				<div id="Grid_Toolbar">
+					<form id="searchForm">
+						<shiro:hasPermission name="coupon:query">
+							<input class="easyui-textbox" name="couponName" data-options="prompt:'卡券名称'" size="25">
+							<button id="btnSearch" class="easyui-splitbutton button-primary" data-options="menu:'#search_menu'">
+								<i class="fa fa-search fa-lg"></i> 查询
+							</button>
+							<div id="search_menu" style="padding: 0;">
+								<div id="reset_btn" data-options="iconCls:'fa fa-refresh fa-lg fa-fw'">清空查询</div>
+							</div>
+						</shiro:hasPermission>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div data-options="region:'south',border:false" style="text-align:left; padding:5px;">
+		<a id="btnSave" href="" class="easyui-linkbutton button-success" style="width: 80px;"><i class="fa fa-check fa-lg"></i>&nbsp;&nbsp;保存</a>
+		<a id="btnCancel" href="" class="easyui-linkbutton button-warning" style="width: 80px;"><i class="fa fa-remove fa-lg"></i>&nbsp;&nbsp;取消</a>
+	</div>
+</div>
+
+<!-- js脚本，必须写在body中，tab的url加载模式只会异步加载body中的内容到tab中 -->
+<script type="text/javascript">
+	require(['jquery','common'], function($){
+		// 给保存按钮添加点击事件
+		$("#btnSave").on('click', function(){
+			var activityId = location.search.replace("?id=","");
+			var selected = $("#Grid").datagrid('getSelections');
+			var couponId = selected[0].id;
+			$("#btnSave").linkbutton('disable');
+			$.ajax({
+				url:' ${ctx}/activity/activityCoupon/insertActivityCoupon',
+				data: {
+					couponId : couponId,
+					activityId : activityId
+				},
+				type: 'post',
+				dataType: 'json',
+				success: function(data){
+					var json = $.parseJSON(data);
+					if(json && json.rtnCode == '00000000'){
+						$.messager.alert('提示', "保存成功", "success");
+						$("#btnSave").linkbutton('enable');
+						hideDialog();
+					}else{
+						$.messager.alert('提示', json.rtnMsg, "error");
+						$("#btnSave").linkbutton('enable');
+					}
+				},
+				error: function(){
+					$("#btnSave").linkbutton('enable');
+					hideDialog();
+				}
+			});
+		});
+
+		// 表单提交，获取查询条件重载表格数据
+		$('#searchForm').submit(function () {
+			$('#Grid').datagrid('reload', $('#searchForm').serializeObject());
+			return false;
+		});
+
+		// 清空查询表单，重载表格数据
+		$('#reset_btn').click(function () {
+			$('#searchForm').form('reset').submit();
+		});
+
+		// 给保存按钮添加点击事件
+		$("#btnCancel").on('click', function(){
+			hideDialog();
+		});
+	});
+</script>
+</body>
+</html>

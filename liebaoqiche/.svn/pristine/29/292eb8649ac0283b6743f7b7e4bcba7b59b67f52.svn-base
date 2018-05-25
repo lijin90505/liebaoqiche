@@ -1,0 +1,62 @@
+<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<!DOCTYPE>
+<html>
+<head>
+	<title>SysUser</title>
+	<%@ include file="/WEB-INF/views/include/head.jsp"%>
+	<!-- 首页css文件 -->
+	<link href="${ctxResources}/css/home.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="easyui-layout" data-options="fit:true">
+	<div data-options="region:'north'" style="height:200px">
+		<div class="home_statistics">
+			<div class="statistics_con">
+				<div class="statistics_con_left">
+					<img src="${ctxResources}/images/index01.png" />
+				</div>
+				<div class="statistics_con_right">
+					<p class="sta_right_mes">今日交易额</p>
+					<p class="sta_right_num">256<b>元</b></p>
+				</div>
+			</div>
+			<div class="statistics_con">
+				<div class="statistics_con_left">
+					<img src="${ctxResources}/images/index02.png" />
+				</div>
+				<div class="statistics_con_right">
+					<p class="sta_right_mes">今日交易量</p>
+					<p class="sta_right_num">256<b>辆</b></p>
+				</div>
+			</div>
+			<div class="statistics_con">
+				<div class="statistics_con_left">
+					<img src="${ctxResources}/images/index03.png" />
+				</div>
+				<div class="statistics_con_right">
+					<p class="sta_right_mes">平均完成时间</p>
+					<p class="sta_right_num">256<b>小时</b></p>
+				</div>
+			</div>
+			<div class="statistics_con">
+				<div class="statistics_con_left">
+					<img src="${ctxResources}/images/index04.png" />
+				</div>
+				<div class="statistics_con_right">
+					<p class="sta_right_mes">支付成功转换率</p>
+					<p class="sta_right_num">256<b>个</b></p>
+				</div>				
+			</div>
+		</div>
+	</div>
+	<div class="home_page"  data-options="region:'east',split:true" title="统计" style="width:50%;">统计</div>
+	<div data-options="region:'west',split:true" title="统计" style="width:50%;">统计</div>
+</div>
+<script>
+require(['jquery','common'], function($){
+	
+});
+</script>
+</body>
+</html>

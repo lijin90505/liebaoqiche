@@ -1,0 +1,94 @@
+package com.ibest.experience.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.ibest.framework.common.utils.StringUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ibest.framework.common.utils.PageList;
+
+import com.ibest.experience.dao.ExperienceDao;
+import com.ibest.experience.entity.Experience;
+import com.ibest.experience.dto.input.ExperienceInputDTO;
+
+@Service
+@Transactional(readOnly=true)
+public class ExperienceService {
+
+	@Autowired
+	protected ExperienceDao experienceDao;
+	
+	public Experience findById(String id) throws Exception{
+		return experienceDao.findById(id);
+	}
+	
+	@Transactional(readOnly=false)
+	public int insert(Experience experience) throws Exception{
+		experience.preInsert();
+		int result = experienceDao.insert(experience);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteById(String id) throws Exception{
+		int result = experienceDao.deleteById(id);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteByIds(String ids) throws Exception{
+		int result = experienceDao.deleteByIds(StringUtils.tokenizeToList(ids));
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int update(Experience experience) throws Exception{
+		experience.preUpdate();
+		int result = experienceDao.update(experience);
+		return result;
+	}
+	
+	/**
+	 * 分页查询
+	 * @param page
+	 * @param inputDto
+	 * @return
+	 * @throws Exception
+	 */
+	public PageList<Experience> findByPage(PageList<Experience> page, ExperienceInputDTO inputDto) throws Exception{
+		
+		if(page == null){
+			page = new PageList<Experience>();
+		}
+		
+		long totalCount = experienceDao.countByObject(inputDto);
+		if(totalCount > 0){
+			// 设置记录总条数
+			page.setTotal(totalCount);
+			
+			// 设置分页参数，查询数据
+			inputDto.setLimitStart((page.getPage() - 1) * page.getPageSize());
+			inputDto.setLimitSize(page.getPageSize());
+			page.setRows(experienceDao.findByObject(inputDto));
+		}
+		
+		return page;
+	}
+	
+	/**
+	* 查询列表
+	*/
+	public Experience findOneByObject(ExperienceInputDTO inputDto) throws Exception{
+		return experienceDao.findOneByObject(inputDto);
+	}
+
+	/**
+	 * 查询列表
+	 */
+	public List<Experience> findByObject(ExperienceInputDTO inputDto) throws Exception{
+		return experienceDao.findByObject(inputDto);
+	}
+}

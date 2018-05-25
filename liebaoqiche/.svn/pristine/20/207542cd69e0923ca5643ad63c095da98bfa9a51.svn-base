@@ -1,0 +1,158 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ include file="/WEB-INF/views/include/taglib.jsp" %>
+<!DOCTYPE>
+<html>
+<head>
+	<title>User</title>
+	<%@ include file="/WEB-INF/views/include/head.jsp" %>
+</head>
+<body>
+<%@ include file="/WEB-INF/views/include/loading.jsp" %>
+<div class="easyui-layout" data-options="fit:true">
+	<div data-options="region:'center'">
+		<form id="DataForm" method="post">
+			<table style="width: 100%;">
+				<tbody>
+				<tr>
+					<td style="width: 50%; padding: 5px; text-align: center;">
+						<input type="hidden" id="id" name="id" value="${user.id}">
+						<%--<input class="easyui-textbox" id="username" name="username" value="${user.username}" labelWidth="100" label="用户名" placeholder="用户名"  required="true"--%>
+						       <%--data-options="prompt:'用户名',--%>
+				    						<%--validType:['remote[\'${ctx}/user/user/checkName\',\'username\']','length[1,50]','mobile','special']"--%>
+						       <%--style="width: 90%;"/>--%>
+						<input class="easyui-textbox" id="username" name="username" value="${user.username}" labelWidth="100" label="用户名" placeholder="用户名" required="true" style="width: 90%;"
+						       data-options="prompt:'用户名',
+				    						validType:['length[1,30]','special','checkName']"
+					</td>
+					<td style="width: 50%; padding: 5px; text-align: center;">
+						<input class="easyui-textbox" id="realname" name="realname" value="${user.realname}" labelWidth="100" label="真实姓名" data-options="prompt:'姓名',
+				    						validType:['length[1,30]','special']" style="width: 90%;">
+					</td>
+				</tr>
+				<tr>
+					<td style="width: 50%; padding: 5px; text-align: center;">
+						<input class="easyui-textbox" id="phone" name="phone" value="${user.phone}" labelWidth="100" label="手机号" placeholder="手机号"  data-options="validType:['mobile','special'],prompt:'手机号'" style="width: 90%;">
+					</td>
+				</tr>
+				<tr>
+					<td style="width: 50%; padding: 5px; text-align: center;" colspan="2">
+						<textarea class="easyui-textbox" name="remarks" maxlength="200"
+						          style="width: 95%; height: 80px;" labelWidth="100" label="备注"
+						          data-options="validType:'length[1,200]',multiline:true,prompt:'备注',tipPosition:'bottom'">${user.remarks}</textarea>
+					</td>
+				</tr>
+				<tr>
+					<td style="width: 50%; padding: 5px; text-align: center;">
+						<input class="" hidden="true" id="email" name="email" value="${user.email}" labelWidth="100" label="邮箱" data-options="prompt:'邮箱'" style="width: 90%;">
+					</td>
+					<td style="width: 50%; padding: 5px; text-align: center;">
+						<input class="" hidden="true" name="sex" value="${user.sex}" labelWidth="100" label="性别" style="width: 90%;"
+						       data-options="
+					        url:'${ctx}/enumData/lieBao/userSex',
+					        textField:'label',
+					        width:100,
+					        panelHeight:'auto',
+					        editable:false,
+					        prompt:'性别'">
+					</td>
+					<td style="width: 50%; padding: 5px; text-align: center;">
+						<input class="" hidden="true" id="birthday" name="birthday" value="${user.birthday}" labelWidth="100" label="生日" data-options="prompt:'生日'" style="width: 90%;">
+					</td>
+				</tr>
+				<tr>
+					<td style="width: 50%; padding: 5px; text-align: center;">
+						<input class="" hidden="true" id="authPhone" name="authPhone" value="${user.authPhone}" labelWidth="100" label="实名认证手机号" data-options="prompt:'实名认证手机号'" style="width: 90%;">
+					</td>
+					<td style="width: 50%; padding: 5px; text-align: center;">
+						<input class="" hidden="true" id="idcard" name="idcard" value="${user.idcard}" labelWidth="100" label="身份证号" data-options="prompt:'身份证号'" style="width: 90%;">
+					</td>
+				</tr>
+				<tr>
+					<td style="width: 50%; padding: 5px; text-align: center;">
+						<input class="" hidden="true" id="locked" name="locked" value="${user.locked}" labelWidth="100" label="锁定" data-options="prompt:'锁定'" style="width: 90%;">
+					</td>
+					<td style="width: 50%; padding: 5px; text-align: center;">
+						<input class="" hidden="true" id="carVin" name="carVin" value="${user.carVin}" labelWidth="100" label="汽车VIN码" data-options="prompt:'汽车VIN码'" style="width: 90%;">
+					</td>
+				</tr>
+				<tr>
+					<td style="width: 50%; padding: 5px; text-align: center;" colspan="2">
+						<input class="" hidden="true" id="address" name="address" value="${user.address}" labelWidth="100" label="家庭住址" data-options="prompt:'家庭住址'" style="width: 95%;">
+					</td>
+				</tr>
+				</tbody>
+			</table>
+		</form>
+	</div>
+	<div data-options="region:'south',border:false" style="text-align:right; padding:10px;">
+		<a id="btnSave" href="javascript:void(0)" class="easyui-linkbutton button-success" style="width: 80px;">
+			<i class="fa fa-check fa-lg"></i>&nbsp;&nbsp;保存
+		</a>
+		<a id="btnCancel" href="javascript:void(0)" class="easyui-linkbutton button-warning" style="width: 80px;">
+			<i class="fa fa-remove fa-lg"></i>&nbsp;&nbsp;取消
+		</a>
+	</div>
+</div>
+
+<!-- js脚本，必须写在body中，tab的url加载模式只会异步加载body中的内容到tab中 -->
+<script type="text/javascript">
+	require(['jquery', 'common'], function ($) {
+		// 给保存按钮添加点击事件
+		$("#btnSave").on('click', function () {
+
+			$("#DataForm").form('submit', {
+				url: $("#id").val() == '' ? '${ctx}/user/user/create' : '${ctx}/user/user/update',
+				onSubmit:function(){
+					if($(this).form('enableValidation').form('validate')){
+						$("#btnSave").linkbutton('disable');
+						return true;
+					}
+					return false;
+				},
+				success: function (data) {
+					var json = $.parseJSON(data);
+					if (json && json.rtnCode == '00000000') {
+						$.messager.alert('提示', "保存成功", "success",function(){
+							$("#btnSave").linkbutton('enable');
+							hideDialog();
+						});
+					} else {
+						$.messager.alert('提示', json.rtnMsg, "error",function(){
+							$("#btnSave").linkbutton('enable');
+						});
+					}
+				},
+				error: function () {
+					$("#btnSave").linkbutton('enable');
+				}
+			});
+		});
+
+		// 给保存按钮添加点击事件
+		$("#btnCancel").on('click', function () {
+			hideDialog();
+		});
+
+		//新增表单设置
+		if($("#id").val() != ''){
+			$("#username").removeAttr("data-options");
+			$("#username").attr("disabled","disabled");
+		}
+
+		//验证用户名是否存在
+		$.extend($.fn.textbox.defaults.rules, {
+			checkName : {
+				validator : function(value) {
+
+					var url = '${ctx}/user/user/checkName?username='+encodeURI(encodeURI(value));
+					var ret = $.ajax({url:url,async:false,cache:false,type:"post"}).responseText;
+					return ret=='true';
+				},
+				message : '该用户名已存在'
+			}
+		});
+	});
+
+</script>
+</body>
+</html>

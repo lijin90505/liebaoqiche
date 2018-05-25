@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ibest.card.dao.CardOperationDao">
+	
+	<sql id="allColumns">
+    	lco.id as id,    	
+    	lco.system_id as systemId,    	
+    	lco.user_id as userId,    	
+    	lco.card_id as cardId,
+    	lco.card_name as cardName,
+    	lco.grant_or_recall as grantOrRecall,
+    	lco.grant_num as grantNum,    	
+    	lco.recall_num as recallNum,    	
+    	lco.creater as creater,    	
+    	lco.create_time as createTime,    	
+    	lco.modifier as modifier,    	
+    	lco.modify_time as modifyTime,    	
+    	lco.version as version,    	
+    	lco.remarks as remarks,    	
+    	lco.is_delete as isDelete    	
+    </sql>
+	
+	<sql id="joinOthers">
+	</sql>
+	
+	<sql id="searchWhere">
+		<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and lco.id = #{id}
+		</if>
+		<if test="systemId != null and systemId != ''">
+			and lco.system_id = #{systemId}
+		</if>-->
+		<!-- <if test="systemId != null and systemId != ''">
+			and CONCAT(
+			IFNULL(lco.system_id,'')
+			) LIKE CONCAT('%%', #{systemId},'%%')
+		</if> -->
+		<!-- <if test="userId != null and userId != ''">
+			and lco.user_id = #{userId}
+		</if>
+		<if test="cardName != null and cardName != ''">
+			and CONCAT(
+			IFNULL(lco.card_name,'')
+			) LIKE CONCAT('%%', #{cardName},'%%')
+		</if>
+		<if test="cardId != null and cardId != ''">
+			and lco.card_id = #{cardId}
+		</if>
+		<if test="grantOrRecall != null and grantOrRecall != ''">
+			and lco.grant_or_recall = #{grantOrRecall}
+		</if> -->
+		<!--<if test="grantNum != null and grantNum != ''">
+			and lco.grant_num = #{grantNum}
+		</if>
+		<if test="recallNum != null and recallNum != ''">
+			and lco.recall_num = #{recallNum}
+		</if>
+		<if test="creater != null and creater != ''">
+			and lco.creater = #{creater}
+		</if>
+		<if test="createTime != null">
+			and lco.create_time = #{createTime}
+		</if>
+		<if test="modifier != null and modifier != ''">
+			and lco.modifier = #{modifier}
+		</if>
+		<if test="modifyTime != null">
+			and lco.modify_time = #{modifyTime}
+		</if>
+		<if test="isDelete != null">
+			and lco.IS_DELETE = #{isDelete}
+		</if>
+		-->
+	</sql>
+	
+	<sql id="searchOrder">
+		<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lco.${order} ${desc}
+		</if>
+	</sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_card_operation(
+			id,
+	    	system_id,	    	
+	    	user_id,	    	
+	    	card_id,
+	    	car_id,
+	    	card_name,
+	    	grant_or_recall,
+	    	grant_num,	    	
+	    	recall_num,	    	
+	    	creater,	    	
+	    	create_time,	    	
+	    	modifier,	    	
+	    	modify_time,	    	
+	    	version,	    	
+	    	remarks,	    	
+	    	is_delete	    	
+		) values(
+			#{id},			 
+			#{systemId},			 
+			#{userId},			 
+			#{cardId},
+			#{carId},
+			#{cardName},
+			#{grantOrRecall},
+			#{grantNum},			 
+			#{recallNum},			 
+			#{creater},			 
+			#{createTime},			 
+			#{modifier},			 
+			#{modifyTime},			 
+			#{version},			 
+			#{remarks},			 
+			#{isDelete}			 
+		)
+	</insert>
+	
+	<select id="findById" resultType="CardOperation">
+		select
+		lco.id as id,
+		lco.system_id as systemId,
+		las.name as systemName,
+		lco.user_id as userId,
+		lu.realname as userName,
+		lc.name as cardName,
+		lco.grant_or_recall as grantOrRecall,
+		lco.grant_num as grantNum,
+		lco.recall_num as recallNum,
+		lco.creater as creater,
+		lco.create_time as createTime,
+		lco.modifier as modifier,
+		lco.modify_time as modifyTime,
+		lco.version as version,
+		lco.remarks as remarks,
+		lco.is_delete as isDelete
+		from
+		liebao_card_operation lco
+		LEFT JOIN
+		liebao_access_system las ON lco.system_id = las.id
+		LEFT JOIN
+		liebao_user lu ON lco.user_id = lu.id
+		LEFT JOIN
+		liebao_card lc ON lco.card_id = lc.id
+		<include refid="joinOthers"/>
+		where
+		lco.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="CardOperation">
+		select
+		<include refid="allColumns"/>
+		from
+		liebao_card_operation lco
+		<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+		count(lco.id)
+		from
+		liebao_card_operation lco
+		<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="CardOperation">
+		select
+		lco.id as id,
+		lco.system_id as systemId,
+		las.name as systemName,
+		lco.user_id as userId,
+		lu.realname as userName,
+		lc.name as cardName,
+		lco.grant_or_recall as grantOrRecall,
+		ifnull(lco.grant_num,lco.recall_num) number,
+		<!-- lco.grant_num as grantNum,
+		lco.recall_num as recallNum, -->
+		lco.creater as creater,
+		lco.create_time as createTime,
+		lco.modifier as modifier,
+		lco.modify_time as modifyTime,
+		lco.version as version,
+		lco.remarks as remarks,
+		lco.is_delete as isDelete
+		from
+		liebao_card_operation lco
+		LEFT JOIN
+		liebao_access_system las ON lco.system_id = las.id
+		LEFT JOIN
+		liebao_user lu ON lco.user_id = lu.id
+		LEFT JOIN
+		liebao_card lc ON lco.card_id = lc.id
+		<include refid="joinOthers"/>
+		<where>
+			<if test="systemName != null and systemName != ''">
+					and las.name LIKE CONCAT(CONCAT('%',#{systemName},'%'))
+			</if>
+			<if test="userName != null and userName != ''">
+					and lu.realname LIKE CONCAT(CONCAT('%',#{userName},'%'))
+			</if>
+			<if test="cardName != null and cardName != ''">
+					and lc.name LIKE CONCAT(CONCAT('%',#{cardName},'%'))
+			</if>
+		</where>
+		order by lco.modify_time desc
+		<include refid="searchOrder"/>
+		<if test="limitStart != null and limitSize != null">
+			LIMIT #{limitStart},#{limitSize}
+		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_card_operation set
+			system_id=#{systemId},			
+			user_id=#{userId},			
+			card_id=#{cardId},
+			car_id=#{carId},
+			card_name=#{cardName},
+			grant_or_recall=#{grantOrRecall},
+			grant_num=#{grantNum},
+			recall_num=#{recallNum},			
+			creater=#{creater},			
+			modifier=#{modifier},
+			modify_time=#{modifyTime},			
+			version=#{version},			
+			remarks=#{remarks},			
+			is_delete=#{isDelete}			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_card_operation where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_card_operation where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_card_operation set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_card_operation set is_delete = 1 where id in
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

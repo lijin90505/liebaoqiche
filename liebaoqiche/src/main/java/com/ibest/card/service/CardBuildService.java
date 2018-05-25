@@ -1,0 +1,99 @@
+package com.ibest.card.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.ibest.framework.common.utils.StringUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ibest.framework.common.utils.PageList;
+
+import com.ibest.card.dao.CardBuildDao;
+import com.ibest.card.entity.CardBuild;
+import com.ibest.card.dto.input.CardBuildInputDTO;
+
+@Service
+@Transactional(readOnly=true)
+public class CardBuildService {
+
+	@Autowired
+	protected CardBuildDao cardBuildDao;
+	
+	public CardBuild findById(String id) throws Exception{
+		return cardBuildDao.findById(id);
+	}
+	
+	public CardBuild checkNameUnique(String name) throws Exception{
+		return cardBuildDao.checkNameUnique(name);
+	}
+	
+	@Transactional(readOnly=false)
+	public int insert(CardBuild cardBuild) throws Exception{
+		cardBuild.preInsert();
+		int result = cardBuildDao.insert(cardBuild);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteById(String id) throws Exception{
+		int result = cardBuildDao.deleteById(id);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteByIds(String ids) throws Exception{
+		int result = cardBuildDao.deleteByIds(StringUtils.tokenizeToList(ids));
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int update(CardBuild cardBuild) throws Exception{
+		cardBuild.preUpdate();
+		int result = cardBuildDao.update(cardBuild);
+		return result;
+	}
+	
+	/**
+	 * 分页查询
+	 * @param page
+	 * @param inputDto
+	 * @return
+	 * @throws Exception
+	 */
+	public PageList<CardBuild> findByPage(PageList<CardBuild> page, CardBuildInputDTO inputDto) throws Exception{
+		
+		if(page == null){
+			page = new PageList<CardBuild>();
+		}
+		
+		long totalCount = cardBuildDao.countByObject(inputDto);
+		if(totalCount > 0){
+			// 设置记录总条数
+			page.setTotal(totalCount);
+			
+			// 设置分页参数，查询数据
+			inputDto.setLimitStart((page.getPage() - 1) * page.getPageSize());
+			inputDto.setLimitSize(page.getPageSize());
+			page.setRows(cardBuildDao.findByObject(inputDto));
+		}
+		
+		return page;
+	}
+	
+	/**
+	* 查询列表
+	*/
+	public CardBuild findOneByObject(CardBuildInputDTO inputDto) throws Exception{
+		return cardBuildDao.findOneByObject(inputDto);
+	}
+
+	/**
+	 * 查询列表
+	 */
+	public List<CardBuild> findByObject(CardBuildInputDTO inputDto) throws Exception{
+		return cardBuildDao.findByObject(inputDto);
+	}
+
+}

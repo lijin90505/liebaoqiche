@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.accesssystem.dao.CouponPermissionAssignmentDao">
+
+    <sql id="allColumns">
+    	lcpa.id as id,    	
+    	lcpa.coupon_build_id as couponBuildId,    	
+    	lcpa.coupon_build_name as couponBuildName,    	
+    	lcpa.coupon_get_id as couponGetId,    	
+    	lcpa.coupon_get_name as couponGetName,    	
+    	lcpa.coupon_use_id as couponUseId,    	
+    	lcpa.coupon_use_name as couponUseName,    	
+    	lcpa.system_sign as systemSign,    	
+    	lcpa.system_sign_name as systemSignName,    	
+    	lcpa.is_delete as isDelete,    	
+    	lcpa.creater as creater,    	
+    	lcpa.create_time as createTime,    	
+    	lcpa.modifier as modifier,    	
+    	lcpa.modify_time as modifyTime,    	
+    	lcpa.version as version,    	
+    	lcpa.remarks as remarks    	
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and lcpa.id = #{id}
+		</if>
+		<if test="couponBuildId != null and couponBuildId != ''">
+			and lcpa.coupon_build_id = #{couponBuildId}
+		</if>
+		<if test="couponBuildName != null and couponBuildName != ''">
+			and lcpa.coupon_build_name = #{couponBuildName}
+		</if>
+		<if test="couponGetId != null and couponGetId != ''">
+			and lcpa.coupon_get_id = #{couponGetId}
+		</if>
+		<if test="couponGetName != null and couponGetName != ''">
+			and lcpa.coupon_get_name = #{couponGetName}
+		</if>
+		<if test="couponUseId != null and couponUseId != ''">
+			and lcpa.coupon_use_id = #{couponUseId}
+		</if>
+		<if test="couponUseName != null and couponUseName != ''">
+			and lcpa.coupon_use_name = #{couponUseName}
+		</if>
+		<if test="systemSign != null and systemSign != ''">
+			and lcpa.system_sign = #{systemSign}
+		</if>
+		<if test="systemSignName != null and systemSignName != ''">
+			and lcpa.system_sign_name = #{systemSignName}
+		</if>
+		<if test="creater != null and creater != ''">
+			and lcpa.creater = #{creater}
+		</if>
+		<if test="createTime != null">
+			and lcpa.create_time = #{createTime}
+		</if>
+		<if test="modifier != null and modifier != ''">
+			and lcpa.modifier = #{modifier}
+		</if>
+		<if test="modifyTime != null">
+			and lcpa.modify_time = #{modifyTime}
+		</if>
+		<if test="version != null and version != ''">
+			and lcpa.version = #{version}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lcpa.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lcpa.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lcpa.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lcpa.UPDATE_DATE = #{updateDate}
+		</if>
+		-->
+		<if test="isDelete != null">
+			and lcpa.IS_DELETE = #{isDelete}
+		</if>
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lcpa.${order} ${desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_coupon_permission_assignment(
+			id,
+	    	coupon_build_id,	    	
+	    	coupon_build_name,	    	
+	    	coupon_get_id,	    	
+	    	coupon_get_name,	    	
+	    	coupon_use_id,	    	
+	    	coupon_use_name,	    	
+	    	system_sign,	    	
+	    	system_sign_name,	    	
+	    	is_delete,	    	
+	    	creater,	    	
+	    	create_time,	    	
+	    	modifier,	    	
+	    	modify_time,	    	
+	    	version,	    	
+	    	remarks	    	
+		) values(
+			#{id},			 
+			#{couponBuildId},			 
+			#{couponBuildName},			 
+			#{couponGetId},			 
+			#{couponGetName},			 
+			#{couponUseId},			 
+			#{couponUseName},			 
+			#{systemSign},			 
+			#{systemSignName},			 
+			#{isDelete},			 
+			#{creater},			 
+			#{createTime},			 
+			#{modifier},			 
+			#{modifyTime},			 
+			#{version},			 
+			#{remarks}			 
+		)
+	</insert>
+	
+	<select id="findById" resultType="CouponPermissionAssignment">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_coupon_permission_assignment lcpa
+			<include refid="joinOthers"/>
+		where
+			lcpa.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="CouponPermissionAssignment">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_coupon_permission_assignment lcpa
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(lcpa.id)
+		from
+			liebao_coupon_permission_assignment lcpa
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="CouponPermissionAssignment">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_coupon_permission_assignment lcpa
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		<include refid="searchOrder"/>
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_coupon_permission_assignment set
+			coupon_build_id=#{couponBuildId},			
+			coupon_build_name=#{couponBuildName},			
+			coupon_get_id=#{couponGetId},			
+			coupon_get_name=#{couponGetName},			
+			coupon_use_id=#{couponUseId},			
+			coupon_use_name=#{couponUseName},			
+			system_sign=#{systemSign},			
+			system_sign_name=#{systemSignName},			
+			is_delete=#{isDelete},			
+			creater=#{creater},			
+			create_time=#{createTime},			
+			modifier=#{modifier},			
+			modify_time=#{modifyTime},			
+			version=#{version},			
+			remarks=#{remarks}			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_coupon_permission_assignment where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_coupon_permission_assignment where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_coupon_permission_assignment set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_coupon_permission_assignment set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

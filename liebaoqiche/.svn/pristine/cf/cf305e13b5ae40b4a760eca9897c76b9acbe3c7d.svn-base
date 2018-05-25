@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.pay.dao.PayUnionReconDao">
+
+    <sql id="allColumns">
+    	lpur.id as id,    	
+    	lpur.pay_recon_id as payReconId,    	
+    	lpur.bill_date as billDate,    	
+    	lpur.bill_type as billType,    	
+    	lpur.trade_time as tradeTime,    	
+    	lpur.app_id as appId,    	
+    	lpur.mch_id as mchId,    	
+    	lpur.sub_mch_id as subMchId,    	
+    	lpur.device_Info as deviceInfo,    	
+    	lpur.trade_no as tradeNo,    	
+    	lpur.order_id as orderId,    	
+    	lpur.user_id as userId,    	
+    	lpur.trade_type as tradeType,    	
+    	lpur.trade_state as tradeState,    	
+    	lpur.bank_type as bankType,    	
+    	lpur.fee_type as feeType,    	
+    	lpur.total_amount as totalAmount,    	
+    	lpur.coupon_fee as couponFee,    	
+    	lpur.result_refund_order_no as resultRefundOrderNo,    	
+    	lpur.refund_order_no as refundOrderNo,    	
+    	lpur.apply_refund_time as applyRefundTime,    	
+    	lpur.refund_success_time as refundSuccessTime,    	
+    	lpur.result_refund_no as resultRefundNo,    	
+    	lpur.refund_no as refundNo,    	
+    	lpur.refund_amount as refundAmount,    	
+    	lpur.refund_coupon_fee as refundCouponFee,    	
+    	lpur.refund_type as refundType,    	
+    	lpur.refund_state as refundState,    	
+    	lpur.merchant_name as merchantName,    	
+    	lpur.merchant_data as merchantData,    	
+    	lpur.service_charge as serviceCharge,    	
+    	lpur.rate as rate,    	
+    	lpur.create_date as createDate,    	
+    	lpur.recon_state as reconState,    	
+    	lpur.fail_message as failMessage,    	
+    	lpur.collected_amount as collectedAmount,    	
+    	lpur.acc_no as accNo,    	
+    	lpur.serial_no as serialNo    	
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and lpur.id = #{id}
+		</if>
+		<if test="payReconId != null and payReconId != ''">
+			and lpur.pay_recon_id = #{payReconId}
+		</if>
+		<if test="billDate != null and billDate != ''">
+			and lpur.bill_date = #{billDate}
+		</if>
+		<if test="billType != null and billType != ''">
+			and lpur.bill_type = #{billType}
+		</if>
+		<if test="tradeTime != null and tradeTime != ''">
+			and lpur.trade_time = #{tradeTime}
+		</if>
+		<if test="appId != null and appId != ''">
+			and lpur.app_id = #{appId}
+		</if>
+		<if test="mchId != null and mchId != ''">
+			and lpur.mch_id = #{mchId}
+		</if>
+		<if test="subMchId != null and subMchId != ''">
+			and lpur.sub_mch_id = #{subMchId}
+		</if>
+		<if test="deviceInfo != null and deviceInfo != ''">
+			and lpur.device_Info = #{deviceInfo}
+		</if>
+		<if test="tradeNo != null and tradeNo != ''">
+			and lpur.trade_no = #{tradeNo}
+		</if>
+		<if test="orderId != null and orderId != ''">
+			and lpur.order_id = #{orderId}
+		</if>
+		<if test="userId != null and userId != ''">
+			and lpur.user_id = #{userId}
+		</if>
+		<if test="tradeType != null and tradeType != ''">
+			and lpur.trade_type = #{tradeType}
+		</if>
+		<if test="tradeState != null and tradeState != ''">
+			and lpur.trade_state = #{tradeState}
+		</if>
+		<if test="bankType != null and bankType != ''">
+			and lpur.bank_type = #{bankType}
+		</if>
+		<if test="feeType != null and feeType != ''">
+			and lpur.fee_type = #{feeType}
+		</if>
+		<if test="totalAmount != null and totalAmount != ''">
+			and lpur.total_amount = #{totalAmount}
+		</if>
+		<if test="couponFee != null and couponFee != ''">
+			and lpur.coupon_fee = #{couponFee}
+		</if>
+		<if test="resultRefundOrderNo != null and resultRefundOrderNo != ''">
+			and lpur.result_refund_order_no = #{resultRefundOrderNo}
+		</if>
+		<if test="refundOrderNo != null and refundOrderNo != ''">
+			and lpur.refund_order_no = #{refundOrderNo}
+		</if>
+		<if test="applyRefundTime != null and applyRefundTime != ''">
+			and lpur.apply_refund_time = #{applyRefundTime}
+		</if>
+		<if test="refundSuccessTime != null and refundSuccessTime != ''">
+			and lpur.refund_success_time = #{refundSuccessTime}
+		</if>
+		<if test="resultRefundNo != null and resultRefundNo != ''">
+			and lpur.result_refund_no = #{resultRefundNo}
+		</if>
+		<if test="refundNo != null and refundNo != ''">
+			and lpur.refund_no = #{refundNo}
+		</if>
+		<if test="refundAmount != null and refundAmount != ''">
+			and lpur.refund_amount = #{refundAmount}
+		</if>
+		<if test="refundCouponFee != null and refundCouponFee != ''">
+			and lpur.refund_coupon_fee = #{refundCouponFee}
+		</if>
+		<if test="refundType != null and refundType != ''">
+			and lpur.refund_type = #{refundType}
+		</if>
+		<if test="refundState != null and refundState != ''">
+			and lpur.refund_state = #{refundState}
+		</if>
+		<if test="merchantName != null and merchantName != ''">
+			and lpur.merchant_name = #{merchantName}
+		</if>
+		<if test="merchantData != null and merchantData != ''">
+			and lpur.merchant_data = #{merchantData}
+		</if>
+		<if test="serviceCharge != null and serviceCharge != ''">
+			and lpur.service_charge = #{serviceCharge}
+		</if>
+		<if test="rate != null and rate != ''">
+			and lpur.rate = #{rate}
+		</if>
+		<if test="reconState != null and reconState != ''">
+			and lpur.recon_state = #{reconState}
+		</if>
+		<if test="failMessage != null and failMessage != ''">
+			and lpur.fail_message = #{failMessage}
+		</if>
+		<if test="collectedAmount != null and collectedAmount != ''">
+			and lpur.collected_amount = #{collectedAmount}
+		</if>
+		<if test="accNo != null and accNo != ''">
+			and lpur.acc_no = #{accNo}
+		</if>
+		<if test="serialNo != null and serialNo != ''">
+			and lpur.serial_no = #{serialNo}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lpur.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lpur.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lpur.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lpur.UPDATE_DATE = #{updateDate}
+		</if>
+		<if test="isDelete != null">
+			and lpur.IS_DELETE = #{isDelete}
+		</if>
+		-->
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lpur.${order} ${desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_pay_union_recon(
+			id,
+	    	pay_recon_id,	    	
+	    	bill_date,	    	
+	    	bill_type,	    	
+	    	trade_time,	    	
+	    	app_id,	    	
+	    	mch_id,	    	
+	    	sub_mch_id,	    	
+	    	device_Info,	    	
+	    	trade_no,	    	
+	    	order_id,	    	
+	    	user_id,	    	
+	    	trade_type,	    	
+	    	trade_state,	    	
+	    	bank_type,	    	
+	    	fee_type,	    	
+	    	total_amount,	    	
+	    	coupon_fee,	    	
+	    	result_refund_order_no,	    	
+	    	refund_order_no,	    	
+	    	apply_refund_time,	    	
+	    	refund_success_time,	    	
+	    	result_refund_no,	    	
+	    	refund_no,	    	
+	    	refund_amount,	    	
+	    	refund_coupon_fee,	    	
+	    	refund_type,	    	
+	    	refund_state,	    	
+	    	merchant_name,	    	
+	    	merchant_data,	    	
+	    	service_charge,	    	
+	    	rate,	    	
+	    	create_date,	    	
+	    	recon_state,	    	
+	    	fail_message,	    	
+	    	collected_amount,	    	
+	    	acc_no,	    	
+	    	serial_no	    	
+		) values(
+			replace(UUID(),'-',''),
+			#{payReconId},			 
+			#{billDate},			 
+			#{billType},			 
+			#{tradeTime},			 
+			#{appId},			 
+			#{mchId},			 
+			#{subMchId},			 
+			#{deviceInfo},			 
+			#{tradeNo},			 
+			#{orderId},			 
+			#{userId},			 
+			#{tradeType},			 
+			#{tradeState},			 
+			#{bankType},			 
+			#{feeType},			 
+			#{totalAmount},			 
+			#{couponFee},			 
+			#{resultRefundOrderNo},			 
+			#{refundOrderNo},			 
+			#{applyRefundTime},			 
+			#{refundSuccessTime},			 
+			#{resultRefundNo},			 
+			#{refundNo},			 
+			#{refundAmount},			 
+			#{refundCouponFee},			 
+			#{refundType},			 
+			#{refundState},			 
+			#{merchantName},			 
+			#{merchantData},			 
+			#{serviceCharge},			 
+			#{rate},			 
+			#{createDate},			 
+			#{reconState},			 
+			#{failMessage},			 
+			#{collectedAmount},			 
+			#{accNo},			 
+			#{serialNo}			 
+		)
+	</insert>
+	
+	<select id="findById" resultType="PayUnionRecon">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_pay_union_recon lpur
+			<include refid="joinOthers"/>
+		where
+			lpur.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="PayUnionRecon">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_pay_union_recon lpur
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(lpur.id)
+		from
+			liebao_pay_union_recon lpur
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="PayUnionRecon">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_pay_union_recon lpur
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		<include refid="searchOrder"/>
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_pay_union_recon set
+			pay_recon_id=#{payReconId},			
+			bill_date=#{billDate},			
+			bill_type=#{billType},			
+			trade_time=#{tradeTime},			
+			app_id=#{appId},			
+			mch_id=#{mchId},			
+			sub_mch_id=#{subMchId},			
+			device_Info=#{deviceInfo},			
+			trade_no=#{tradeNo},			
+			order_id=#{orderId},			
+			user_id=#{userId},			
+			trade_type=#{tradeType},			
+			trade_state=#{tradeState},			
+			bank_type=#{bankType},			
+			fee_type=#{feeType},			
+			total_amount=#{totalAmount},			
+			coupon_fee=#{couponFee},			
+			result_refund_order_no=#{resultRefundOrderNo},			
+			refund_order_no=#{refundOrderNo},			
+			apply_refund_time=#{applyRefundTime},			
+			refund_success_time=#{refundSuccessTime},			
+			result_refund_no=#{resultRefundNo},			
+			refund_no=#{refundNo},			
+			refund_amount=#{refundAmount},			
+			refund_coupon_fee=#{refundCouponFee},			
+			refund_type=#{refundType},			
+			refund_state=#{refundState},			
+			merchant_name=#{merchantName},			
+			merchant_data=#{merchantData},			
+			service_charge=#{serviceCharge},			
+			rate=#{rate},			
+			recon_state=#{reconState},			
+			fail_message=#{failMessage},			
+			collected_amount=#{collectedAmount},			
+			acc_no=#{accNo},			
+			serial_no=#{serialNo}			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_pay_union_recon where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_pay_union_recon where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_pay_union_recon set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_pay_union_recon set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

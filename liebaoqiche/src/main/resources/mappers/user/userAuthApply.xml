@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ibest.user.dao.UserAuthApplyDao">
+	
+	<sql id="allColumns">
+    	luaa.id as id,    	
+    	luaa.user_id as userId,    	
+    	luaa.username as username,    	
+    	luaa.realname as realname,    	
+    	luaa.level_id as levelId,    	
+    	luaa.platform as platform,    	
+    	luaa.status as status,    	
+    	luaa.detail as detail,    	
+    	luaa.out_system_id as outSystemId,    	
+    	luaa.out_system_name as outSystemName,    	
+    	luaa.create_time as createTime,    	
+    	luaa.modify_time as modifyTime,    	
+    	luaa.modify_user_id as modifyUserId,    	
+    	luaa.modify_user_name as modifyUserName,    	
+    	luaa.is_delete as isDelete,
+    	luaa.remarks as remarks
+    </sql>
+	
+	<sql id="joinOthers">
+	</sql>
+	
+	<sql id="searchWhere">
+		<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and luaa.id = #{id}
+		</if>
+		<if test="userId != null and userId != ''">
+			and luaa.user_id = #{userId}
+		</if>
+		<if test="username != null and username != ''">
+			and luaa.username = #{username}
+		</if>-->
+		<if test="realname != null and realname != ''">
+			and CONCAT(
+			IFNULL(luaa.realname,'')
+			) LIKE CONCAT('%%', #{realname},'%%')
+		</if>
+		<if test="levelId != null and levelId != ''">
+			and luaa.level_id = #{levelId}
+		</if>
+		<if test="platform != null and platform != ''">
+			and luaa.platform = #{platform}
+		</if>
+		<if test="outSystemName != null and outSystemName != ''">
+			and luaa.out_system_name = #{outSystemName}
+		</if>
+		<!--<if test="status != null">
+			and luaa.status = #{status}
+		</if>
+		<if test="detail != null and detail != ''">
+			and luaa.detail = #{detail}
+		</if>
+		<if test="outSystemId != null and outSystemId != ''">
+			and luaa.out_system_id = #{outSystemId}
+		</if>
+		<if test="createTime != null">
+			and luaa.create_time = #{createTime}
+		</if>
+		<if test="modifyTime != null">
+			and luaa.modify_time = #{modifyTime}
+		</if>
+		<if test="modifyUserId != null and modifyUserId != ''">
+			and luaa.modify_user_id = #{modifyUserId}
+		</if>
+		<if test="modifyUserName != null and modifyUserName != ''">
+			and luaa.modify_user_name = #{modifyUserName}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and luaa.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and luaa.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and luaa.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and luaa.UPDATE_DATE = #{updateDate}
+		</if>
+		-->
+		<if test="isDelete != null">
+			and luaa.IS_DELETE = #{isDelete}
+		</if>
+	</sql>
+	
+	<sql id="searchOrder">
+		<if test="order != null and order != '' and desc != null and desc != ''">
+			order by luaa.${order} ${desc}
+		</if>
+	</sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_user_auth_apply(
+	    	user_id,	    	
+	    	username,	    	
+	    	realname,	    	
+	    	level_id,	    	
+	    	platform,	    	
+	    	status,	    	
+	    	detail,	    	
+	    	out_system_id,	    	
+	    	out_system_name,	    	
+	    	create_time,	    	
+	    	modify_time,	    	
+	    	modify_user_id,	    	
+	    	modify_user_name,	    	
+	    	is_delete,
+	    	remarks
+		) values(
+			#{userId},			 
+			#{username},			 
+			#{realname},			 
+			#{levelId},			 
+			#{platform},			 
+			#{status},			 
+			#{detail},			 
+			#{outSystemId},			 
+			#{outSystemName},			 
+			#{createTime},			 
+			#{modifyTime},			 
+			#{modifyUserId},			 
+			#{modifyUserName},			 
+			#{isDelete},
+			#{remarks}
+		)
+	</insert>
+	
+	<select id="findById" resultType="UserAuthApply">
+		select
+		luaa.id as id,
+		luaa.user_id as userId,
+		luaa.username as username,
+		luaa.realname as realname,
+		luaa.level_id as levelId,
+		lul.level_name as levelName,
+		luaa.platform as platform,
+		luaa.status as status,
+		luaa.detail as detail,
+		luaa.out_system_id as outSystemId,
+		luaa.out_system_name as outSystemName,
+		luaa.create_time as createTime,
+		luaa.modify_time as modifyTime,
+		luaa.modify_user_id as modifyUserId,
+		luaa.modify_user_name as modifyUserName,
+		luaa.is_delete as isDelete,
+		luaa.remarks as remarks
+		from
+		liebao_user_auth_apply luaa
+		LEFT JOIN liebao_user_level lul ON luaa.level_id = lul.id
+		<include refid="joinOthers"/>
+		where
+		luaa.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="UserAuthApply">
+		select
+		<include refid="allColumns"/>
+		from
+		liebao_user_auth_apply luaa
+		<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+		count(luaa.id)
+		from
+		liebao_user_auth_apply luaa
+		<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findAllLevel" resultType="UserAuthApply">
+		select
+			luaa.id as id,
+			luaa.user_id as userId,
+			luaa.username as username,
+			luaa.realname as realname,
+			luaa.level_id as levelId,
+			lul.level_name as levelName,
+			luaa.platform as platform,
+			luaa.status as status,
+			luaa.detail as detail,
+			luaa.out_system_id as outSystemId,
+			luaa.out_system_name as outSystemName,
+			luaa.create_time as createTime,
+			luaa.modify_time as modifyTime,
+			luaa.modify_user_id as modifyUserId,
+			luaa.modify_user_name as modifyUserName,
+			luaa.is_delete as isDelete,
+			luaa.remarks as remarks
+		from
+			liebao_user_auth_apply luaa
+		LEFT JOIN liebao_user_level lul ON luaa.level_id = lul.id
+		<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="UserAuthApply">
+		select
+			luaa.id as id,
+			luaa.user_id as userId,
+			luaa.username as username,
+			luaa.realname as realname,
+			luaa.level_id as levelId,
+			lul.level_name as levelName,
+			luaa.platform as platform,
+			luaa.status as status,
+			luaa.detail as detail,
+			luaa.out_system_id as outSystemId,
+			luaa.out_system_name as outSystemName,
+			luaa.create_time as createTime,
+			luaa.modify_time as modifyTime,
+			luaa.modify_user_id as modifyUserId,
+			luaa.modify_user_name as modifyUserName,
+			luaa.is_delete as isDelete,
+			luaa.remarks as remarks
+		from
+			liebao_user_auth_apply luaa
+		LEFT JOIN liebao_user_level lul ON luaa.level_id = lul.id
+		<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		order by luaa.modify_time desc
+		<include refid="searchOrder"/>
+		<if test="limitStart != null and limitSize != null">
+			LIMIT #{limitStart},#{limitSize}
+		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_user_auth_apply set
+			user_id=#{userId},			
+			username=#{username},			
+			realname=#{realname},			
+			level_id=#{levelId},			
+			platform=#{platform},			
+			status=#{status},			
+			detail=#{detail},			
+			out_system_id=#{outSystemId},			
+			out_system_name=#{outSystemName},			
+			create_time=#{createTime},			
+			modify_time=#{modifyTime},			
+			modify_user_id=#{modifyUserId},			
+			modify_user_name=#{modifyUserName},			
+			is_delete=#{isDelete},
+			remarks=#{remarks}
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_user_auth_apply where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_user_auth_apply where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_user_auth_apply set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_user_auth_apply set is_delete = 1 where id in
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+	
+	<!--批量处理认证申请，通过/拒绝，重复操作忽略 -->
+	<update id="handle">
+		UPDATE liebao_user_auth_apply
+		<set>
+			status = #{status},
+			detail = #{detail},
+			modify_time = NOW()
+		</set>
+		<where>
+			id IN
+			<foreach collection="ids" open="(" close=")" separator="," item="id">
+				#{id}
+			</foreach>
+		</where>
+	</update>
+</mapper>

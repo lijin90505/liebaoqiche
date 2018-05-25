@@ -1,0 +1,223 @@
+<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<!DOCTYPE>
+<html>
+<head>
+	<title>User</title>
+	<%@ include file="/WEB-INF/views/include/head.jsp"%>
+</head>
+<body>
+	<%@ include file="/WEB-INF/views/include/loading.jsp"%>
+	<div class="easyui-layout" data-options="fit:true">
+		<div data-options="region:'center'">
+    		<table style="width: 100%;">
+    			<tbody>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						用户唯一标识，uuid
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${user.id}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						用户名
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${user.username}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						密码
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${user.password}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						姓名
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${user.realname}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						电话
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${user.phone}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						邮箱
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${user.email}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						性别
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${user.sex}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						生日
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${user.birthday}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						实名认证手机号
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${user.authPhone}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						身份证号
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${user.idcard}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						汽车VIN码
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${user.carVin}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						家庭住址
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${user.address}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						用户注册标识类型（1、用户名，2、手机，3、邮箱）
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${user.registerType}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						是否已经修改用户名
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${user.modified}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						用户是否锁定
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${user.locked}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						用户认证等级
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${user.levelId}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						注册时间
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${user.createTime}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						修改时间
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${user.modifyTime}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						创建人ID
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${user.createUserId}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						创建人名称
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${user.createUserName}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						修改人ID
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${user.modifyUserId}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						修改人名称
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${user.modifyUserName}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						删除标识（0 未删除 1 已删除 2 删除审核）
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${user.isDelete}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						<label class="label-top">备注:</label>
+    						<input class="easyui-textbox" name="remarks" style="width:99.5%; height:80px;" data-options="multiline:true">
+    					</td>
+    				</tr>
+    			</tbody>
+    		</table>
+		</div>
+		<div data-options="region:'south',border:false" style="text-align:left; padding:5px;">
+            <a id="btnCancel_User" href="javascript:void(0)" class="easyui-linkbutton button-warning" style="width: 80px;"><i class="fa fa-remove fa-lg"></i>&nbsp;&nbsp;取消</a>
+        </div>
+   	</div>
+    
+    <!-- js脚本，必须写在body中，tab的url加载模式只会异步加载body中的内容到tab中 -->
+	<script type="text/javascript">
+		require(['jquery','common'], function($){
+			// 给保存按钮添加点击事件
+			$("#btnCancel_User").on('click', function(){
+				history.go(-1);
+			});
+		});
+	</script>
+</body>
+</html>

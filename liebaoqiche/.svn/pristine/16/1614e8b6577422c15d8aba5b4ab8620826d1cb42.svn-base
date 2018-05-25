@@ -1,0 +1,161 @@
+package com.ibest.experience.entity;
+
+import java.util.Date;
+
+import com.ibest.experience.enums.EnumsPlatformType;
+import com.ibest.framework.common.persistence.BaseEntity;
+
+public class SystemExpStatistics extends BaseEntity {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+							
+	// sys_exp_rule_id
+	private String sysExpRuleId;
+				
+	// sys_exp_rule_name
+	private String sysExpRuleName;
+				
+	// sys_exp_level_id
+	private String sysExpLevelId;
+				
+	// sys_exp_level_name
+	private String sysExpLevelName;
+
+	private Integer platform;
+	private String platformDesc;
+
+	// total_exp
+	private Integer totalExp;
+				
+	// system_id
+	private String systemId;
+				
+	// system_name
+	private String systemName;
+				
+	// creater
+	private String creater;
+				
+	// create_time
+	private Date createTime;
+				
+	// modifier
+	private String modifier;
+				
+	// modify_time
+	private Date modifyTime;
+				
+	// version
+	private String version;
+				
+
+	public String getSysExpRuleId(){
+		return sysExpRuleId;
+	}
+	
+	public void setSysExpRuleId(String sysExpRuleId){
+		this.sysExpRuleId = sysExpRuleId;
+	}
+				
+	public String getSysExpRuleName(){
+		return sysExpRuleName;
+	}
+	
+	public void setSysExpRuleName(String sysExpRuleName){
+		this.sysExpRuleName = sysExpRuleName;
+	}
+				
+	public String getSysExpLevelId(){
+		return sysExpLevelId;
+	}
+	
+	public void setSysExpLevelId(String sysExpLevelId){
+		this.sysExpLevelId = sysExpLevelId;
+	}
+				
+	public String getSysExpLevelName(){
+		return sysExpLevelName;
+	}
+	
+	public void setSysExpLevelName(String sysExpLevelName){
+		this.sysExpLevelName = sysExpLevelName;
+	}
+
+	public Integer getPlatform() {
+		return platform;
+	}
+
+	public void setPlatform(Integer platform) {
+		this.platform = platform;
+	}
+
+	public Integer getTotalExp(){
+		return totalExp;
+	}
+	
+	public void setTotalExp(Integer totalExp){
+		this.totalExp = totalExp;
+	}
+				
+	public String getSystemId(){
+		return systemId;
+	}
+	
+	public void setSystemId(String systemId){
+		this.systemId = systemId;
+	}
+				
+	public String getSystemName(){
+		return systemName;
+	}
+	
+	public void setSystemName(String systemName){
+		this.systemName = systemName;
+	}
+				
+	public String getCreater(){
+		return creater;
+	}
+	
+	public void setCreater(String creater){
+		this.creater = creater;
+	}
+				
+	public Date getCreateTime(){
+		return createTime;
+	}
+	
+	public void setCreateTime(Date createTime){
+		this.createTime = createTime;
+	}
+				
+	public String getModifier(){
+		return modifier;
+	}
+	
+	public void setModifier(String modifier){
+		this.modifier = modifier;
+	}
+				
+	public Date getModifyTime(){
+		return modifyTime;
+	}
+	
+	public void setModifyTime(Date modifyTime){
+		this.modifyTime = modifyTime;
+	}
+				
+	public String getVersion(){
+		return version;
+	}
+	
+	public void setVersion(String version){
+		this.version = version;
+	}
+				
+	public String getPlatformDesc() {return platformDesc = EnumsPlatformType.getLabel(this.platform);}
+}

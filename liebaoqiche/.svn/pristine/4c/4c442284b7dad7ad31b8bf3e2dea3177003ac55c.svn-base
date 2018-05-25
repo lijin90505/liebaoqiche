@@ -1,0 +1,207 @@
+package com.ibest.user.controller;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.ibest.framework.common.enums.EnumsRtnMapResult;
+import com.ibest.framework.common.persistence.BaseController;
+import com.ibest.framework.common.utils.PageList;
+import com.ibest.framework.common.utils.UserUtils;
+import com.ibest.user.dto.input.UserCarsInputDTO;
+import com.ibest.user.entity.User;
+import com.ibest.user.entity.UserCars;
+import com.ibest.user.service.UserCarsService;
+import com.ibest.user.service.UserService;
+
+@Controller
+@RequestMapping(value="${adminPath}/user/userCars")
+public class UserCarsController extends BaseController {
+	
+	private static final Logger logger = LoggerFactory.getLogger(UserCarsController.class);
+	
+	@Autowired
+	private UserCarsService userCarsService;
+	
+	@Autowired
+	private UserService userService;
+	
+	/**
+	* 进入到列表页
+	*/
+	@RequestMapping(value="/")
+	public String index(){
+		return "module/user/userCars/userCarsList";
+	}
+	
+	/**
+	* 进入到表单页-创建
+	*/
+	@RequestMapping(value="/add")
+	public String add(Model model){
+		List<User> userList;
+		try {
+			userList = userService.findAllUsers();
+			model.addAttribute("userList", userList);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "module/user/userCars/userCarsForm";
+	}
+	
+	/**
+	* 进入到表单页，编辑
+	*/
+	@RequestMapping(value="/edit")
+	public String edit(@RequestParam String id, Model model){
+		try {
+			if(StringUtils.isNotEmpty(id)){
+				List<User> userList;
+				try {
+					userList = userService.findAllUsers();
+					model.addAttribute("userList", userList);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				
+				UserCars userCars = userCarsService.findById(id);
+				if(userCars != null){
+					model.addAttribute("userCars", userCars);
+				}else{
+					setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "您查看的信息不存在！", model);
+				}
+			}else{
+				setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "请选择需要编辑的信息！", model);
+			}
+		} catch (Exception e) {
+			setRtnCodeAndMsg(EnumsRtnMapResult.EXCEPTION.getCode(), EnumsRtnMapResult.EXCEPTION.getMsg(), model);
+		}
+		return "module/user/userCars/userCarsForm";
+	}
+	
+	/**
+	* 进入到详情页
+	*/
+	@RequestMapping(value="/view")
+	public String view(@RequestParam String id, Model model){
+		try {
+			if(StringUtils.isNotEmpty(id)){
+				UserCars userCars = userCarsService.findById(id);
+				if(userCars != null){
+					model.addAttribute("userCars", userCars);
+				}else{
+					setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "您查看的信息不存在！", model);
+				}
+			}else{
+				setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "请选择需要查看的信息！", model);
+			}
+		} catch (Exception e) {
+			setRtnCodeAndMsg(EnumsRtnMapResult.EXCEPTION.getCode(), EnumsRtnMapResult.EXCEPTION.getMsg(), model);
+		}
+		return "module/user/userCars/userCarsDetail";
+	}
+
+	/**
+	* 异步分页查询
+	*/
+	@ResponseBody
+	@RequiresPermissions("userCars:query")
+	@RequestMapping(value="/list")
+	public PageList<UserCars> list(UserCarsInputDTO userCars, HttpServletRequest request){
+		
+		PageList<UserCars> pageList = new PageList<UserCars>();
+		
+		try {
+			//设置分页参数
+			super.setPage(request, pageList);
+		
+			pageList = userCarsService.findByPage(pageList, userCars);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return pageList;
+	}
+	
+	/**
+	* 异步表单提交
+	*/
+	@ResponseBody
+	@RequiresPermissions("userCars:create")
+	@RequestMapping(value="create")
+	public Map<String, Object> insert(UserCars userCars){
+
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		setRtnCodeAndMsgBySuccess(rtnMap, "保存成功");
+		
+		try {
+			userCars.setCreateDate(new Date());
+			userCars.setCreateBy(UserUtils.getCurrentUser().getUsername());
+			userCars.setUpdateBy(UserUtils.getCurrentUser().getUsername());
+			userCars.setUpdateDate(new Date());
+			int result = userCarsService.insert(userCars);
+			if(result == 0){
+				setRtnCodeAndMsgByFailure(rtnMap, "保存失败");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+		return rtnMap;
+	}
+	
+	@ResponseBody
+	@RequiresPermissions("userCars:update")
+	@RequestMapping(value="update")
+	public Map<String, Object> update(UserCars userCars){
+
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		setRtnCodeAndMsgBySuccess(rtnMap, "保存成功");
+		
+		try {
+			userCars.setUpdateBy(UserUtils.getCurrentUser().getUsername());
+			userCars.setUpdateDate(new Date());
+			int result = userCarsService.update(userCars);
+			if(result == 0){
+				setRtnCodeAndMsgByFailure(rtnMap, "保存失败");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+		return rtnMap;
+	}
+	
+	@ResponseBody
+	@RequiresPermissions("userCars:delete")
+	@RequestMapping(value="delete")
+	public Map<String, Object> delete(@RequestParam(required=true) String ids){
+		
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		setRtnCodeAndMsgBySuccess(rtnMap, "删除成功");
+		
+		try {
+			int result = userCarsService.deleteByIds(ids);
+			if(result == 0){
+				setRtnCodeAndMsgByFailure(rtnMap, "删除失败");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+		return rtnMap;
+	}
+}

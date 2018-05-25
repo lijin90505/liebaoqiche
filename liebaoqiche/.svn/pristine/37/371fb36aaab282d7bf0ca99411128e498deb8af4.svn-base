@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.integral.dao.UserPointDao">
+
+    <sql id="allColumns">
+    	lup.id as id,    	
+    	lup.user_point_count as userPointCount,    	
+    	lup.user_id as userId,    	
+    	lup.user_name as userName,    	
+    	lup.point_type_id as pointTypeId,    	
+    	lup.point_type_name as pointTypeName,    	
+    	lup.point_rule_id as pointRuleId,    	
+    	lup.point_rule_name as pointRuleName,    	
+    	lup.is_delete as isDelete,
+    	lup.system_sign as systemSign,
+    	lup.system_name as systemName,
+    	lup.creater as creater,
+    	lup.create_time as createTime,    	
+    	lup.modifier as modifier,    	
+    	lup.modify_time as modifyTime,    	
+    	lup.version as version,    	
+    	lup.remarks as remarks
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and lup.id = #{id}
+		</if>
+		<if test="userPointCount != null">
+			and lup.user_point_count = #{userPointCount}
+		</if>
+		<if test="userId != null and userId != ''">
+			and lup.user_id = #{userId}
+		</if>-->
+	    <if test="userName != null and userName != ''">
+		    and CONCAT(
+		    IFNULL(lup.user_name,'')
+		    ) LIKE CONCAT('%%', #{userName},'%%')
+	    </if>
+	    <if test="pointTypeId != null and pointTypeId != ''">
+			and lup.point_type_id = #{pointTypeId}
+		</if>
+	    <!-- <if test="pointTypeName != null and pointTypeName != ''">
+			and lup.point_type_name = #{pointTypeName}
+		</if>-->
+	    <if test="pointRuleId != null and pointRuleId != ''">
+			and lup.point_rule_id = #{pointRuleId}
+		</if>
+	    <!-- <if test="pointRuleName != null and pointRuleName != ''">
+			and lup.point_rule_name = #{pointRuleName}
+		</if>-->
+	    <if test="systemSign != null and systemSign != ''">
+			and lup.system_sign = #{systemSign}
+		</if>
+	    <!-- <if test="systemName != null and systemName != ''">
+			and lup.system_name = #{systemName}
+		</if>-->
+		<!-- <if test="creater != null and creater != ''">
+			and lup.creater = #{creater}
+		</if>
+		<if test="createTime != null">
+			and lup.create_time = #{createTime}
+		</if>
+		<if test="modifier != null and modifier != ''">
+			and lup.modifier = #{modifier}
+		</if>
+		<if test="modifyTime != null">
+			and lup.modify_time = #{modifyTime}
+		</if>
+		<if test="version != null and version != ''">
+			and lup.version = #{version}
+		</if>
+		<if test="remarks != null and remarks != ''">
+			and lup.remarks = #{remarks}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lup.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lup.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lup.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lup.UPDATE_DATE = #{updateDate}
+		</if>-->
+	    <if test="isDelete != null">
+		    and lup.IS_DELETE = #{isDelete}
+	    </if>
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lup.${order} ${desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_user_point(
+			id,
+	    	user_point_count,	    	
+	    	user_id,	    	
+	    	user_name,	    	
+	    	point_type_id,	    	
+	    	point_type_name,	    	
+	    	point_rule_id,	    	
+	    	point_rule_name,	    	
+	    	is_delete,
+	    	system_sign,
+    	 	system_name,
+	    	creater,	    	
+	    	create_time,	    	
+	    	modifier,	    	
+	    	modify_time,	    	
+	    	version,	    	
+	    	remarks
+		) values(
+			#{id},
+			#{userPointCount},
+			#{userId},
+			#{userName},			 
+			#{pointTypeId},			 
+			#{pointTypeName},			 
+			#{pointRuleId},			 
+			#{pointRuleName},			 
+			#{isDelete},
+    		#{systemSign},
+			#{systemName},
+			#{creater},			 
+			#{createTime},			 
+			#{modifier},			 
+			#{modifyTime},			 
+			#{version},			 
+			#{remarks}
+		)
+	</insert>
+	
+	<select id="findById" resultType="UserPoint">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_user_point lup
+			<include refid="joinOthers"/>
+		where
+			lup.id = #{id} and lup.is_delete = 0
+	</select>
+	
+	<select id="findOneByObject" resultType="UserPoint">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_user_point lup
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(lup.id)
+		from
+			liebao_user_point lup
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="UserPoint">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_user_point lup
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		<include refid="searchOrder"/>
+  		<if test="limitStart != null and limitSize != null">
+         	 LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_user_point set
+			user_point_count=#{userPointCount},			
+			user_id=#{userId},			
+			user_name=#{userName},			
+			point_type_id=#{pointTypeId},			
+			point_type_name=#{pointTypeName},			
+			point_rule_id=#{pointRuleId},			
+			point_rule_name=#{pointRuleName},			
+			is_delete=#{isDelete},
+			system_sign=#{systemSign},
+			system_name=#{systemName},
+			creater=#{creater},
+			create_time=#{createTime},
+			modifier=#{modifier},			
+			modify_time=#{modifyTime},			
+			version=#{version},			
+			remarks=#{remarks}
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_user_point where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_user_point where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_user_point set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_user_point set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

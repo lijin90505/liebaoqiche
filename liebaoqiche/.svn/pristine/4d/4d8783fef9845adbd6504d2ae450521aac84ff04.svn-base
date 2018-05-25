@@ -1,0 +1,145 @@
+<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<!DOCTYPE>
+<html>
+<head>
+	<title>accessSystem</title>
+	<%@ include file="/WEB-INF/views/include/head.jsp"%>
+</head>
+<body>
+<%@ include file="/WEB-INF/views/include/loading.jsp"%>
+ <%-- 页面加载时运行js方法 --%>  
+<div class="easyui-layout" data-options="fit:true">
+	<div data-options="region:'center'">
+		<div class="datagrid-body" style=" overflow-x: hidden;">
+			<table style="width: 100%;font-size:12px;" class="datagrid-btable detail-table">
+				<tr>
+					<td><div>系统名称</div></td>
+					<td><div>${accessSystem.name== '' || accessSystem.name==null?'':accessSystem.name}</div></td>
+					<td><div>系统标识</div></td>
+					<td><div>${accessSystem.identification== '' || accessSystem.identification==null?'':accessSystem.identification}</div></td>
+				</tr>
+				<tr>
+					<td><div>是否关联活动</div></td>
+					<td><div>${accessSystem.isActivity== '' || accessSystem.isActivity==null?'':accessSystem.isActivity}</div></td>
+					<td><div>是否关联渠道</div></td>
+					<td><div>${accessSystem.isChannel== '' || accessSystem.isChannel==null?'':accessSystem.isChannel}</div></td>
+				</tr>
+				<tr>
+					<td><div>创建人</div></td>
+					<td><div>${accessSystem.creater == '' || accessSystem.creater ==null?0:accessSystem.creater}</div></td>
+					<td><div>创建时间</div></td>
+					<td><div><fmt:formatDate value="${accessSystem.createTime == '' || accessSystem.createTime ==null?0:accessSystem.createTime}" pattern="yyyy-MM-dd HH:mm:ss" /></div></td>
+				</tr>
+				<tr>
+					<td><div>修改人</div></td>
+					<td><div>${accessSystem.modifier == '' || accessSystem.modifier ==null?0:accessSystem.modifier}</div></td>
+					<td><div>修改时间</div></td>
+					<td><div><fmt:formatDate value="${accessSystem.modifyTime == '' || accessSystem.modifyTime ==null?0:accessSystem.modifyTime}" pattern="yyyy-MM-dd HH:mm:ss" /></div></td>
+				</tr>
+				<tr>
+					<td><div>备注</div></td>
+					<td colspan="3" class="remarks"><div>${accessSystem.remarks ==''||accessSystem.remarks ==null?'':accessSystem.remarks}</div></td>
+				</tr>
+			</table>
+		<table id="ActivityGrid" class="easyui-datagrid" title="活动详情" ctrlSelect="true" striped="true"
+				rownumbers="true" pagination="true" toolbar="#Grid_Toolbar" style="height:200px;"
+				loadMsg="正在加载数据，请稍等..." emptyMsg="没有找到符合条件的数据"
+				data-options="checkOnSelect:true, selectOnCheck:true, border: false">
+			    <thead>
+			        <tr>
+			            <th data-options="field:'id',hidden:true">id</th>
+			            <th data-options="field:'activityDetailsName',width:120">活动名称</th>
+						<th data-options="field:'id',hidden:true,width:150">活动代码</th>
+			            <th data-options="field:'creater'">创建人</th>
+			            <th data-options="field:'createTime'">创建时间</th>
+			            <th data-options="field:'modifier'">修改人</th>
+			            <th data-options="field:'modifyTime'">修改时间</th>
+			        </tr>
+			    </thead>
+			</table>
+			
+		<table id="PayChannelGrid" class="easyui-datagrid" title="支付渠道详情" ctrlSelect="true" striped="true" style="height:200px;"
+				rownumbers="true" pagination="true" toolbar="#Grid_Toolbar"
+				loadMsg="正在加载数据，请稍等..." emptyMsg="没有找到符合条件的数据"
+				data-options="checkOnSelect:true, selectOnCheck:true, border: false">
+			    <thead>
+			        <tr>
+			            <th data-options="field:'id',hidden:true">id</th>
+			            <th data-options="field:'payChannelName',width:120">支付渠道名称</th>
+						<th data-options="field:'id',hidden:true,width:150">支付渠道代码</th>
+			            <th data-options="field:'creater'">创建人</th>
+			            <th data-options="field:'createTime'">创建时间</th>
+			            <th data-options="field:'modifier'">修改人</th>
+			            <th data-options="field:'modifyTime'">修改时间</th>
+			        </tr>
+			    </thead>
+			</table>
+		</div>
+	</div>
+	<div data-options="region:'south',border:false" style="text-align:right; padding:10px;">
+		<a id="btnClose" href="javascript:void(0)" class="easyui-linkbutton button-warning" style="width: 80px;"><i class="fa fa-remove fa-lg"></i>&nbsp;&nbsp;关闭</a>
+	</div>
+</div>
+
+<!-- js脚本，必须写在body中，tab的url加载模式只会异步加载body中的内容到tab中 -->
+<script type="text/javascript">
+	require(['jquery','common'], function($){
+		// 给关闭按钮添加点击事件
+		$("#btnClose").on('click', function(){
+			hideDialog();
+		});
+		var id = "${id}"
+			// 加载活动授权信息
+		$(function(){
+			
+			$.ajax({
+				url: '${ctx}/accesssystem/accessSystem/activityList',
+				data: {
+					accessSystemId: id
+				},
+				type: 'POST',
+				dataType: 'JSON',
+				success: function (json) {
+
+					$("#ActivityGrid").datagrid();
+					// 显示未选中的活动
+					if(json && json.sysUnChooseActivityList){
+						$("#Grid_UnchoosedActivitys").datagrid('loadData', json.sysUnChooseActivityList);
+					}
+
+					// 显示已经选中的活动
+					if(json && json.sysChooseActivityList){
+						$("#ActivityGrid").datagrid('loadData', json.sysChooseActivityList);
+					}
+
+				}
+			});
+		});
+		
+		// 加载支付渠道授权信息
+		$(function(){
+			// 加载活动授权信息
+			$.ajax({
+				url: '${ctx}/accesssystem/accessSystem/sysPaychannel',
+				data: {
+					systemSign: id
+				},
+				type: 'POST',
+				dataType: 'JSON',
+				success: function (json) {
+
+					$("#PayChannelGrid").datagrid();
+					// 显示已经授权的活动
+					if(json && json.sysChoosedPayChannelList){
+						$("#PayChannelGrid").datagrid('loadData', json.sysChoosedPayChannelList);
+					}
+
+				}
+			});
+		});
+	});
+	
+</script>
+</body>
+</html>

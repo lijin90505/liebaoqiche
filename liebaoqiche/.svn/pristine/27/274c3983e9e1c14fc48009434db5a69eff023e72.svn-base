@@ -1,0 +1,23 @@
+package com.ibest.user.dto.input;
+
+import com.ibest.framework.common.persistence.BaseInputDTO;
+
+public class UserCarsInputDTO extends BaseInputDTO {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	private String userId;
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+	
+	
+}

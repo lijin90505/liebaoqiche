@@ -1,0 +1,30 @@
+package com.ibest.integral.dto.input;
+
+import com.ibest.framework.common.persistence.BaseInputDTO;
+
+public class UserIntegralInputDTO extends BaseInputDTO {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private String userName;
+	private String integralId;
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getIntegralId() {
+		return integralId;
+	}
+
+	public void setIntegralId(String integralId) {
+		this.integralId = integralId;
+	}
+}

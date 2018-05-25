@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.accesssystem.dao.ActivityPermissionAssignmentDao">
+
+    <sql id="allColumns">
+    	lapa.id as id,    	
+    	lapa.activity_id as activityId,    	
+    	lapa.activity_name as activityName,    	
+    	lapa.activity_start_time as activityStartTime,    	
+    	lapa.activity_end_time as activityEndTime,    	
+    	lapa.system_sign as systemSign,    	
+    	lapa.system_sign_name as systemSignName,    	
+    	lapa.is_delete as isDelete,    	
+    	lapa.creater as creater,    	
+    	lapa.create_time as createTime,    	
+    	lapa.modifier as modifier,    	
+    	lapa.modify_time as modifyTime,    	
+    	lapa.version as version,    	
+    	lapa.remarks as remarks    	
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and lapa.id = #{id}
+		</if>
+		<if test="activityId != null and activityId != ''">
+			and lapa.activity_id = #{activityId}
+		</if>
+		<if test="activityName != null and activityName != ''">
+			and lapa.activity_name = #{activityName}
+		</if>
+		<if test="activityStartTime != null">
+			and lapa.activity_start_time = #{activityStartTime}
+		</if>
+		<if test="activityEndTime != null">
+			and lapa.activity_end_time = #{activityEndTime}
+		</if>
+		<if test="systemSign != null and systemSign != ''">
+			and lapa.system_sign = #{systemSign}
+		</if>
+		<if test="systemSignName != null and systemSignName != ''">
+			and lapa.system_sign_name = #{systemSignName}
+		</if>
+		<if test="creater != null and creater != ''">
+			and lapa.creater = #{creater}
+		</if>
+		<if test="createTime != null">
+			and lapa.create_time = #{createTime}
+		</if>
+		<if test="modifier != null and modifier != ''">
+			and lapa.modifier = #{modifier}
+		</if>
+		<if test="modifyTime != null">
+			and lapa.modify_time = #{modifyTime}
+		</if>
+		<if test="version != null and version != ''">
+			and lapa.version = #{version}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lapa.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lapa.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lapa.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lapa.UPDATE_DATE = #{updateDate}
+		</if>
+		-->
+		<if test="isDelete != null">
+			and lapa.IS_DELETE = #{isDelete}
+		</if>
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lapa.${order} ${desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_activity_permission_assignment(
+			id,
+	    	activity_id,	    	
+	    	activity_name,	    	
+	    	activity_start_time,	    	
+	    	activity_end_time,	    	
+	    	system_sign,	    	
+	    	system_sign_name,	    	
+	    	is_delete,	    	
+	    	creater,	    	
+	    	create_time,	    	
+	    	modifier,	    	
+	    	modify_time,	    	
+	    	version,	    	
+	    	remarks	    	
+		) values(
+			#{id},			 
+			#{activityId},			 
+			#{activityName},			 
+			#{activityStartTime},			 
+			#{activityEndTime},			 
+			#{systemSign},			 
+			#{systemSignName},			 
+			#{isDelete},			 
+			#{creater},			 
+			#{createTime},			 
+			#{modifier},			 
+			#{modifyTime},			 
+			#{version},			 
+			#{remarks}			 
+		)
+	</insert>
+	
+	<select id="findById" resultType="ActivityPermissionAssignment">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_activity_permission_assignment lapa
+			<include refid="joinOthers"/>
+		where
+			lapa.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="ActivityPermissionAssignment">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_activity_permission_assignment lapa
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(lapa.id)
+		from
+			liebao_activity_permission_assignment lapa
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="ActivityPermissionAssignment">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_activity_permission_assignment lapa
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		<include refid="searchOrder"/>
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_activity_permission_assignment set
+			activity_id=#{activityId},			
+			activity_name=#{activityName},			
+			activity_start_time=#{activityStartTime},			
+			activity_end_time=#{activityEndTime},			
+			system_sign=#{systemSign},			
+			system_sign_name=#{systemSignName},			
+			is_delete=#{isDelete},			
+			creater=#{creater},			
+			create_time=#{createTime},			
+			modifier=#{modifier},			
+			modify_time=#{modifyTime},			
+			version=#{version},			
+			remarks=#{remarks}			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_activity_permission_assignment where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_activity_permission_assignment where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_activity_permission_assignment set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_activity_permission_assignment set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

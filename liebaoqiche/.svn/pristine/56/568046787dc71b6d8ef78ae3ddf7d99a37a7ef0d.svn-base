@@ -1,0 +1,191 @@
+package com.ibest.card.entity;
+
+import java.util.Date;
+
+import com.ibest.card.enums.EnumCardGrantOrRecall;
+import com.ibest.framework.common.persistence.BaseEntity;
+
+public class CardOperation extends BaseEntity {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	
+	// 系统标识
+	private String systemId;
+	private String systemName;
+				
+	// 发放用户编号
+	private String userId;
+	private String userName;
+
+	//汽车id
+	private String carId;
+	
+	public String getCarId() {
+		return carId;
+	}
+
+	public void setCarId(String carId) {
+		this.carId = carId;
+	}
+
+	//卡券编号
+	private String cardId;
+
+	// 卡券名称
+	private String cardName;
+				
+	// 发放/撤回；0发放，1撤回
+	private String grantOrRecall;
+	private String grantOrRecallDesc;
+				
+	// 数量
+	private String grantNum;
+				
+	// recall_num
+	private String recallNum;
+				
+	// 创建人
+	private String creater;
+				
+	// 创建时间
+	private Date createTime;
+				
+	// 修改人
+	private String modifier;
+				
+	// 修改时间
+	private Date modifyTime;
+				
+	// 版本
+	private String version;
+	
+	private String number;
+	
+	
+											
+	public String getNumber() {
+		return number;
+	}
+
+	public void setNumber(String number) {
+		this.number = number;
+	}
+
+	public String getSystemId(){
+		return systemId;
+	}
+	
+	public void setSystemId(String systemId){
+		this.systemId = systemId;
+	}
+				
+	public String getUserId(){
+		return userId;
+	}
+	
+	public void setUserId(String userId){
+		this.userId = userId;
+	}
+
+	public String getCardId() {
+		return cardId;
+	}
+
+	public void setCardId(String cardId) {
+		this.cardId = cardId;
+	}
+
+	public String getCardName(){
+		return cardName;
+	}
+	
+	public void setCardName(String cardName){
+		this.cardName = cardName;
+	}
+
+	public String getSystemName() {
+		return systemName;
+	}
+
+	public void setSystemName(String systemName) {
+		this.systemName = systemName;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getGrantOrRecall(){
+		return grantOrRecall;
+	}
+	
+	public void setGrantOrRecall(String grantOrRecall){
+		this.grantOrRecall = grantOrRecall;
+	}
+				
+	public String getGrantNum(){
+		return grantNum;
+	}
+	
+	public void setGrantNum(String grantNum){
+		this.grantNum = grantNum;
+	}
+				
+	public String getRecallNum(){
+		return recallNum;
+	}
+	
+	public void setRecallNum(String recallNum){
+		this.recallNum = recallNum;
+	}
+				
+	public String getCreater(){
+		return creater;
+	}
+	
+	public void setCreater(String creater){
+		this.creater = creater;
+	}
+				
+	public Date getCreateTime(){
+		return createTime;
+	}
+	
+	public void setCreateTime(Date createTime){
+		this.createTime = createTime;
+	}
+				
+	public String getModifier(){
+		return modifier;
+	}
+	
+	public void setModifier(String modifier){
+		this.modifier = modifier;
+	}
+				
+	public Date getModifyTime(){
+		return modifyTime;
+	}
+	
+	public void setModifyTime(Date modifyTime){
+		this.modifyTime = modifyTime;
+	}
+				
+	public String getVersion(){
+		return version;
+	}
+	
+	public void setVersion(String version){
+		this.version = version;
+	}
+
+	public String getGrantOrRecallDesc() {return grantOrRecallDesc = EnumCardGrantOrRecall.getLabel(grantOrRecall);}
+}

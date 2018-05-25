@@ -1,0 +1,279 @@
+package com.ibest.activity.controller;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+import javax.servlet.http.HttpServletRequest;
+
+import com.ibest.activity.entity.Activity;
+import com.ibest.activity.enums.EnumsActivityStatus;
+import com.ibest.activity.service.ActivityService;
+import com.ibest.framework.common.utils.UserUtils;
+import com.ibest.integral.entity.PointRule;
+import com.ibest.integral.entity.PointType;
+import com.ibest.integral.service.PointRuleService;
+import com.ibest.integral.service.PointTypeService;
+import com.ibest.utils.ConstantUtils;
+import org.apache.commons.lang3.RandomUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.ibest.framework.common.enums.EnumsRtnMapResult;
+import com.ibest.framework.common.persistence.BaseController;
+import com.ibest.framework.common.utils.PageList;
+import com.ibest.activity.dto.input.ActivityPointInputDTO;
+import com.ibest.activity.entity.ActivityPoint;
+import com.ibest.activity.service.ActivityPointService;
+
+@Controller
+@RequestMapping(value="${adminPath}/activity/activityPoint")
+public class ActivityPointController extends BaseController {
+	
+	private static final Logger logger = LoggerFactory.getLogger(ActivityPointController.class);
+	
+	@Autowired
+	private ActivityPointService activityPointService;
+
+	@Autowired
+	private ActivityService activityService;
+
+	@Autowired
+	private PointRuleService pointRuleService;
+
+	@Autowired
+	private PointTypeService pointTypeService;
+
+	/**
+	* 进入到列表页
+	*/
+	@RequestMapping(value="/")
+	public String index(){
+		return "module/activity/activityPoint/activityPointList";
+	}
+	
+	/**
+	* 进入到表单页-创建
+	*/
+	@RequestMapping(value="/add")
+	public String add(){
+		
+		return "module/activity/activityPoint/activityPointForm";
+	}
+	
+	/**
+	* 进入到表单页，编辑
+	*/
+	@RequestMapping(value="/edit")
+	public String edit(@RequestParam String id, Model model){
+		try {
+			if(StringUtils.isNotEmpty(id)){
+				ActivityPoint activityPoint = activityPointService.findById(id);
+				if(activityPoint != null){
+					model.addAttribute("activityPoint", activityPoint);
+				}else{
+					setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "您查看的信息不存在！", model);
+				}
+			}else{
+				setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "请选择需要编辑的信息！", model);
+			}
+		} catch (Exception e) {
+			setRtnCodeAndMsg(EnumsRtnMapResult.EXCEPTION.getCode(), EnumsRtnMapResult.EXCEPTION.getMsg(), model);
+		}
+		return "module/activity/activityPoint/activityPointForm";
+	}
+	
+	/**
+	* 进入到详情页
+	*/
+	@RequestMapping(value="/view")
+	public String view(@RequestParam String id, Model model){
+		try {
+			if(StringUtils.isNotEmpty(id)){
+				ActivityPoint activityPoint = activityPointService.findById(id);
+				if(activityPoint != null){
+					model.addAttribute("activityPoint", activityPoint);
+				}else{
+					setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "您查看的信息不存在！", model);
+				}
+			}else{
+				setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "请选择需要查看的信息！", model);
+			}
+		} catch (Exception e) {
+			setRtnCodeAndMsg(EnumsRtnMapResult.EXCEPTION.getCode(), EnumsRtnMapResult.EXCEPTION.getMsg(), model);
+		}
+		return "module/activity/activityPoint/activityPointDetail";
+	}
+
+	/**
+	* 异步分页查询
+	*/
+	@ResponseBody
+	@RequiresPermissions("activityPoint:query")
+	@RequestMapping(value="/list")
+	public PageList<ActivityPoint> list(ActivityPointInputDTO activityPoint, HttpServletRequest request){
+		
+		PageList<ActivityPoint> pageList = new PageList<ActivityPoint>();
+		
+		try {
+			//设置分页参数
+			super.setPage(request, pageList);
+		
+			pageList = activityPointService.findByPage(pageList, activityPoint);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return pageList;
+	}
+
+	/**
+	 * 活动积分关联
+	 * @param pointRuleId
+	 * @param activityId
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value="insertActivityPoint")
+	public Map<String, Object> insertActivityPoint(@RequestParam String pointRuleId, @RequestParam String activityId){
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		if(com.ibest.framework.common.utils.StringUtils.isBlank(pointRuleId) ||
+				com.ibest.framework.common.utils.StringUtils.isBlank(activityId)) {
+			setRtnCodeAndMsgByFailure(rtnMap, "保存失败");
+		}
+		setRtnCodeAndMsgBySuccess(rtnMap, "保存成功");
+
+		try {
+			ActivityPoint activityPoint = getActivityPoint(pointRuleId, activityId);
+
+			int result = activityPointService.insert(activityPoint);
+			if(result == 0){
+				setRtnCodeAndMsgByFailure(rtnMap, "保存失败");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+		return rtnMap;
+	}
+
+	/**
+	 * buildActivityPoint
+	 * @param pointRuleId
+	 * @param activityId
+	 * @return
+	 * @throws Exception
+	 */
+	private ActivityPoint getActivityPoint(@RequestParam String pointRuleId, @RequestParam String activityId)
+			throws Exception {
+		Activity activity = activityService.findById(activityId);
+		PointRule pointRule = pointRuleService.findById(pointRuleId);
+		ActivityPoint activityPoint = new ActivityPoint();
+		activityPoint.setId(com.ibest.utils.RandomUtils.RandomUUID());
+		activityPoint.setPointTypeId(pointRule.getPointTypeId());
+		activityPoint.setPointTypeName(pointRule.getPointTypeName());
+		activityPoint.setPointRuleId(pointRule.getId());
+		activityPoint.setPointRuleName(pointRule.getPointName());
+		activityPoint.setActivityId(activity.getId());
+		activityPoint.setActivityName(activity.getActivityName());
+		activityPoint.setStatus(EnumsActivityStatus.getValue("未开始"));
+		activityPoint.setIsDelete(ConstantUtils.UPDATE_SET_ZERO);
+		activityPoint.setCreater(UserUtils.getCurrentUser().getRealname());
+		SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd");
+		activityPoint.setCreateTime(dateFormat.parse(dateFormat.format(new Date())));
+		activityPoint.setModifier(UserUtils.getCurrentUser().getRealname());
+		activityPoint.setModifyTime(dateFormat.parse(dateFormat.format(new Date())));
+		return activityPoint;
+	}
+
+	/**
+	* 异步表单提交
+	*/
+	@ResponseBody
+	@RequiresPermissions("activityPoint:create")
+	@RequestMapping(value="create")
+	public Map<String, Object> insert(ActivityPoint activityPoint){
+
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		setRtnCodeAndMsgBySuccess(rtnMap, "保存成功");
+		
+		try {
+			activityPoint.setId(com.ibest.utils.RandomUtils.RandomUUID());
+			getTypeNameAndRuleNameAndActivityName(activityPoint);
+			activityPoint.setIsDelete(ConstantUtils.UPDATE_SET_ZERO);
+			int result = activityPointService.insert(activityPoint);
+			if(result == 0){
+				setRtnCodeAndMsgByFailure(rtnMap, "保存失败");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+		return rtnMap;
+	}
+
+	/**
+	 * 构建活动积分对象
+	 * @param activityPoint
+	 * @throws Exception
+	 */
+	private void getTypeNameAndRuleNameAndActivityName(ActivityPoint activityPoint)
+			throws Exception {
+		String pointTypeName = pointTypeService.findById(activityPoint.getPointTypeId()).getPointTypeName();
+		String pointRuleName = pointRuleService.findById(activityPoint.getPointRuleId()).getPointName();
+		String activityName = activityService.findById(activityPoint.getActivityId()).getActivityName();
+		activityPoint.setPointTypeName(pointTypeName);
+		activityPoint.setPointRuleName(pointRuleName);
+		activityPoint.setActivityName(activityName);
+	}
+
+	@ResponseBody
+	@RequiresPermissions("activityPoint:update")
+	@RequestMapping(value="update")
+	public Map<String, Object> update(ActivityPoint activityPoint){
+
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		setRtnCodeAndMsgBySuccess(rtnMap, "保存成功");
+		
+		try {
+			getTypeNameAndRuleNameAndActivityName(activityPoint);
+			int result = activityPointService.update(activityPoint);
+			if(result == 0){
+				setRtnCodeAndMsgByFailure(rtnMap, "保存失败");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+		return rtnMap;
+	}
+	
+	@ResponseBody
+	@RequiresPermissions("activityPoint:delete")
+	@RequestMapping(value="delete")
+	public Map<String, Object> delete(@RequestParam(required=true) String ids){
+		
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		setRtnCodeAndMsgBySuccess(rtnMap, "删除成功");
+		
+		try {
+			int result = activityPointService.deleteByIds(ids);
+			if(result == 0){
+				setRtnCodeAndMsgByFailure(rtnMap, "删除失败");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+		return rtnMap;
+	}
+}

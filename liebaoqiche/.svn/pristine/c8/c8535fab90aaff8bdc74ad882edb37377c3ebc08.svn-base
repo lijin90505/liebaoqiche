@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.experience.dao.ExperienceDao">
+
+    <sql id="allColumns">
+    	le.id as id,    	
+    	le.name as name,    	
+    	le.exp as exp,
+    	le.state as state,    	
+    	le.is_delete as isDelete,    	
+    	le.creater as creater,    	
+    	le.create_time as createTime,    	
+    	le.modifier as modifier,    	
+    	le.modify_time as modifyTime,    	
+    	le.version as version,    	
+    	le.remarks as remarks    	
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and le.id = #{id}
+		</if>-->
+	    <if test="name != null and name != ''">
+		    and CONCAT(
+		    IFNULL(le.name,'')
+		    ) LIKE CONCAT('%%', #{name},'%%')
+	    </if>
+		<!--<if test="exp != null">
+			and le.exp = #{exp}
+		</if>
+		<if test="creater != null and creater != ''">
+			and le.creater = #{creater}
+		</if>
+		<if test="createTime != null">
+			and le.create_time = #{createTime}
+		</if>
+		<if test="modifier != null and modifier != ''">
+			and le.modifier = #{modifier}
+		</if>
+		<if test="modifyTime != null">
+			and le.modify_time = #{modifyTime}
+		</if>
+		<if test="version != null and version != ''">
+			and le.version = #{version}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and le.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and le.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and le.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and le.UPDATE_DATE = #{updateDate}
+		</if>
+		-->
+		<if test="isDelete != null">
+			and le.IS_DELETE = #{isDelete}
+		</if>
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by le.${order} ${desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_experience(
+			id,
+	    	name,	    	
+	    	exp,
+	    	state,	    	
+	    	is_delete,	    	
+	    	creater,	    	
+	    	create_time,	    	
+	    	modifier,	    	
+	    	modify_time,	    	
+	    	version,	    	
+	    	remarks	    	
+		) values(
+			#{id},			 
+			#{name},			 
+			#{exp},
+			#{state},			 
+			#{isDelete},			 
+			#{creater},			 
+			#{createTime},			 
+			#{modifier},			 
+			#{modifyTime},			 
+			#{version},			 
+			#{remarks}			 
+		)
+	</insert>
+	
+	<select id="checkNameUnique" resultType="Experience">
+		select name from liebao_experience where is_delete = '0'
+		and name = #{name}
+	</select>
+	
+	<select id="findById" resultType="Experience">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_experience le
+			<include refid="joinOthers"/>
+		where
+			le.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="Experience">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_experience le
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(le.id)
+		from
+			liebao_experience le
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="Experience">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_experience le
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		order by modify_time desc
+		<include refid="searchOrder"/>
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_experience set
+			name=#{name},			
+			exp=#{exp},
+			state=#{state},			
+			is_delete=#{isDelete},			
+			creater=#{creater},			
+			modifier=#{modifier},
+			modify_time=#{modifyTime},			
+			version=#{version},			
+			remarks=#{remarks}			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_experience where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_experience where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_experience set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_experience set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

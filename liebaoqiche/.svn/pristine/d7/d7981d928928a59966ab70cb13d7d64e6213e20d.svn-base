@@ -1,0 +1,115 @@
+<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<!DOCTYPE>
+<html>
+<head>
+	<title>PointType</title>
+	<%@ include file="/WEB-INF/views/include/head.jsp"%>
+</head>
+<body>
+	<%@ include file="/WEB-INF/views/include/loading.jsp"%>
+	<div class="easyui-layout" data-options="fit:true">
+		<div data-options="region:'center'">
+	    	<form id="DataForm" method="post">
+	    		<table style="width: 100%;">
+	    			<tbody>
+	    				<tr>
+	    					<td colspan="2" class="chapter">
+	    						基本信息
+	    					</td>
+	    				</tr>
+	    				<tr>
+						    <td style="width: 50%; padding: 5px; text-align: center;">
+							    <input class="easyui-textbox" id="pointTypeName" name="pointTypeName" maxlength="18" required="true" maxlength="18" maxlength="18" required="true" value="${pointType.pointTypeName}" labelWidth="100" label="积分类别"  data-options="prompt:'积分类别'" style="width: 90%;">
+						    </td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="creater" name="creater" maxlength="18" required="true" value="${pointType.creater}" labelWidth="100" label="创建人"  data-options="prompt:'创建人'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-datebox" id="createTime" editable="false" name="createTime" required="true" value="${pointType.createTime}" labelWidth="100" label="创建时间"  data-options="prompt:'创建时间'" style="width: 90%;">
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="modifier" name="modifier" maxlength="18" required="true" value="${pointType.modifier}" labelWidth="100" label="修改人"  data-options="prompt:'修改人'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-datebox" id="modifyTime" editable="false" name="modifyTime" required="true" value="${pointType.modifyTime}" labelWidth="100" label="修改时间"  data-options="prompt:'修改时间'" style="width: 90%;">
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="version" name="version" maxlength="18" value="${pointType.version}" labelWidth="100" label="版本"  data-options="prompt:'版本'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;" colspan="2">
+	    													<textarea class="easyui-textbox" id="remarks" name="remarks"
+									style="width: 95%; height: 80px;" labelWidth="70" label="备注" maxlength="200"
+									data-options="validType:'length[1,300]',prompt:'备注'">${pointType.remarks}</textarea>
+	    					</td>
+	    				</tr>
+	    				<tr>
+						    <td style="width: 50%; padding: 5px; text-align: center;">
+							    <input class="" hidden="true" id="pointTypeId" name="pointTypeId" value="${pointType.pointTypeId}" labelWidth="100" label="积分类别"  data-options="prompt:'积分类别'" style="width: 90%;">
+						    </td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="" id="id" name="id" value="${pointType.id}" labelWidth="100" label="id" hidden="true" required="true" data-options="prompt:'id'" style="width: 90%;">
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="" id="isDelete" hidden="true"  name="isDelete" value="${pointType.isDelete}" labelWidth="100" label="是否删除；0未删除，1删除"  data-options="prompt:'是否删除；0未删除，1删除'" style="width: 90%;">
+	    					</td>
+						    <td style="width: 50%; padding: 5px; text-align: center;">
+							    <input class="" hidden="true" id="pointTypeId" name="pointTypeId" value="${pointType.pointTypeId}" labelWidth="100" label="积分类别编号"  data-options="prompt:'积分类别编号'" style="width: 90%;">
+						    </td>
+
+	    				</tr>
+	    			</tbody>
+	    		</table>
+			</form>
+		</div>
+		<div data-options="region:'south',border:false" style="text-align:left; padding:5px;">
+            <a id="btnSave" href="javascript:void(0)" class="easyui-linkbutton button-success" style="width: 80px;"><i class="fa fa-check fa-lg"></i>&nbsp;&nbsp;保存</a>
+            <a id="btnCancel" href="javascript:void(0)" class="easyui-linkbutton button-warning" style="width: 80px;"><i class="fa fa-remove fa-lg"></i>&nbsp;&nbsp;取消</a>
+        </div>
+   	</div>
+    
+    <!-- js脚本，必须写在body中，tab的url加载模式只会异步加载body中的内容到tab中 -->
+	<script type="text/javascript">
+		require(['jquery','common'], function($){
+			// 给保存按钮添加点击事件
+			$("#btnSave").on('click', function(){
+				
+				$("#btnSave").linkbutton('disable');
+			
+				$("#DataForm").form('submit',{
+					url:$("#id").val() == ''?'${ctx}/integral/pointType/create':'${ctx}/integral/pointType/update',
+					onSubmit:function(){
+						return $(this).form('enableValidation').form('validate');
+					},
+					success: function(data){
+						var json = $.parseJSON(data);
+						if(json && json.rtnCode == '00000000'){
+							hideDialog();
+							$.messager.alert('提示', "保存成功", "success");
+							$("#btnSave").linkbutton('enable');
+							hideDialog();
+						}else{
+							$.messager.alert('提示', json.rtnMsg, "error");
+							$("#btnSave").linkbutton('enable');
+						}
+					},
+					error: function(){
+						$("#btnSave").linkbutton('enable');
+					}
+				});
+			});
+			
+			// 给保存按钮添加点击事件
+			$("#btnCancel").on('click', function(){
+				hideDialog();
+			});
+		});
+	</script>
+</body>
+</html>

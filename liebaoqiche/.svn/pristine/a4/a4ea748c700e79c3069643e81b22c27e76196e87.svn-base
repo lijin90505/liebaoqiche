@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.integral.dao.UserIntegralDao">
+
+    <sql id="allColumns">
+    	lui.id as id,    	
+    	lui.user_id as userId,    	
+    	lui.vin_no as vinNo,    	
+    	lui.integral_id as integralId,    	
+    	lui.access_system_id as accessSystemId,    	
+    	lui.app_id as appId,    	
+    	lui.order_id as orderId,    	
+    	lui.serial_id as serialId,    	
+    	lui.type as type,    	
+    	lui.creater as creater,    	
+    	lui.create_time as createTime,    	
+    	lui.modifier as modifier,    	
+    	lui.modify_time as modifyTime,    	
+    	lui.version as version,    	
+    	lui.remarks as remarks    	
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and lui.id = #{id}
+		</if>
+		<if test="vinNo != null and vinNo != ''">
+			and lui.vin_no = #{vinNo}
+		</if>-->
+		<if test="userName != null and userName != ''">
+			AND CONCAT(
+			IFNULL(userName, '')
+			) LIKE CONCAT('%%', #{userName}, '%%')
+		</if>
+		<if test="integral != null and integral != ''">
+			and lui.integral = #{integral}
+		</if>
+		<if test="accessSystemId != null and accessSystemId != ''">
+			AND CONCAT(
+			IFNULL(access_system_id, '')
+			) LIKE CONCAT('%%', #{accessSystemId}, '%%')
+		</if>
+		<if test="appId != null and appId != ''">
+			and lui.app_id = #{appId}
+		</if>
+	    <if test="type != null and type != ''">
+		    and lui.type = #{type}
+	    </if>
+		<!--<if test="orderId != null and orderId != ''">
+			and lui.order_id = #{orderId}
+		</if>
+		<if test="serialId != null and serialId != ''">
+			and lui.serial_id = #{serialId}
+		</if>
+		<if test="creater != null and creater != ''">
+			and lui.creater = #{creater}
+		</if>
+		<if test="createTime != null">
+			and lui.create_time = #{createTime}
+		</if>
+		<if test="modifier != null and modifier != ''">
+			and lui.modifier = #{modifier}
+		</if>
+		<if test="modifyTime != null">
+			and lui.modify_time = #{modifyTime}
+		</if>
+		<if test="version != null and version != ''">
+			and lui.version = #{version}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lui.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lui.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lui.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lui.UPDATE_DATE = #{updateDate}
+		</if>
+		<if test="isDelete != null">
+			and lui.IS_DELETE = #{isDelete}
+		</if>
+		-->
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lui.${order} ${desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_user_integral(
+			id,
+	    	user_id,	    	
+	    	vin_no,	    	
+	    	integral_id,
+	    	consume_num,	    	
+	    	access_system_id,
+	    	app_id,	    	
+	    	order_id,	    	
+	    	serial_id,	    	
+	    	type,	    	
+	    	creater,	    	
+	    	create_time,	    	
+	    	modifier,	    	
+	    	modify_time,	    	
+	    	version,	    	
+	    	remarks	    	
+		) values(
+			#{id},			 
+			#{userId},			 
+			#{vinNo},			 
+			#{integralId},
+			#{consumeNum},			 
+			#{accessSystemId},			 
+			#{appId},			 
+			#{orderId},			 
+			#{serialId},			 
+			#{type},			 
+			#{creater},			 
+			#{createTime},			 
+			#{modifier},			 
+			#{modifyTime},			 
+			#{version},			 
+			#{remarks}			 
+		)
+	</insert>
+	
+	<select id="findById" resultType="UserIntegral">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_user_integral lui
+			<include refid="joinOthers"/>
+		where
+			lui.id = #{id}
+	</select>
+	
+	<select id="findByUserId" resultType="UserIntegral">
+		select 
+			<include refid="allColumns"/>
+		from liebao_user_integral lui where lui.user_id = #{userId}
+	</select>
+	
+	<select id="findOneByObject" resultType="UserIntegral">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_user_integral lui
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(lui.id)
+		from
+			liebao_user_integral_view lui
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	<!-- UserIntegral -->
+	<select id="findByObject" resultType="UserIntegral">
+	
+		select
+			lui.id AS id,
+			lui.access_system_id as accessSystemId,
+			ifnull(lui.consume_num,lui.integral) number,
+			lui.name as systemName,
+			lui.app_id as appId,
+			lui.user_id as userId,
+			lui.userName as userName,
+			lui.vin_no as vinNo,
+			lui.integral_id as integralId,
+			ifnull(lui.category_name,'后台增减操作') categoryName,
+			<!-- lui.category_name as categoryName, -->
+			lui.activity_name as activityName,
+			lui.order_id AS orderId,
+			lui.serial_id AS serialId,
+			lui.create_time as createTime,
+			lui.modify_time as modifyTime,
+			lui.remarks as remarks
+	
+			from liebao_user_integral_view lui
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+			order by
+				lui.modify_time DESC
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_user_integral set
+			user_id=#{userId},			
+			vin_no=#{vinNo},			
+			integral_id=#{integralId},
+			consume_num=#{consumeNum}			
+			access_system_id=#{accessSystemId},			
+			app_id=#{appId},			
+			order_id=#{orderId},			
+			serial_id=#{serialId},			
+			type=#{type},			
+			creater=#{creater},			
+			modifier=#{modifier},
+			modify_time=#{modifyTime},			
+			version=#{version},			
+			remarks=#{remarks}			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_user_integral where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_user_integral where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_user_integral set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_user_integral set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

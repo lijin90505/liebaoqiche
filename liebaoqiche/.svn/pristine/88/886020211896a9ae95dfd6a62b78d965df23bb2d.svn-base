@@ -1,0 +1,363 @@
+package com.ibest.user.controller;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import com.ibest.framework.common.utils.UserUtils;
+import com.ibest.user.enums.EnumsLocked;
+import com.ibest.user.enums.EnumsModified;
+import com.ibest.user.enums.EnumsRegisterType;
+import com.ibest.utils.MD5Util;
+import com.ibest.utils.RandomUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.ibest.framework.common.enums.EnumsRtnMapResult;
+import com.ibest.framework.common.persistence.BaseController;
+import com.ibest.framework.common.utils.PageList;
+import com.ibest.user.dto.input.UserCarsInputDTO;
+import com.ibest.user.dto.input.UserInputDTO;
+import com.ibest.user.entity.User;
+import com.ibest.user.entity.UserCars;
+import com.ibest.user.service.UserCarsService;
+import com.ibest.user.service.UserService;
+
+@Controller
+@RequestMapping(value = "${adminPath}/user/user")
+public class UserController extends BaseController {
+
+	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+
+	@Autowired
+	private UserService userService;
+	
+	@Autowired
+	private UserCarsService userCarService;
+
+	/**
+	 * 进入到列表页
+	 */
+	@RequestMapping(value = "/")
+	public String index() {
+		return "module/user/user/userList";
+	}
+
+	/**
+	 * 进入到表单页-创建
+	 */
+	@RequestMapping(value = "/add")
+	public String add(Model model) {
+		model.addAttribute("user", null);
+		return "module/user/user/userForm";
+	}
+
+	/**
+	 * 进入到表单页，编辑
+	 */
+	@RequestMapping(value = "/edit")
+	public String edit(@RequestParam String id, Model model) {
+		try {
+			if (StringUtils.isNotEmpty(id)) {
+				User user = userService.findById(id);
+				if (user != null) {
+					model.addAttribute("user", user);
+				} else {
+					setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "您查看的信息不存在！", model);
+				}
+			} else {
+				setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "请选择需要编辑的信息！", model);
+			}
+		} catch (Exception e) {
+			setRtnCodeAndMsg(EnumsRtnMapResult.EXCEPTION.getCode(), EnumsRtnMapResult.EXCEPTION.getMsg(), model);
+		}
+		return "module/user/user/userForm";
+	}
+
+	/**
+	 * 进入到详情页
+	 */
+	@RequestMapping(value = "/view")
+	public String view(@RequestParam String id, Model model) {
+		try {
+			if (StringUtils.isNotEmpty(id)) {
+				User user = userService.findById(id);
+				if (user != null) {
+					model.addAttribute("user", user);
+				} else {
+					setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "您查看的信息不存在！", model);
+				}
+			} else {
+				setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "请选择需要查看的信息！", model);
+			}
+		} catch (Exception e) {
+			setRtnCodeAndMsg(EnumsRtnMapResult.EXCEPTION.getCode(), EnumsRtnMapResult.EXCEPTION.getMsg(), model);
+		}
+		return "module/user/user/userDetail";
+	}
+
+	/**
+	 *
+	 */
+	@ResponseBody
+	//	@RequiresPermissions("user:query")
+	@RequestMapping(value="/users")
+	public List<User> users(UserInputDTO inputDTO, HttpServletRequest request) throws Exception{
+		return userService.findByObject(inputDTO);
+	}
+
+	/**
+	 *
+	 */
+	@ResponseBody
+	@RequestMapping(value="/carVins")
+	public Map<String, Object> carVins(@RequestParam String userId, HttpServletRequest request) throws Exception{
+		Map<String, Object> map = new HashMap<>();
+		List<UserCars> userCarsList = userCarService.findVinByUserId(userId);
+		map.put("userCarsList", userCarsList);
+		return map;
+	}
+
+	/**
+	 * 异步分页查询
+	 */
+	@ResponseBody
+	@RequiresPermissions("user:query")
+	@RequestMapping(value = "/list")
+	public PageList<User> list(UserInputDTO user, HttpServletRequest request) {
+
+		PageList<User> pageList = new PageList<User>();
+
+		try {
+			//设置分页参数
+			super.setPage(request, pageList);
+
+			pageList = userService.findByPage(pageList, user);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return pageList;
+	}
+
+	/**
+	 * 异步表单提交
+	 */
+	@ResponseBody
+	@RequiresPermissions("user:create")
+	@RequestMapping(value = "create")
+	public Map<String, Object> insert(User user) {
+
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		setRtnCodeAndMsgBySuccess(rtnMap, "保存成功");
+
+		try {
+			user.setId(RandomUtils.RandomUUID());
+			// 创建的用户默认密码132456
+			user.setPassword(MD5Util.encrypt("123456"));
+//			user.setCreateTime(new Date());
+			user.setRegisterType(EnumsRegisterType.USERNAME.getValue());
+			user.setModified(EnumsModified.MODIFIED_1.getValue());
+			user.setLocked(EnumsLocked.UNLOCKED.getValue());
+			user.setCreateUserName(UserUtils.getCurrentUser().getRealname());
+			user.setCreateTime(new Date());
+			user.setModifyUserName(UserUtils.getCurrentUser().getRealname());
+			user.setModifyTime(new Date());
+			int result = userService.insert(user);
+			if (result == 0) {
+				setRtnCodeAndMsgByFailure(rtnMap, "保存失败");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+		return rtnMap;
+	}
+
+	@ResponseBody
+	@RequiresPermissions("user:update")
+	@RequestMapping(value = "update")
+	public Map<String, Object> update(User user) {
+
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		setRtnCodeAndMsgBySuccess(rtnMap, "保存成功");
+
+		try {
+			user.setModifyUserName(UserUtils.getCurrentUser().getRealname());
+			user.setModifyTime(new Date());
+			int result = userService.update(user);
+			if (result == 0) {
+				setRtnCodeAndMsgByFailure(rtnMap, "保存失败");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+		return rtnMap;
+	}
+
+	@ResponseBody
+	@RequiresPermissions("user:delete")
+	@RequestMapping(value = "delete")
+	public Map<String, Object> delete(@RequestParam(required = true) String ids) {
+
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		setRtnCodeAndMsgBySuccess(rtnMap, "删除成功");
+
+		try {
+			int result = userService.deleteByIds(ids);
+			if (result == 0) {
+				setRtnCodeAndMsgByFailure(rtnMap, "删除失败");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+		return rtnMap;
+	}
+
+	/**
+	 * 检测用户名唯一性
+	 * @param inputDTO
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value="checkName")
+	public String checkName(UserInputDTO inputDTO) {
+
+		boolean isSame=true;
+
+		int userCount = userService.countUserByObject(inputDTO);
+
+		if (userCount == 1) {
+			isSame = false;
+		}
+		return isSame+"";
+	}
+
+	/**
+	 * 解锁/锁定
+	 *
+	 * @return
+	 * @throws Exception
+	 */
+	@ResponseBody
+	@RequiresPermissions(value = {"user:lock", "user:unlock"}, logical = Logical.OR)
+	@RequestMapping(value = "handle")
+	public Object handle(@RequestParam List<String> ids, @RequestParam Integer locked) {
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		setRtnCodeAndMsgBySuccess(rtnMap, "操作成功");
+
+		try {
+			userService.handle(ids, locked);
+		} catch (Exception e) {
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+
+		return rtnMap;
+	}
+
+	/**
+	 * 用户锁定解锁
+	 * @param id
+	 * @param locked
+	 * @return
+	 */
+	@ResponseBody
+	@RequiresPermissions("user:lock")
+	@RequestMapping(value = "lock")
+	public Object lock(@RequestParam String id, @RequestParam Boolean locked) {
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		try {
+			User user = userService.findById(id);
+			setRtnCodeAndMsgBySuccess(rtnMap, "用户" + (locked ? "锁定" : "解锁") + "成功！");
+
+			if(user == null){
+				setRtnCodeAndMsgByFailure(rtnMap, "更新失败，用户不存在！");
+				return rtnMap;
+			}
+
+//			user.setLocked(BooleanUtils.toInteger(locked));
+
+			int rs = userService.update(user);
+			if (rs == 0) setRtnCodeAndMsgByFailure(rtnMap, "更新失败");
+		} catch (Exception e) {
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+
+		return rtnMap;
+	}
+	
+	@ResponseBody
+	@RequiresPermissions("user:checkPhone")
+	@RequestMapping(value = "checkPhone")
+	public Object checkPhone(HttpServletRequest request) {
+		String phone = request.getParameter("phone");
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		try {
+			User user = userService.findByPhone(phone);
+
+			if(user != null){
+				setRtnCodeAndMsgByFailure(rtnMap, "手机号已存在！");
+				return rtnMap;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+		return rtnMap;
+	}
+	
+	@ResponseBody
+	@RequiresPermissions("user:checkEmail")
+	@RequestMapping(value = "checkEmail")
+	public Object checkEmail(HttpServletRequest request) {
+		String email = request.getParameter("email");
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		try {
+			User user = userService.findByEmail(email);
+
+			if(user != null){
+				setRtnCodeAndMsgByFailure(rtnMap, "邮箱已存在！");
+				return rtnMap;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+		return rtnMap;
+	}
+	
+	@ResponseBody
+	@RequiresPermissions("user:checkUserName")
+	@RequestMapping(value = "checkUserName")
+	public Object checkUserName(HttpServletRequest request) {
+		String username = request.getParameter("username");
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		try {
+			User user = userService.findByUserName(username);
+			if(user != null){
+				setRtnCodeAndMsgByFailure(rtnMap, "邮箱已存在！");
+				return rtnMap;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+		return rtnMap;
+	}
+}

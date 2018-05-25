@@ -1,0 +1,129 @@
+<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<!DOCTYPE>
+<html>
+<head>
+	<title>PayInfoConfig</title>
+	<%@ include file="/WEB-INF/views/include/head.jsp"%>
+</head>
+<body>
+	<%@ include file="/WEB-INF/views/include/loading.jsp"%>
+	<div class="easyui-layout" data-options="fit:true">
+		<div data-options="region:'center'">
+	    	<form id="DataForm" method="post">
+	    		<table style="width: 100%;">
+	    			<tbody>
+	    				<tr>
+	    					<td colspan="2" class="chapter">
+	    						支付配置管理基本信息
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input type="hidden" id="id" name="id" value="${payInfoConfig.id}">
+	    						<input class="easyui-textbox" id="appid" name="appid" value="${payInfoConfig.appid}" labelWidth="100" label="appid" required="true" data-options="prompt:'appid'" style="width: 90%;">
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="merchantId" name="merchantId" value="${payInfoConfig.merchantId}" labelWidth="100" label="商户号"  data-options="prompt:'商户号'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="merchantName" name="merchantName" value="${payInfoConfig.merchantName}" labelWidth="100" label="商户号名称"  data-options="prompt:'商户号名称'" style="width: 90%;">
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="merchantCode" name="merchantCode" value="${payInfoConfig.merchantCode}" labelWidth="100" label="商户号code"  data-options="prompt:'商户号code'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="merchantKey" name="merchantKey" value="${payInfoConfig.merchantKey}" labelWidth="100" label="商户号密钥"  data-options="prompt:'商户号密钥'" style="width: 90%;">
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="keyStoreFile" name="keyStoreFile" value="${payInfoConfig.keyStoreFile}" labelWidth="100" label="证书路径"  data-options="prompt:'证书路径'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="keyStorePassword" name="keyStorePassword" value="${payInfoConfig.keyStorePassword}" labelWidth="100" label="证书密码"  data-options="prompt:'证书密码'" style="width: 90%;">
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="requestUrl" name="requestUrl" value="${payInfoConfig.requestUrl}" labelWidth="100" label="请求url"  data-options="prompt:'请求url'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="tradeType" name="tradeType" value="${payInfoConfig.tradeType}" labelWidth="100" label="支付方式"  data-options="prompt:'支付方式'" style="width: 90%;">
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="notifyUrl" name="notifyUrl" value="${payInfoConfig.notifyUrl}" labelWidth="100" label="回调地址"  data-options="prompt:'回调地址'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="backUrl" name="backUrl" value="${payInfoConfig.backUrl}" labelWidth="100" label="前置通知"  data-options="prompt:'前置通知'" style="width: 90%;">
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="frontUrl" name="frontUrl" value="${payInfoConfig.frontUrl}" labelWidth="100" label="后置通知"  data-options="prompt:'后置通知'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="publicKey" name="publicKey" value="${payInfoConfig.publicKey}" labelWidth="100" label="公钥"  data-options="prompt:'公钥'" style="width: 90%;">
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="privateKey" name="privateKey" value="${payInfoConfig.privateKey}" labelWidth="100" label="私钥"  data-options="prompt:'私钥'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="remarks" name="remarks" value="${payInfo.remarks}" labelWidth="100" label="备注"  data-options="prompt:'备注'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    			</tbody>
+	    		</table>
+			</form>
+		</div>
+		<div data-options="region:'south',border:false" style="text-align:left; padding:5px;">
+            <a id="btnSave" href="javascript:void(0)" class="easyui-linkbutton button-success" style="width: 80px;"><i class="fa fa-check fa-lg"></i>&nbsp;&nbsp;保存</a>
+            <a id="btnCancel" href="javascript:void(0)" class="easyui-linkbutton button-warning" style="width: 80px;"><i class="fa fa-remove fa-lg"></i>&nbsp;&nbsp;取消</a>
+        </div>
+   	</div>
+    
+    <!-- js脚本，必须写在body中，tab的url加载模式只会异步加载body中的内容到tab中 -->
+	<script type="text/javascript">
+		require(['jquery','common'], function($){
+			// 给保存按钮添加点击事件
+			$("#btnSave").on('click', function(){
+				
+				$("#btnSave").linkbutton('disable');
+			
+				$("#DataForm").form('submit',{
+					url:$("#id").val() == ''?'${ctx}/pay/payInfoConfig/create':'${ctx}/pay/payInfoConfig/update',
+					onSubmit:function(){
+						return $(this).form('enableValidation').form('validate');
+					},
+					success: function(data){
+						var json = $.parseJSON(data);
+						if(json && json.rtnCode == '00000000'){
+							$.messager.alert('提示', "保存成功", "success");
+							$("#btnSave").linkbutton('enable');
+						}else{
+							$.messager.alert('提示', json.rtnMsg, "error");
+							$("#btnSave").linkbutton('enable');
+						}
+					},
+					error: function(){
+						$("#btnSave").linkbutton('enable');
+					}
+				});
+			});
+			
+			// 给保存按钮添加点击事件
+			$("#btnCancel").on('click', function(){
+				history.go(-1);
+			});
+		});
+	</script>
+</body>
+</html>

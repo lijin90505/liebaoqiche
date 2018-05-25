@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.activity.dao.ActivityIntegralDao">
+
+    <sql id="allColumns">
+    	lai.id as id,    	
+    	lai.integral_id as integralId,    	
+    	lai.activity_id as activityId,    	
+    	lai.is_delete as isDelete,    	
+    	lai.creater as creater,    	
+    	lai.create_time as createTime,    	
+    	lai.modifier as modifier,    	
+    	lai.modify_time as modifyTime,    	
+    	lai.version as version,    	
+    	lai.remarks as remarks    	
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and lai.id = #{id}
+		</if>
+		<if test="integralId != null and integralId != ''">
+			and lai.integral_id = #{integralId}
+		</if>
+		<if test="activityId != null and activityId != ''">
+			and lai.activity_id = #{activityId}
+		</if>
+		<if test="creater != null and creater != ''">
+			and lai.creater = #{creater}
+		</if>
+		<if test="createTime != null">
+			and lai.create_time = #{createTime}
+		</if>
+		<if test="modifier != null and modifier != ''">
+			and lai.modifier = #{modifier}
+		</if>
+		<if test="modifyTime != null">
+			and lai.modify_time = #{modifyTime}
+		</if>
+		<if test="version != null and version != ''">
+			and lai.version = #{version}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lai.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lai.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lai.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lai.UPDATE_DATE = #{updateDate}
+		</if>
+		<if test="isDelete != null">
+			and lai.IS_DELETE = #{isDelete}
+		</if>
+		-->
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lai.${order} ${desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_activity_integral(
+			id,
+	    	integral_id,	    	
+	    	activity_id,	    	
+	    	is_delete,	    	
+	    	creater,	    	
+	    	create_time,	    	
+	    	modifier,	    	
+	    	modify_time,	    	
+	    	version,	    	
+	    	remarks	    	
+		) values(
+			#{id},
+			#{integralId},
+			#{activityId},
+			#{isDelete},			 
+			#{creater},			 
+			#{createTime},			 
+			#{modifier},			 
+			#{modifyTime},			 
+			#{version},			 
+			#{remarks}			 
+		)
+	</insert>
+	
+	<select id="findById" resultType="ActivityIntegral">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_activity_integral lai
+			<include refid="joinOthers"/>
+		where
+			lai.id = #{id}
+	</select>
+	
+	<select id="getChoosedIntegral" resultType="Integral" >
+		SELECT lpc.* FROM liebao_integral lpc
+		INNER JOIN liebao_activity_integral lpcpa ON lpc.ID=lpcpa.integral_id
+		INNER JOIN liebao_activity la ON la.ID=lpcpa.activity_id
+		INNER JOIN liebao_activity_details lad ON lad.ID=la.activity_details_id
+		WHERE lad.id=#{activityId}
+		AND lpc.IS_DELETE = 0
+		order by lpc.ID
+	</select>
+	
+	<select id="getUnChoosedIntegral" resultType="Integral" >
+		SELECT lpc.* FROM liebao_integral lpc
+		WHERE lpc.ID NOT IN
+		(SELECT integral_id FROM liebao_activity_integral
+		WHERE activity_id=#{activityId} )
+		AND IS_DELETE = 0
+		order by lpc.ID
+	</select>
+	
+	<delete id="deleteByActivityId">
+		delete from liebao_activity_integral where activity_id = #{activity_id}
+	</delete>
+	
+	<update id="deleteAll">
+		delete from liebao_activity_integral
+	</update>
+	
+	<select id="findOneByObject" resultType="ActivityIntegral">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_activity_integral lai
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(lai.id)
+		from
+			liebao_activity_integral lai
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="ActivityIntegral">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_activity_integral lai
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		order by create_time desc
+		<include refid="searchOrder"/>
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_activity_integral set
+			integral_id=#{integralId},			
+			activity_id=#{activityId},			
+			is_delete=#{isDelete},			
+			creater=#{creater},			
+			create_time=#{createTime},			
+			modifier=#{modifier},			
+			modify_time=#{modifyTime},			
+			version=#{version},			
+			remarks=#{remarks}			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_activity_integral where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_activity_integral where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_activity_integral set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_activity_integral set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

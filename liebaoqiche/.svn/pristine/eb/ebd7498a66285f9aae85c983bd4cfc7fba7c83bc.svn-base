@@ -1,0 +1,50 @@
+<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<!DOCTYPE>
+<html>
+<head>
+	<title>UserPointStatement</title>
+	<%@ include file="/WEB-INF/views/include/head.jsp"%>
+</head>
+<body>
+	<%@ include file="/WEB-INF/views/include/loading.jsp"%>
+	<!-- 数据列表  -->
+	<div class="easyui-layout" data-options="fit:true,border:false">
+		<div data-options="region:'center'">
+			<table id="Grid" class="easyui-datagrid" title="" ctrlSelect="true" striped="true"
+			       rownumbers="true" pagination="true" fitColumns="true" toolbar="#Grid_Toolbar"
+			       loadMsg="正在加载数据，请稍等..." emptyMsg="没有找到符合条件的数据"
+			       data-options="url:'${ctx}/integral/userPointStatement/list',fit:true, fitColumns:true, checkOnSelect:true, selectOnCheck:true, border: false">
+				<thead>
+				<tr>
+					<th data-options="field:'ck',checkbox:true"></th>
+					<th data-options="field:'id',hidden:true">id</th>
+					<th data-options="field:'userId',hidden:true">用户编号</th>
+					<th data-options="field:'userName'">用户名</th>
+					<th data-options="field:'pointTypeId',hidden:true">积分类别编号</th>
+					<th data-options="field:'pointTypeName'">积分类别名称</th>
+					<th data-options="field:'pointRuleId',hidden:true">积分规则编号</th>
+					<th data-options="field:'pointRuleName'">积分规则名称</th>
+					<th data-options="field:'activityId',hidden:true">活动编号</th>
+					<th data-options="field:'activityName'">活动名称</th>
+					<th data-options="field:'userPointId',hidden:true">用户积分编号</th>
+					<th data-options="field:'systemSign',hidden:true">系统标识编号</th>
+					<th data-options="field:'systemSignName'">系统名称</th>
+					<th data-options="field:'joinPoint'">汇入积分</th>
+					<th data-options="field:'consumePoint'">消耗积分</th>
+					<th data-options="field:'userPointCount'">积分</th>
+					<th data-options="field:'terminalType',hidden:true">终端类别</th>
+					<th data-options="field:'terminalTypeName',hidden:true">终端类别名称</th>
+					<th data-options="field:'creater'">创建人</th>
+					<th data-options="field:'createTime'">创建时间</th>
+					<th data-options="field:'modifier'">修改人</th>
+					<th data-options="field:'modifyTime'">修改时间</th>
+					<th data-options="field:'version'">版本</th>
+					<th data-options="field:'remarks'">备注</th>
+				</tr>
+				</thead>
+			</table>
+		</div>
+	</div>
+</body>
+</html>

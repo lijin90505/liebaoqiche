@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.accesssystem.dao.PointPermissionAssignmentDao">
+
+    <sql id="allColumns">
+    	lppa.id as id,    	
+    	lppa.point_type_id as pointTypeId,    	
+    	lppa.point_type_name as pointTypeName,    	
+    	lppa.point_rule_id as pointRuleId,    	
+    	lppa.point_rule_name as pointRuleName,    	
+    	lppa.system_sign as systemSign,    	
+    	lppa.system_sign_name as systemSignName,    	
+    	lppa.is_delete as isDelete,    	
+    	lppa.creater as creater,    	
+    	lppa.create_time as createTime,    	
+    	lppa.modifier as modifier,    	
+    	lppa.modify_time as modifyTime,    	
+    	lppa.version as version,    	
+    	lppa.remarks as remarks    	
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and lppa.id = #{id}
+		</if>
+		<if test="pointTypeId != null and pointTypeId != ''">
+			and lppa.point_type_id = #{pointTypeId}
+		</if>
+		<if test="pointTypeName != null and pointTypeName != ''">
+			and lppa.point_type_name = #{pointTypeName}
+		</if>
+		<if test="pointRuleId != null and pointRuleId != ''">
+			and lppa.point_rule_id = #{pointRuleId}
+		</if>
+		<if test="pointRuleName != null and pointRuleName != ''">
+			and lppa.point_rule_name = #{pointRuleName}
+		</if>
+		<if test="systemSign != null and systemSign != ''">
+			and lppa.system_sign = #{systemSign}
+		</if>
+		<if test="systemSignName != null and systemSignName != ''">
+			and lppa.system_sign_name = #{systemSignName}
+		</if>
+		<if test="creater != null and creater != ''">
+			and lppa.creater = #{creater}
+		</if>
+		<if test="createTime != null">
+			and lppa.create_time = #{createTime}
+		</if>
+		<if test="modifier != null and modifier != ''">
+			and lppa.modifier = #{modifier}
+		</if>
+		<if test="modifyTime != null">
+			and lppa.modify_time = #{modifyTime}
+		</if>
+		<if test="version != null and version != ''">
+			and lppa.version = #{version}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lppa.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lppa.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lppa.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lppa.UPDATE_DATE = #{updateDate}
+		</if>
+		-->
+		<if test="isDelete != null">
+			and lppa.IS_DELETE = #{isDelete}
+		</if>
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lppa.${order} ${desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_point_permission_assignment(
+			id,
+	    	point_type_id,	    	
+	    	point_type_name,	    	
+	    	point_rule_id,	    	
+	    	point_rule_name,	    	
+	    	system_sign,	    	
+	    	system_sign_name,	    	
+	    	is_delete,	    	
+	    	creater,	    	
+	    	create_time,	    	
+	    	modifier,	    	
+	    	modify_time,	    	
+	    	version,	    	
+	    	remarks	    	
+		) values(
+			#{id},			 
+			#{pointTypeId},			 
+			#{pointTypeName},			 
+			#{pointRuleId},			 
+			#{pointRuleName},			 
+			#{systemSign},			 
+			#{systemSignName},			 
+			#{isDelete},			 
+			#{creater},			 
+			#{createTime},			 
+			#{modifier},			 
+			#{modifyTime},			 
+			#{version},			 
+			#{remarks}			 
+		)
+	</insert>
+	
+	<select id="findById" resultType="PointPermissionAssignment">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_point_permission_assignment lppa
+			<include refid="joinOthers"/>
+		where
+			lppa.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="PointPermissionAssignment">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_point_permission_assignment lppa
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(lppa.id)
+		from
+			liebao_point_permission_assignment lppa
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="PointPermissionAssignment">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_point_permission_assignment lppa
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		<include refid="searchOrder"/>
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_point_permission_assignment set
+			point_type_id=#{pointTypeId},			
+			point_type_name=#{pointTypeName},			
+			point_rule_id=#{pointRuleId},			
+			point_rule_name=#{pointRuleName},			
+			system_sign=#{systemSign},			
+			system_sign_name=#{systemSignName},			
+			is_delete=#{isDelete},			
+			creater=#{creater},			
+			create_time=#{createTime},			
+			modifier=#{modifier},			
+			modify_time=#{modifyTime},			
+			version=#{version},			
+			remarks=#{remarks}			
+		where
+			id = #{id}
+	</update>
+	
+	<select id="getChoosedPointRule" resultType="PointRule" >
+		SELECT lpc.* FROM liebao_point_rule lpc
+		INNER JOIN liebao_point_permission_assignment lpcpa ON lpc.ID=lpcpa.point_rule_id
+		INNER JOIN liebao_access_system las ON las.ID=lpcpa.system_sign
+		WHERE las.id=#{systemSign}
+		AND lpc.IS_DELETE = 0
+		order by lpc.ID
+	</select>
+	
+	<select id="getUnChoosedPointRule" resultType="PointRule" >
+		SELECT lpc.* FROM liebao_point_rule lpc
+		WHERE lpc.ID NOT IN
+		(SELECT point_rule_id FROM liebao_point_permission_assignment
+		WHERE system_sign=#{systemSign} )
+		AND IS_DELETE = 0
+		order by lpc.ID
+	</select>
+	
+	<delete id="deleteBySystemSign">
+		delete from liebao_point_permission_assignment where system_sign = #{systemSign}
+	</delete>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_point_permission_assignment where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_point_permission_assignment where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_point_permission_assignment set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_point_permission_assignment set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

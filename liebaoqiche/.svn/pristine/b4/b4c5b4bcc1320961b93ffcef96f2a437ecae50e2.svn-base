@@ -1,0 +1,54 @@
+package com.ibest.activity.dto.input;
+
+import com.ibest.framework.common.persistence.BaseInputDTO;
+
+public class ActivityPointInputDTO extends BaseInputDTO {
+
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private String activityName;
+
+	// 活动状态
+	private Integer status;
+
+	// 积分类别编号
+	private String pointTypeId;
+	
+	// 积分规则编号
+	private String pointRuleId;
+
+	public String getActivityName() {
+		return activityName;
+	}
+
+	public void setActivityName(String activityName) {
+		this.activityName = activityName;
+	}
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+
+	public String getPointTypeId() {
+		return pointTypeId;
+	}
+
+	public void setPointTypeId(String pointTypeId) {
+		this.pointTypeId = pointTypeId;
+	}
+
+	public String getPointRuleId() {
+		return pointRuleId;
+	}
+
+	public void setPointRuleId(String pointRuleId) {
+		this.pointRuleId = pointRuleId;
+	}
+}

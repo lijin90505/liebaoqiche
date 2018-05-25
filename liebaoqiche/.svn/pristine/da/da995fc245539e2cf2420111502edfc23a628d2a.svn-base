@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.pay.dao.WechatPayReconDao">
+
+    <sql id="allColumns">
+    	lwpr.id as id, 
+    	lwpr.recon_channel as reconChannel,
+    	lwpr.bill_date as billDate,    	
+    	lwpr.bill_type as billType,    	
+    	lwpr.trade_time as tradeTime,    	
+    	lwpr.app_id as appId,    	
+    	lwpr.mch_id as mchId,    	
+    	lwpr.sub_mch_id as subMchId,    	
+    	lwpr.device_Info as deviceInfo,    	
+    	lwpr.result_order_no as resultOrderNo,    	
+    	lwpr.order_id as orderId,    	
+    	lwpr.user_id as userId,    	
+    	lwpr.trade_type as tradeType,    	
+    	lwpr.trade_state as tradeState,    	
+    	lwpr.bank_type as bankType,    	
+    	lwpr.fee_type as feeType,    	
+    	lwpr.total_amount as totalAmount,    	
+    	lwpr.coupon_fee as couponFee,    	
+    	lwpr.merchant_name as merchantName,    	
+    	lwpr.merchant_data as merchantData,    	
+    	lwpr.service_charge as serviceCharge,    	
+    	lwpr.rate as rate,    	
+    	lwpr.recon_state as reconState,    	
+    	lwpr.fail_message as failMessage,    	
+    	lwpr.create_date as createDate    	
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and lwpr.id = #{id}
+		</if>
+		<if test="payReconId != null and payReconId != ''">
+			and lwpr.pay_recon_id = #{payReconId}
+		</if>
+		<if test="appId != null and appId != ''">
+			and lwpr.app_id = #{appId}
+		</if>
+		<if test="mchId != null and mchId != ''">
+			and lwpr.mch_id = #{mchId}
+		</if>
+		<if test="subMchId != null and subMchId != ''">
+			and lwpr.sub_mch_id = #{subMchId}
+		</if>
+		<if test="deviceInfo != null and deviceInfo != ''">
+			and lwpr.device_Info = #{deviceInfo}
+		</if>
+		<if test="resultOrderNo != null and resultOrderNo != ''">
+			and lwpr.result_order_no = #{resultOrderNo}
+		</if>
+		
+		<if test="userId != null and userId != ''">
+			and lwpr.user_id = #{userId}
+		</if>
+		<if test="tradeType != null and tradeType != ''">
+			and lwpr.trade_type = #{tradeType}
+		</if>
+		
+		<if test="bankType != null and bankType != ''">
+			and lwpr.bank_type = #{bankType}
+		</if>
+		<if test="feeType != null and feeType != ''">
+			and lwpr.fee_type = #{feeType}
+		</if>
+		<if test="totalAmount != null and totalAmount != ''">
+			and lwpr.total_amount = #{totalAmount}
+		</if>
+		<if test="couponFee != null and couponFee != ''">
+			and lwpr.coupon_fee = #{couponFee}
+		</if>
+		<if test="resultRefundOrderNo != null and resultRefundOrderNo != ''">
+			and lwpr.result_refund_order_no = #{resultRefundOrderNo}
+		</if>
+		<if test="refundOrderNo != null and refundOrderNo != ''">
+			and lwpr.refund_order_no = #{refundOrderNo}
+		</if>
+		<if test="applyRefundTime != null and applyRefundTime != ''">
+			and lwpr.apply_refund_time = #{applyRefundTime}
+		</if>
+		<if test="refundSuccessTime != null and refundSuccessTime != ''">
+			and lwpr.refund_success_time = #{refundSuccessTime}
+		</if>
+		<if test="resultRefundNo != null and resultRefundNo != ''">
+			and lwpr.result_refund_no = #{resultRefundNo}
+		</if>
+		<if test="refundNo != null and refundNo != ''">
+			and lwpr.refund_no = #{refundNo}
+		</if>
+		<if test="refundAmount != null and refundAmount != ''">
+			and lwpr.refund_amount = #{refundAmount}
+		</if>
+		<if test="refundCouponFee != null and refundCouponFee != ''">
+			and lwpr.refund_coupon_fee = #{refundCouponFee}
+		</if>
+		<if test="refundType != null and refundType != ''">
+			and lwpr.refund_type = #{refundType}
+		</if>
+		<if test="refundState != null and refundState != ''">
+			and lwpr.refund_state = #{refundState}
+		</if>
+		<if test="merchantName != null and merchantName != ''">
+			and lwpr.merchant_name = #{merchantName}
+		</if>
+		<if test="merchantData != null and merchantData != ''">
+			and lwpr.merchant_data = #{merchantData}
+		</if>
+		<if test="serviceCharge != null and serviceCharge != ''">
+			and lwpr.service_charge = #{serviceCharge}
+		</if>
+		<if test="rate != null and rate != ''">
+			and lwpr.rate = #{rate}
+		</if>
+		<if test="reconState != null and reconState != ''">
+			and lwpr.recon_state = #{reconState}
+		</if>
+		<if test="failMessage != null and failMessage != ''">
+			and lwpr.fail_message = #{failMessage}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lwpr.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lwpr.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lwpr.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lwpr.UPDATE_DATE = #{updateDate}
+		</if>
+		<if test="isDelete != null">
+			and lwpr.IS_DELETE = #{isDelete}
+		</if>
+		-->
+		<if test="orderId != null and orderId != ''">
+			and lwpr.order_id = #{orderId}
+		</if>
+		<if test="tradeState != null and tradeState != ''">
+			and lwpr.trade_state = #{tradeState}
+		</if>
+		<if test="billDate != null and billDate != ''">
+			and lwpr.bill_date = #{billDate}
+		</if>
+		<if test="tradeTime != null and tradeTime != ''">
+			and lwpr.trade_time = #{tradeTime}
+		</if>
+		<if test="reconChannel !=null and reconChannel !=''">
+			and lwpr.recon_channel = #{reconChannel}
+		</if>
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lwpr.#{order} #{desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		<selectKey  keyProperty="id" resultType="java.lang.String" order="BEFORE">
+             select uuid()
+		</selectKey>
+		insert into liebao_wechat_pay_recon(
+			id,
+	    	recon_channel,	    	
+	    	bill_date,	    	
+	    	bill_type,	    	
+	    	trade_time,	    	
+	    	app_id,	    	
+	    	mch_id,	    	
+	    	sub_mch_id,	    	
+	    	device_Info,	    	
+	    	result_order_no,	    	
+	    	order_id,	    	
+	    	user_id,	    	
+	    	trade_type,	    	
+	    	trade_state,	    	
+	    	bank_type,	    	
+	    	fee_type,	    	
+	    	total_amount,	    	
+	    	coupon_fee,	    	
+	    	merchant_name,	    	
+	    	merchant_data,	    	
+	    	service_charge,	    	
+	    	rate,	    	
+	    	recon_state,	    	
+	    	fail_message,	    	
+	    	create_date	    	
+		) values(
+			#{id},
+			#{reconChannel},			 
+			#{billDate},			 
+			#{billType},			 
+			#{tradeTime},			 
+			#{appId},			 
+			#{mchId},			 
+			#{subMchId},			 
+			#{deviceInfo},			 
+			#{resultOrderNo},			 
+			#{orderId},			 
+			#{userId},			 
+			#{tradeType},			 
+			#{tradeState},			 
+			#{bankType},			 
+			#{feeType},			 
+			#{totalAmount},			 
+			#{couponFee},			 
+			#{merchantName},			 
+			#{merchantData},			 
+			#{serviceCharge},			 
+			#{rate},			 
+			#{reconState},			 
+			#{failMessage},			 
+			#{createDate}			 
+		)
+	</insert>
+	
+	<select id="findById" resultType="WechatPayRecon">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_wechat_pay_recon lwpr
+			<include refid="joinOthers"/>
+		where
+			lwpr.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="WechatPayRecon">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_wechat_pay_recon lwpr
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(lwpr.id)
+		from
+			liebao_wechat_pay_recon lwpr
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="WechatPayRecon">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_wechat_pay_recon lwpr
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		<include refid="searchOrder"/>
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_wechat_pay_recon set
+			recon_channel=#{reconChannel},			
+			bill_date=#{billDate},			
+			bill_type=#{billType},			
+			trade_time=#{tradeTime},			
+			app_id=#{appId},			
+			mch_id=#{mchId},			
+			sub_mch_id=#{subMchId},			
+			device_Info=#{deviceInfo},			
+			result_order_no=#{resultOrderNo},			
+			order_id=#{orderId},			
+			user_id=#{userId},			
+			trade_type=#{tradeType},			
+			trade_state=#{tradeState},			
+			bank_type=#{bankType},			
+			fee_type=#{feeType},			
+			total_amount=#{totalAmount},			
+			coupon_fee=#{couponFee},			
+			merchant_name=#{merchantName},			
+			merchant_data=#{merchantData},			
+			service_charge=#{serviceCharge},			
+			rate=#{rate},			
+			recon_state=#{reconState},			
+			fail_message=#{failMessage},			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_wechat_pay_recon where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_wechat_pay_recon where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_wechat_pay_recon set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_wechat_pay_recon set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

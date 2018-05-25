@@ -1,0 +1,88 @@
+package com.ibest.activity.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.ibest.framework.common.utils.StringUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ibest.framework.common.utils.PageList;
+
+import com.ibest.activity.dao.ActivityCouponDao;
+import com.ibest.activity.entity.ActivityCoupon;
+import com.ibest.activity.dto.input.ActivityCouponInputDTO;
+
+@Service
+@Transactional(readOnly=true)
+public class ActivityCouponService {
+
+	@Autowired
+	protected ActivityCouponDao activityCouponDao;
+	
+	public ActivityCoupon findById(String id) throws Exception{
+		return activityCouponDao.findById(id);
+	}
+	
+	@Transactional(readOnly=false)
+	public int insert(ActivityCoupon activityCoupon) throws Exception{
+		activityCoupon.preInsert();
+		int result = activityCouponDao.insert(activityCoupon);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteById(String id) throws Exception{
+		int result = activityCouponDao.deleteById(id);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteByIds(String ids) throws Exception{
+		int result = activityCouponDao.deleteByIds(StringUtils.tokenizeToList(ids));
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int update(ActivityCoupon activityCoupon) throws Exception{
+		activityCoupon.preUpdate();
+		int result = activityCouponDao.update(activityCoupon);
+		return result;
+	}
+	
+	/**
+	 * 分页查询
+	 * @param page
+	 * @param inputDto
+	 * @return
+	 * @throws Exception
+	 */
+	public PageList<ActivityCoupon> findByPage(PageList<ActivityCoupon> page, ActivityCouponInputDTO inputDto) throws Exception{
+		
+		if(page == null){
+			page = new PageList<ActivityCoupon>();
+		}
+		
+		long totalCount = activityCouponDao.countByObject(inputDto);
+		if(totalCount > 0){
+			// 设置记录总条数
+			page.setTotal(totalCount);
+			
+			// 设置分页参数，查询数据
+			inputDto.setLimitStart((page.getPage() - 1) * page.getPageSize());
+			inputDto.setLimitSize(page.getPageSize());
+			page.setRows(activityCouponDao.findByObject(inputDto));
+		}
+		
+		return page;
+	}
+	
+	/**
+	* 查询列表
+	*/
+	public ActivityCoupon findByObject(ActivityCouponInputDTO inputDto) throws Exception{
+		return activityCouponDao.findOneByObject(inputDto);
+	}
+
+}

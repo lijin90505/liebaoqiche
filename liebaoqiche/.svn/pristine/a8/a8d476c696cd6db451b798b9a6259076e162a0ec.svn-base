@@ -1,0 +1,183 @@
+package com.ibest.activity.entity;
+
+import java.util.Date;
+
+import com.ibest.activity.enums.EnumsActivityStatus;
+import com.ibest.framework.common.persistence.BaseEntity;
+
+public class SystemActivity extends BaseEntity {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+					
+	// 活动编号
+	private String activityId;
+				
+	// 活动名称
+	private String activityName;
+				
+	// 活动内容
+	private String activityContent;
+				
+	// 生效时间
+	private Date startTime;
+				
+	// 截止时间
+	private Date endTime;
+				
+	// 活动状态
+	private String activityStatus;
+	private String activityStatusDesc;
+				
+	// 活动URL
+	private String activityUrl;
+				
+	// 图片URL
+	private String pictureUrl;
+				
+	// 系统标识
+	private String systemId;
+				
+	// 系统名称
+	private String systemName;
+				
+	// 创建人
+	private String creater;
+				
+	// 创建时间
+	private Date createTime;
+				
+	// 修改人
+	private String modifier;
+				
+	// 修改时间
+	private Date modifyTime;
+				
+	// 版本
+	private String version;
+									
+	public String getActivityId(){
+		return activityId;
+	}
+	
+	public void setActivityId(String activityId){
+		this.activityId = activityId;
+	}
+				
+	public String getActivityName(){
+		return activityName;
+	}
+	
+	public void setActivityName(String activityName){
+		this.activityName = activityName;
+	}
+				
+	public String getActivityContent(){
+		return activityContent;
+	}
+	
+	public void setActivityContent(String activityContent){
+		this.activityContent = activityContent;
+	}
+				
+	public Date getStartTime(){
+		return startTime;
+	}
+	
+	public void setStartTime(Date startTime){
+		this.startTime = startTime;
+	}
+				
+	public Date getEndTime(){
+		return endTime;
+	}
+	
+	public void setEndTime(Date endTime){
+		this.endTime = endTime;
+	}
+				
+	public String getActivityStatus(){
+		return activityStatus;
+	}
+	
+	public void setActivityStatus(String activityStatus){
+		this.activityStatus = activityStatus;
+	}
+				
+	public String getActivityUrl(){
+		return activityUrl;
+	}
+	
+	public void setActivityUrl(String activityUrl){
+		this.activityUrl = activityUrl;
+	}
+				
+	public String getPictureUrl(){
+		return pictureUrl;
+	}
+	
+	public void setPictureUrl(String pictureUrl){
+		this.pictureUrl = pictureUrl;
+	}
+				
+	public String getSystemId(){
+		return systemId;
+	}
+	
+	public void setSystemId(String systemId){
+		this.systemId = systemId;
+	}
+				
+	public String getSystemName(){
+		return systemName;
+	}
+	
+	public void setSystemName(String systemName){
+		this.systemName = systemName;
+	}
+				
+	public String getCreater(){
+		return creater;
+	}
+	
+	public void setCreater(String creater){
+		this.creater = creater;
+	}
+				
+	public Date getCreateTime(){
+		return createTime;
+	}
+	
+	public void setCreateTime(Date createTime){
+		this.createTime = createTime;
+	}
+				
+	public String getModifier(){
+		return modifier;
+	}
+	
+	public void setModifier(String modifier){
+		this.modifier = modifier;
+	}
+				
+	public Date getModifyTime(){
+		return modifyTime;
+	}
+	
+	public void setModifyTime(Date modifyTime){
+		this.modifyTime = modifyTime;
+	}
+				
+	public String getVersion(){
+		return version;
+	}
+	
+	public void setVersion(String version){
+		this.version = version;
+	}
+					
+	public String getActivityStatusDesc() {return activityStatusDesc = EnumsActivityStatus.getLabel(Integer.parseInt(this.activityStatus));}
+}

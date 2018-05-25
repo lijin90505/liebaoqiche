@@ -1,0 +1,265 @@
+package com.ibest.pay.entity;
+
+import com.ibest.framework.common.persistence.BaseEntity;
+
+public class PayInfoConfig extends BaseEntity {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * 支付渠道主键
+	 */
+	private String payChannelId;
+	
+	/**
+	 * 支付类型主键
+	 */
+	private String payTypeId;
+					
+	/**
+	 * 微信公众号appid
+	 */ 
+	private String appid;
+				
+	/**
+	 * 商户号
+	 */ 
+	private String merchantId;
+				
+	/**
+	 * 商户号code，定义好后不可更改，与商户号对应
+	 */ 
+	private String merchantCode;
+	
+	/**
+	 * 商户name
+	 */
+	private String merchantName;
+				
+	/**
+	 * 商户号密钥
+	 */ 
+	private String merchantKey;
+				
+	/**
+	 * 证书路径
+	 */ 
+	private String keyStoreFile;
+				
+	/**
+	 * 证书密码
+	 */ 
+	private String keyStorePassword;
+				
+	/**
+	 * 请求url
+	 */ 
+	private String requestUrl;
+				
+	/**
+	 * 支付方式
+	 */ 
+	private String tradeType;
+				
+	/**
+	 * 回调地址，微信公众号不能带参数
+	 */ 
+	private String notifyUrl;
+				
+	/**
+	 * 前置通知
+	 */ 
+	private String backUrl;
+				
+	/**
+	 * 后置通知
+	 */ 
+	private String frontUrl;
+						
+	/**
+	 *  支付宝公钥
+	 */
+	private String publicKey;
+
+	/** 
+	 *  商户私钥
+	 */
+	private String privateKey;
+
+	/**
+	 * 接入系统标识
+	 */
+	private String systemSign;
+	
+	private String accessSystemDesc;
+	
+	
+	private String payChannelName;
+	
+	private String payName;
+	
+	
+	public String getSystemSign() {
+		return systemSign;
+	}
+
+	public void setSystemSign(String systemSign) {
+		this.systemSign = systemSign;
+	}
+
+	public String getPublicKey() {
+		return publicKey;
+	}
+
+	public void setPublicKey(String publicKey) {
+		this.publicKey = publicKey;
+	}
+
+	public String getPrivateKey() {
+		return privateKey;
+	}
+
+	public void setPrivateKey(String privateKey) {
+		this.privateKey = privateKey;
+	}
+
+	public String getAppid(){
+		return appid;
+	}
+	
+	public void setAppid(String appid){
+		this.appid = appid;
+	}
+				
+	public String getMerchantId(){
+		return merchantId;
+	}
+	
+	public void setMerchantId(String merchantId){
+		this.merchantId = merchantId;
+	}
+				
+	public String getMerchantCode(){
+		return merchantCode;
+	}
+	
+	public void setMerchantCode(String merchantCode){
+		this.merchantCode = merchantCode;
+	}
+				
+	public String getMerchantKey(){
+		return merchantKey;
+	}
+	
+	public void setMerchantKey(String merchantKey){
+		this.merchantKey = merchantKey;
+	}
+				
+	public String getKeyStoreFile(){
+		return keyStoreFile;
+	}
+	
+	public void setKeyStoreFile(String keyStoreFile){
+		this.keyStoreFile = keyStoreFile;
+	}
+				
+	public String getKeyStorePassword(){
+		return keyStorePassword;
+	}
+	
+	public void setKeyStorePassword(String keyStorePassword){
+		this.keyStorePassword = keyStorePassword;
+	}
+				
+	public String getRequestUrl(){
+		return requestUrl;
+	}
+	
+	public void setRequestUrl(String requestUrl){
+		this.requestUrl = requestUrl;
+	}
+				
+	public String getTradeType(){
+		return tradeType;
+	}
+	
+	public void setTradeType(String tradeType){
+		this.tradeType = tradeType;
+	}
+				
+	public String getNotifyUrl(){
+		return notifyUrl;
+	}
+	
+	public void setNotifyUrl(String notifyUrl){
+		this.notifyUrl = notifyUrl;
+	}
+				
+	public String getBackUrl(){
+		return backUrl;
+	}
+	
+	public void setBackUrl(String backUrl){
+		this.backUrl = backUrl;
+	}
+				
+	public String getFrontUrl(){
+		return frontUrl;
+	}
+	
+	public void setFrontUrl(String frontUrl){
+		this.frontUrl = frontUrl;
+	}
+
+	public String getMerchantName() {
+		return merchantName;
+	}
+
+	public void setMerchantName(String merchantName) {
+		this.merchantName = merchantName;
+	}
+
+	public String getPayTypeId() {
+		return payTypeId;
+	}
+
+	public void setPayTypeId(String payTypeId) {
+		this.payTypeId = payTypeId;
+	}
+
+	public String getPayChannelId() {
+		return payChannelId;
+	}
+
+	public void setPayChannelId(String payChannelId) {
+		this.payChannelId = payChannelId;
+	}
+
+	public String getAccessSystemDesc() {
+		return accessSystemDesc;
+	}
+
+	public void setAccessSystemDesc(String accessSystemDesc) {
+		this.accessSystemDesc = accessSystemDesc;
+	}
+
+	public String getPayChannelName() {
+		return payChannelName;
+	}
+
+	public void setPayChannelName(String payChannelName) {
+		this.payChannelName = payChannelName;
+	}
+
+	public String getPayName() {
+		return payName;
+	}
+
+	public void setPayName(String payName) {
+		this.payName = payName;
+	}
+	
+}

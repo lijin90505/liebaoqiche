@@ -1,0 +1,95 @@
+package com.ibest.pay.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ibest.framework.common.utils.PageList;
+import com.ibest.framework.common.utils.StringUtils;
+import com.ibest.pay.dao.PayInfoDao;
+import com.ibest.pay.dto.input.PayInfoInputDTO;
+import com.ibest.pay.dto.input.PayInfoTime;
+import com.ibest.pay.entity.PayInfo;
+
+@Service
+@Transactional(readOnly=true)
+public class PayInfoService {
+
+	@Autowired
+	protected PayInfoDao payInfoDao;
+	
+	public PayInfo findById(String id) throws Exception{
+		return payInfoDao.findById(id);
+	}
+	
+	@Transactional(readOnly=false)
+	public int insert(PayInfo payInfo) throws Exception{
+		payInfo.preInsert();
+		int result = payInfoDao.insert(payInfo);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteById(String id) throws Exception{
+		int result = payInfoDao.deleteById(id);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteByIds(String ids) throws Exception{
+		int result = payInfoDao.deleteByIds(StringUtils.tokenizeToList(ids));
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int update(PayInfo payInfo) throws Exception{
+		payInfo.preUpdate();
+		int result = payInfoDao.update(payInfo);
+		return result;
+	}
+	
+	/**
+	 * 分页查询
+	 * @param page
+	 * @param inputDto
+	 * @return
+	 * @throws Exception
+	 */
+	public PageList<PayInfo> findByPage(PageList<PayInfo> page, PayInfoInputDTO inputDto) throws Exception{
+		
+		if(page == null){
+			page = new PageList<PayInfo>();
+		}
+		
+		long totalCount = payInfoDao.countByObject(inputDto);
+		if(totalCount > 0){
+			// 设置记录总条数
+			page.setTotal(totalCount);
+			
+			// 设置分页参数，查询数据
+			inputDto.setLimitStart((page.getPage() - 1) * page.getPageSize());
+			inputDto.setLimitSize(page.getPageSize());
+			page.setRows(payInfoDao.findByObject(inputDto));
+		}
+		
+		return page;
+	}
+	
+	/**
+	* 查询列表
+	*/
+	public PayInfo findByObject(PayInfoInputDTO inputDto) throws Exception{
+		return payInfoDao.findOneByObject(inputDto);
+	}
+
+	public List<PayInfo> findAllOrderId() throws Exception{
+		return payInfoDao.findAllOrderId();
+	}
+	
+	public String countAmount(PayInfoTime infoTime) throws Exception{
+		return payInfoDao.countAmount(infoTime);
+	}
+
+}

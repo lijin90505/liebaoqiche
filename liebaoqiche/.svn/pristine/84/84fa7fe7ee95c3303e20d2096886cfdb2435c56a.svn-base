@@ -1,0 +1,531 @@
+package com.ibest.accesssystem.service;
+
+import com.ibest.accesssystem.dao.AccessSystemDao;
+import com.ibest.accesssystem.dao.CouponPermissionAssignmentDao;
+import com.ibest.accesssystem.dao.PayChannelPermissionAssignmentDao;
+import com.ibest.accesssystem.dao.PointPermissionAssignmentDao;
+import com.ibest.accesssystem.dao.SystemActivityDao;
+import com.ibest.accesssystem.dto.input.*;
+import com.ibest.accesssystem.entity.*;
+import com.ibest.activity.dao.ActivityDetailsDao;
+import com.ibest.activity.dao.ActivitySystemDao;
+import com.ibest.activity.dto.input.ActivityDetailsInputDTO;
+import com.ibest.activity.dto.input.ActivitySystemInputDTO;
+import com.ibest.activity.entity.Activity;
+import com.ibest.activity.entity.ActivityDetails;
+import com.ibest.activity.entity.ActivitySystem;
+import com.ibest.activity.service.ActivityDetailsService;
+import com.ibest.activity.service.ActivityService;
+import com.ibest.framework.common.utils.StringUtils;
+import com.ibest.framework.common.utils.UserUtils;
+import com.ibest.utils.ConstantUtils;
+import com.ibest.utils.RandomUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ibest.framework.common.utils.PageList;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
+@Service
+@Transactional(readOnly = true)
+public class AccessSystemService {
+
+	@Autowired
+	protected AccessSystemDao accessSystemDao;
+
+	@Autowired
+	protected PayChannelPermissionAssignmentDao payChannelPermissionAssignmentDao;
+
+	@Autowired
+	protected PointPermissionAssignmentDao pointPermissionAssignmentDao;
+
+	@Autowired
+	protected CouponPermissionAssignmentDao couponPermissionAssignmentDao;
+
+	@Autowired
+	protected ActivitySystemDao activitySystemDao;
+
+	@Autowired
+	protected SystemActivityDao systemActivityDao;
+
+
+	@Autowired
+	protected ActivityDetailsDao activityDetailsDao;
+		
+	@Autowired
+	protected ActivityService activityService;
+	
+	@Autowired
+	protected ActivityDetailsService activityDetailsService;
+	
+
+	public AccessSystem findById(String id) throws Exception {
+		return accessSystemDao.findById(id);
+	}
+
+	@Transactional(readOnly = false)
+	public int insert(AccessSystem accessSystem) throws Exception {
+		accessSystem.preInsert();
+		int result = accessSystemDao.insert(accessSystem);
+		return result;
+	}
+
+	@Transactional(readOnly = false)
+	public int deleteById(String id) throws Exception {
+		int result = accessSystemDao.deleteById(id);
+		return result;
+	}
+
+	@Transactional(readOnly = false)
+	public int deleteByIds(String ids) throws Exception {
+		int result = accessSystemDao.deleteByIds(StringUtils.tokenizeToList(ids));
+		return result;
+	}
+
+	@Transactional(readOnly = false)
+	public int update(AccessSystem accessSystem) throws Exception {
+		accessSystem.preUpdate();
+		int result = accessSystemDao.update(accessSystem);
+		return result;
+	}
+	
+	public AccessSystem findIdentificationByAccessId(String identification) throws Exception {
+		return accessSystemDao.findIdentificationByAccessId(identification);
+	}
+
+	/**
+	 * 分页查询
+	 *
+	 * @param page
+	 * @param inputDto
+	 * @return
+	 * @throws Exception
+	 */
+	public PageList<AccessSystem> findByPage(PageList<AccessSystem> page, AccessSystemInputDTO inputDto)
+			throws Exception {
+
+		if (page == null) {
+			page = new PageList<AccessSystem>();
+		}
+
+		long totalCount = accessSystemDao.countByObject(inputDto);
+		if (totalCount > 0) {
+			// 设置记录总条数
+			page.setTotal(totalCount);
+
+			// 设置分页参数，查询数据
+			inputDto.setLimitStart((page.getPage() - 1) * page.getPageSize());
+			inputDto.setLimitSize(page.getPageSize());
+			PayChannelPermissionAssignmentInputDTO payChannelPermissionAssignmentInputDTO = new PayChannelPermissionAssignmentInputDTO();
+			SystemActivityInputDTO systemActivityInputDTO = new SystemActivityInputDTO();
+			List<AccessSystem> accessSystems = accessSystemDao.findByObject(inputDto);
+			List<PayChannelPermissionAssignment> payChannelPermissionAssignments = payChannelPermissionAssignmentDao
+					.findByObject(payChannelPermissionAssignmentInputDTO);
+			List<SystemActivity> systemActivities = systemActivityDao.findByObject(systemActivityInputDTO);
+			String activitySystemSign;
+			String systemSign;
+			String payChannelSystemSign;
+			if (null != accessSystems) {
+				// 是否已关联活动
+				for (AccessSystem system : accessSystems) {
+					systemSign = system.getIdentification();
+					if (null != systemActivities && systemActivities.size() > 0) {
+						for (SystemActivity activity : systemActivities) {
+							activitySystemSign = activity.getAccessSystemId();
+							if (systemSign.equals(activitySystemSign)) {
+								system.setIsActivity("已关联");
+								break;
+							} else {
+								system.setIsActivity("未关联");
+								continue;
+							}
+						}
+					} else {
+						system.setIsActivity("未关联");
+					}
+				}
+
+				// 是否已关联支付渠道
+				for (AccessSystem system : accessSystems) {
+					systemSign = system.getName();
+					if (null != payChannelPermissionAssignments && payChannelPermissionAssignments.size() > 0) {
+						for (PayChannelPermissionAssignment payChannel : payChannelPermissionAssignments) {
+							payChannelSystemSign = payChannel.getSystemSignName();
+							if (systemSign.equals(payChannelSystemSign)) {
+								system.setIsChannel("已关联");
+								break;
+							} else {
+								system.setIsChannel("未关联");
+								continue;
+							}
+						}
+					} else {
+						system.setIsChannel("未关联");
+					}
+				}
+			}
+			page.setRows(accessSystems);
+		}
+
+		return page;
+	}
+
+	/**
+	 * 根据条件对象查询用户个数
+	 *
+	 * @param inputDTO
+	 * @return
+	 */
+	public int countAccessSystemByObject(AccessSystemInputDTO inputDTO) {
+
+		return accessSystemDao.countAccessSystemByObject(inputDTO);
+	}
+
+	/**
+	 * 查询列表
+	 */
+	public List<AccessSystem> findByObject(AccessSystemInputDTO inputDto) throws Exception {
+		return accessSystemDao.findByObject(inputDto);
+	}
+
+	public AccessSystem findOneByObject(AccessSystemInputDTO inputDto) throws Exception {
+		return accessSystemDao.findOneByObject(inputDto);
+	}
+
+	/**
+	 * 获取系统拥有的支付渠道
+	 *
+	 * @param systemSign
+	 * @return
+	 * @throws Exception
+	 */
+	public AccessSystem getSystemPayChannnel(String systemSign) throws Exception {
+		AccessSystem accessSystem = accessSystemDao.findById(systemSign);
+		if (accessSystem != null) {
+			PayChannelPermissionAssignmentInputDTO inputDTO = new PayChannelPermissionAssignmentInputDTO();
+			inputDTO.setSystemSign(systemSign);
+			accessSystem.setSysChoosedPayChannelList(payChannelPermissionAssignmentDao.getChoosedPayChannel(inputDTO));
+			accessSystem
+					.setSysUnChoosedPayChannelList(payChannelPermissionAssignmentDao.getUnChoosedPayChannel(inputDTO));
+		}
+		return accessSystem;
+	}
+
+	/**
+	 * 授权
+	 *
+	 * @param systemSign
+	 *            系统id
+	 * @param payTypeId
+	 *            支付渠道id
+	 * @param systemSignName
+	 *            系统标识
+	 */
+	@Transactional(readOnly = false)
+	public void accredit(String systemSign, String systemSignName, String payTypeId) {
+
+		// 删除已经授权的支付类型
+		payChannelPermissionAssignmentDao.deleteBySystemSign(systemSign);
+		// 重新授权
+		if (StringUtils.isNotEmpty(payTypeId)) {
+			String[] cids = payTypeId.split(",");
+			for (String cid : cids) {
+				PayChannelPermissionAssignment payChannelPermissionAssignment = new PayChannelPermissionAssignment();
+				payChannelPermissionAssignment.setSystemSign(systemSign);
+				payChannelPermissionAssignment.setSystemSignName(systemSignName);
+				payChannelPermissionAssignment.setPayTypeId(cid);
+				payChannelPermissionAssignment.preInsert();
+				payChannelPermissionAssignment.setIsDelete(ConstantUtils.UPDATE_SET_ZERO);
+				payChannelPermissionAssignment.setCreater(UserUtils.getCurrentUser().getRealname());
+				payChannelPermissionAssignment.setCreateTime(new Date());
+				payChannelPermissionAssignment.setModifier(UserUtils.getCurrentUser().getRealname());
+				payChannelPermissionAssignment.setModifyTime(new Date());
+				payChannelPermissionAssignmentDao.insert(payChannelPermissionAssignment);
+			}
+		}
+	}
+
+	// ``````````````````````积分规则`````````````````````````````````
+
+	/**
+	 * 获取系统拥有的积分规则
+	 *
+	 * @param systemSign
+	 * @return
+	 * @throws Exception
+	 */
+	public AccessSystem getSystemPointRule(String systemSign) throws Exception {
+		AccessSystem accessSystem = accessSystemDao.findById(systemSign);
+		if (accessSystem != null) {
+			PointPermissionAssignmentInputDTO inputDTO = new PointPermissionAssignmentInputDTO();
+			inputDTO.setSystemSign(systemSign);
+			accessSystem.setSysChoosePointRuleList(pointPermissionAssignmentDao.getChoosedPointRule(inputDTO));
+			accessSystem.setSysUnChoosePointRuleList(pointPermissionAssignmentDao.getUnChoosedPointRule(inputDTO));
+		}
+		return accessSystem;
+	}
+
+	/**
+	 * 授权
+	 *
+	 * @param systemSign
+	 *            系统id
+	 * @param allPointRulesId
+	 *            积分id
+	 */
+	@Transactional(readOnly = false)
+	public void accreditPoint(String systemSign, String allPointRulesId) {
+
+		// 删除已经授权的角色
+		pointPermissionAssignmentDao.deleteBySystemSign(systemSign);
+		// 重新授权角色
+		if (StringUtils.isNotEmpty(allPointRulesId)) {
+			String[] pids = allPointRulesId.split(",");
+			for (String pid : pids) {
+				PointPermissionAssignment pointPermissionAssignment = new PointPermissionAssignment();
+				pointPermissionAssignment.setSystemSign(systemSign);
+				pointPermissionAssignment.setPointRuleId(pid);
+				pointPermissionAssignment.setIsDelete(ConstantUtils.UPDATE_SET_ZERO);
+				pointPermissionAssignment.setId(RandomUtils.RandomUUID());
+				pointPermissionAssignment.preInsert();
+				pointPermissionAssignmentDao.insert(pointPermissionAssignment);
+			}
+		}
+	}
+
+	// ``````````````````````卡券`````````````````````````````````
+
+	/**
+	 * 获取系统拥有的卡券
+	 *
+	 * @param systemSign
+	 * @return
+	 * @throws Exception
+	 */
+	public AccessSystem getSystemCoupon(String systemSign) throws Exception {
+		AccessSystem accessSystem = accessSystemDao.findById(systemSign);
+		if (accessSystem != null) {
+			CouponPermissionAssignmentInputDTO inputDTO = new CouponPermissionAssignmentInputDTO();
+			inputDTO.setSystemSign(systemSign);
+			accessSystem.setSysChooseCouponList(couponPermissionAssignmentDao.getChoosedCoupon(inputDTO));
+			accessSystem.setSysUnChooseCouponList(couponPermissionAssignmentDao.getUnChoosedCoupon(inputDTO));
+		}
+		return accessSystem;
+	}
+
+	/**
+	 * 授权
+	 *
+	 * @param systemSign
+	 *            系统id
+	 * @param allCouponsId
+	 *            卡券id
+	 */
+	@Transactional(readOnly = false)
+	public void accreditCoupon(String systemSign, String allCouponsId) {
+
+		// 删除已经授权的角色
+		couponPermissionAssignmentDao.deleteBySystemSign(systemSign);
+		// 重新授权角色
+		if (StringUtils.isNotEmpty(allCouponsId)) {
+			String[] ids = allCouponsId.split(",");
+			for (String id : ids) {
+				CouponPermissionAssignment couponPermissionAssignment = new CouponPermissionAssignment();
+				couponPermissionAssignment.setSystemSign(systemSign);
+				couponPermissionAssignment.setCouponId(id);
+				couponPermissionAssignment.setIsDelete(ConstantUtils.UPDATE_SET_ZERO);
+				couponPermissionAssignment.setId(RandomUtils.RandomUUID());
+				couponPermissionAssignment.preInsert();
+				couponPermissionAssignmentDao.insert(couponPermissionAssignment);
+			}
+		}
+	}
+
+	// ``````````````````````活动`````````````````````````````````
+
+	/**
+	 * 获取系统拥有的活动
+	 *
+	 * @param accessSystemId
+	 * @return
+	 * @throws Exception
+	 */
+	public AccessSystem getSystemActivity(String accessSystemId) throws Exception {
+		AccessSystem accessSystem = accessSystemDao.findById(accessSystemId);
+		if (accessSystem != null) {
+			ActivitySystemInputDTO inputDTO = new ActivitySystemInputDTO();
+			ActivityDetailsInputDTO detailsInputDTO = new ActivityDetailsInputDTO();
+			inputDTO.setAccessSystemId(accessSystemId);
+			inputDTO.setIdentification(accessSystem.getIdentification());
+			List<Activity> choosedActivity = activitySystemDao.getChoosedActivity(inputDTO);
+			List<Activity> unChoosedActivity = activitySystemDao.getUnChoosedActivity(inputDTO);
+			List<ActivityDetails> activityDetailsList = activityDetailsDao.findByPublish();
+			List<Activity> unChoosedActivityPublic = null;
+			String activityDetailsId = "";
+			for (Activity activityObj : choosedActivity) {
+				activityDetailsId = activityObj.getActivityDetailsId();
+				for (ActivityDetails activityDetails : activityDetailsList) {
+					if (activityDetailsId.equals(activityDetails.getId())) {
+						activityObj.setActivityDetailsName(activityDetails.getActivityName());
+					}
+				}
+			}
+			for (Activity activityObj : unChoosedActivity) {
+				activityDetailsId = activityObj.getActivityDetailsId();
+				for (ActivityDetails activityDetails : activityDetailsList) {
+					if (activityDetailsId.equals(activityDetails.getId())) {
+						activityObj.setActivityDetailsName(activityDetails.getActivityName());
+					}
+				}
+			}
+			for (int activityObj = unChoosedActivity.size()-1;activityObj>=0;activityObj--) {
+				if (StringUtils.isBlank(unChoosedActivity.get(activityObj).getActivityDetailsName())) {
+					unChoosedActivity.remove(activityObj);
+				}
+			}
+			accessSystem.setSysChooseActivityList(choosedActivity);
+			accessSystem.setSysUnChooseActivityList(unChoosedActivity);
+		}
+		return accessSystem;
+	}
+	
+	
+	
+	/**
+	 * 获取系统拥有的活动
+	 *
+	 * @param accessSystemId
+	 * @return
+	 * @throws Exception
+	 */
+	@Transactional(readOnly = false)
+	public AccessSystem getSystemActivityFrank(String accessSystemId) throws Exception {
+		AccessSystem accessSystem = accessSystemDao.findById(accessSystemId);
+		
+		List<Activity> sysChooseActivityList=new ArrayList<Activity>();	
+		List<Activity> 	activityList=activityService.findALL();	
+		
+		//校验活动过期
+		for (Activity activity : activityList) {
+			boolean flag = activityDetailsService.checkActivityPast(activity.getActivityDetailsId());
+			if(flag == true){
+				activity.setState("1");
+				activityService.update(activity);
+			}
+		}
+		
+		List<ActivitySystem> systemActivityList=activitySystemDao.findAll(accessSystem.getIdentification());
+		
+		for (ActivitySystem systemActivity : systemActivityList) {		
+			for(int i=0; i<activityList.size();i++){
+				Activity activity=activityList.get(i);
+				String activityId=activity.getId();				
+				if(activityId.equals(systemActivity.getActivityId())){
+					activityList.remove(i);
+					i--;
+				}	
+				
+			}
+			
+			Activity activity2=activityService.findById(systemActivity.getActivityId());
+			activity2.setActivityDetailsName(activityDetailsDao.findById(activity2.getActivityDetailsId()).getActivityName());
+			sysChooseActivityList.add(activity2);
+		}
+		
+		for (Activity activity : activityList) {
+			activity.setActivityDetailsName(activityDetailsDao.findById(activity.getActivityDetailsId()).getActivityName());	
+		}
+		
+		accessSystem.setSysUnChooseActivityList(activityList);
+		accessSystem.setSysChooseActivityList(sysChooseActivityList);
+		return accessSystem;
+	}
+
+	/**
+	 * 授权
+	 *
+	 * @param accessSystemId
+	 *            系统id
+	 * @param allActivitysId
+	 *            活动id
+	 */
+	@Transactional(readOnly = false)
+	public void accreditActivity(String accessSystemId, String allActivitysId) {
+		AccessSystem accessSystem = accessSystemDao.findById(accessSystemId);
+		//1，先通过系统标识查出集合
+		//2，修改关联状态为1 解除
+		//3，如果id在集合里有则改回状态
+		//4，如果没有则新增
+		List<ActivitySystem> findListByAccessId = 
+				activitySystemDao.findListByAccessId(accessSystem.getIdentification());
+		if(findListByAccessId!=null && findListByAccessId.size()>0){
+			for (ActivitySystem activitySystem : findListByAccessId) {
+				/*if(!activitySystem.getRelevance().equals("1")){*/
+					activitySystem.setRelevance("1");
+					activitySystemDao.update(activitySystem);
+				/*}*/
+			}
+		}
+		
+		if(StringUtils.isNoneEmpty(allActivitysId)){
+			String[] ids = allActivitysId.split(",");
+			for(String id : ids){
+				int flag=0;
+				for(ActivitySystem activitySystem : findListByAccessId){
+					if(id.equals(activitySystem.getActivityId())){
+						activitySystem.setRelevance("0");
+						flag = activitySystemDao.update(activitySystem);
+					}
+				}
+				if(flag == 0){
+					ActivitySystem activitySystem = new ActivitySystem();
+					activitySystem.setAccessSystemId(accessSystem.getIdentification());
+					activitySystem.setActivityId(id);
+					activitySystem.setIsDelete(ConstantUtils.UPDATE_SET_ZERO);
+					activitySystem.setId(RandomUtils.RandomUUID());
+					activitySystem.setState("0");
+					activitySystem.setRelevance("0");
+					activitySystem.setCreater(UserUtils.getCurrentUser().getRealname());
+					activitySystem.setCreateTime(new Date());
+					activitySystem.setModifier(UserUtils.getCurrentUser().getRealname());
+					activitySystem.setModifyTime(new Date());
+					activitySystem.preInsert();
+					activitySystemDao.insert(activitySystem);
+				}
+			}
+		}
+		
+		/*AccessSystem accessSystem1 = accessSystemDao.findById(accessSystemId);
+		// 删除已经授权的活动
+		//修改系统活动的id
+		
+		AccessSystem accessSystem = accessSystemDao.findById(accessSystemId);
+		// 重新授权活动
+		if (StringUtils.isNotEmpty(allActivitysId)) {
+			String[] ids = allActivitysId.split(",");
+			for (String id : ids) {
+				ActivitySystem activitySystem = new ActivitySystem();
+				activitySystem.setAccessSystemId(accessSystem.getIdentification());
+				activitySystem.setActivityId(id);
+				activitySystem.setIsDelete(ConstantUtils.UPDATE_SET_ZERO);
+				activitySystem.setId(RandomUtils.RandomUUID());
+				activitySystem.setState("0");
+				activitySystem.setCreater(UserUtils.getCurrentUser().getRealname());
+				activitySystem.setCreateTime(new Date());
+				activitySystem.setModifier(UserUtils.getCurrentUser().getRealname());
+				activitySystem.setModifyTime(new Date());
+				activitySystem.preInsert();
+				activitySystemDao.insert(activitySystem);
+			}
+		}*/
+	}
+
+	public List<AccessSystem> findByAll() {
+		return accessSystemDao.findByAll();
+	}
+}

@@ -1,0 +1,321 @@
+<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<!DOCTYPE>
+<html>
+<head>
+	<title>SysUser</title>
+
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=8,IE=9,IE=10" />
+	<meta http-equiv="Expires" content="0">
+	<meta http-equiv="Cache-Control" content="no-cache">
+
+	<!-- JQuery EasyUI -->
+	<link rel="stylesheet" type="text/css" href="/resources/js/insdep/themes/insdep/easyui.css">
+	<link rel="stylesheet" type="text/css" href="/resources/js/insdep/themes/insdep/easyui_animation.css">
+	<link rel="stylesheet" type="text/css" href="/resources/js/insdep/themes/insdep/easyui_plus.css">
+	<link rel="stylesheet" type="text/css" href="/resources/js/insdep/themes/insdep/insdep_theme_default.css">
+	<link rel="stylesheet" type="text/css" href="/resources/js/insdep/themes/insdep/icon.css">
+	<link rel="stylesheet" type="text/css" href="/resources/css/font-awesome-4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="/resources/css/fakeloader.css">
+	<link rel="stylesheet" type="text/css" href="/resources/css/iconfont/iconfont.css">
+	<link rel="stylesheet" type="text/css" href="/resources/css/app.css?v=1.0">
+	<script type="text/javascript" src="/resources/js/requirejs/require.js"></script>
+	<script type="text/javascript" src="/resources/js/requirejs/require.config.js"></script>
+	<script type="text/javascript" src="/resources/js/insdep/jquery.min.js"></script>
+	<script type="text/javascript" src="/resources/js/jquery.qrcode.min.js"></script>
+</head>
+<body>
+
+<div id="fakeloader" class="loading">
+	<div class="style2-pic">
+		<i></i>
+		<i></i>
+		<i></i>
+		<i></i>
+		<i></i>
+	</div>
+</div>
+
+<div style="height: 500px;margin:10px 20px;box-sizing:border-box;">
+	<div class="easyui-layout" data-options="fit:true">
+		<div data-options="region:'north', collapsible:false" title="当前操作用户信息"
+		     style="height: 80px; line-height: 40px; padding: 0 10px;">
+			系统名称：<span value="${payChannelPermissionAssignment.createTime}"></span>
+		</div>
+		<div data-options="region: 'west', collapsible:false" title="未选角色"
+		     style="width: 350px;">
+			<table id="Grid_SysUserUnchoosedRoles" class="easyui-datagrid"
+			       ctrlSelect="true" striped="true" rownumbers="true"
+			       pagination="false" fitColumns="true" loadMsg="正在加载数据，请稍等..."
+			       data-options="fit:true, checkOnSelect:true, selectOnCheck:true, border: false">
+				<thead>
+				<tr>
+					<th data-options="field:'ck',checkbox:true"></th>
+					<th data-options="field:'name',width:120">角色名称</th>
+					<th data-options="field:'code',width:150">角色代码</th>
+				</tr>
+				</thead>
+			</table>
+		</div>
+		<div class="btnLink" data-options="region:'center', border: false">
+			<a id="btnRight_SysUserSelectRole" href="javascript:void(0)"
+			   class="easyui-linkbutton button-default"><i
+					class="fa fa-angle-right fa-lg"></i></a> <a
+				id="btnDoubleRight_SysUserSelectRole" href="javascript:void(0)"
+				class="easyui-linkbutton button-default"><i
+				class="fa fa-angle-double-right fa-lg"></i></a> <a
+				id="btnDoubleLeft_SysUserSelectRole" href="javascript:void(0)"
+				class="easyui-linkbutton button-default"><i
+				class="fa fa-angle-double-left fa-lg"></i></a> <a
+				id="btnLeft_SysUserSelectRole" href="javascript:void(0)"
+				class="easyui-linkbutton button-default"><i
+				class="fa fa-angle-left fa-lg"></i></a>
+		</div>
+		<div data-options="region: 'east', collapsible:false" title="已有角色"
+		     style="width: 350px">
+			<table id="Grid_SysUserChoosedRoles" class="easyui-datagrid"
+			       ctrlSelect="true" striped="true" rownumbers="true"
+			       pagination="false" fitColumns="true" loadMsg="正在加载数据，请稍等..."
+			       data-options="fit:true, checkOnSelect:true, selectOnCheck:true, border: false">
+				<thead>
+				<tr>
+					<th data-options="field:'ck',checkbox:true"></th>
+					<th data-options="field:'name',width:120">角色名称</th>
+					<th data-options="field:'code',width:150">角色代码</th>
+				</tr>
+				</thead>
+			</table>
+		</div>
+
+		<div data-options="region:'south',border:false"
+		     style="text-align: right; padding: 5px;">
+			<a id="btnSave_SysUserAccredit"
+			   class="easyui-linkbutton button-success"><i
+					class="fa fa-wrench fa-lg"></i>&nbsp;&nbsp;授权</a>
+			<a id="btnCancel" href="javascript:void(0)"
+			   class="easyui-linkbutton button-warning" style="width: 80px;"><i
+					class="fa fa-remove fa-lg"></i>&nbsp;&nbsp;取消</a>
+		</div>
+
+	</div></div>
+<!-- </div> -->
+
+<!-- js脚本，必须写在body中，tab的url加载模式只会异步加载body中的内容到tab中 -->
+<script type="text/javascript">
+	require(['jquery','common'], function($){
+
+		$(function(){
+			// 加载角色授权信息
+			$.ajax({
+				url: '/admin/system/sysUser/SysUserAccredit',
+				data: {
+					userId: '1'
+				},
+				type: 'POST',
+				dataType: 'JSON',
+				success: function (json) {
+
+					// 设置当前显示的角色名称
+					$("#Label_SysUserAccedit_Name").html('超级管理员' + "(" + '12121212' + ")");
+					$("#Grid_SysUserUnchoosedRoles").datagrid();
+					$("#Grid_SysUserChoosedRoles").datagrid();
+					// 显示未选中的角色
+					if(json && json.sysUnchoosedRoleList){
+						$("#Grid_SysUserUnchoosedRoles").datagrid('loadData', json.sysUnchoosedRoleList);
+					}
+
+					// 显示已经选中的角色
+					if(json && json.sysChoosedRoleList){
+						$("#Grid_SysUserChoosedRoles").datagrid('loadData', json.sysChoosedRoleList);
+					}
+
+				}
+			});
+		});
+
+		//授权按钮保存
+		$('#btnSave_SysUserAccredit').click(function () {
+			$.messager.confirm("授权确认","确认要给该角色进行授权？",function(r){
+				if(r){
+					var allChoosedRoles = $("#Grid_SysUserChoosedRoles").datagrid('getData');
+					var allRows = [];
+					for(var i=0;i<allChoosedRoles.rows.length;i++){
+						allRows.push(allChoosedRoles.rows[i]);
+					}
+					var allRowsId = "";
+					for(var i = 0; i < allRows.length; i++){
+						allRowsId += allRows[i].id;
+						if(i != allRows.length - 1){
+							allRowsId += ",";
+						}
+					}
+
+					$.ajax({
+						url: '/admin/system/sysUser/accredit',
+						data: {
+							userId : '1',
+							allRowsId : allRowsId
+						},
+						type: 'post',
+						dataType: 'json',
+						success: function (json) {
+							if (json && json.rtnCode == '00000000') {
+								$.messager.alert('提示', "授权成功", "success",function(){
+									hideDialog();
+								});
+							} else {
+								$.messager.alert('提示', json.rtnMsg, "error");
+							}
+						}
+					});
+				}
+			});
+		});
+
+		//点击插入选择的N个角色
+		$("#btnRight_SysUserSelectRole").click(function(){
+
+			var selectedRoles = $("#Grid_SysUserUnchoosedRoles").datagrid('getSelections');
+			var allSelectedRows = [];
+			//插入行
+			for(var i=0;i<selectedRoles.length;i++){
+				allSelectedRows.push(selectedRoles[i]);
+				$("#Grid_SysUserChoosedRoles").datagrid('insertRow', {
+					row:{
+						name : selectedRoles[i].name ,
+						code : selectedRoles[i].code,
+						id : selectedRoles[i].id
+					}
+				});
+
+			}
+			//删除行
+			for(var j =0;j<allSelectedRows.length;j++){
+				var index = $('#Grid_SysUserUnchoosedRoles').datagrid('getRowIndex',allSelectedRows[j]);
+				$('#Grid_SysUserUnchoosedRoles').datagrid('deleteRow',index);
+			}
+		});
+
+		//点击插入选择所有角色
+		$("#btnDoubleRight_SysUserSelectRole").click(function(){
+
+			var allUnchoosedRoles = $("#Grid_SysUserUnchoosedRoles").datagrid('getData');
+			var allRows = [];
+			//插入所有行
+			for(var i=0;i<allUnchoosedRoles.rows.length;i++){
+				allRows.push(allUnchoosedRoles.rows[i]);
+				$("#Grid_SysUserChoosedRoles").datagrid('insertRow', {
+					row:{
+						name : allUnchoosedRoles.rows[i].name ,
+						code : allUnchoosedRoles.rows[i].code,
+						id : allUnchoosedRoles.rows[i].id
+					}
+				});
+			}
+			//删除所有行
+			for(var j =0;j<allRows.length;j++){
+				var index = $('#Grid_SysUserUnchoosedRoles').datagrid('getRowIndex',allRows[j]);
+				$('#Grid_SysUserUnchoosedRoles').datagrid('deleteRow',index);
+			}
+
+		});
+
+		//点击移除选择的N行
+		$("#btnLeft_SysUserSelectRole").click(function(){
+
+			var selectedRoles = $("#Grid_SysUserChoosedRoles").datagrid('getSelections');
+			var allSelectedRows = [];
+			//插入行
+			for(var i=0;i<selectedRoles.length;i++){
+				allSelectedRows.push(selectedRoles[i]);
+				$("#Grid_SysUserUnchoosedRoles").datagrid('insertRow', {
+					row:{
+						name : selectedRoles[i].name ,
+						code : selectedRoles[i].code,
+						id : selectedRoles[i].id
+					}
+				});
+
+			}
+			//删除行
+			for(var j =0;j<allSelectedRows.length;j++){
+				var index = $('#Grid_SysUserChoosedRoles').datagrid('getRowIndex',allSelectedRows[j]);
+				$('#Grid_SysUserChoosedRoles').datagrid('deleteRow',index);
+			}
+		});
+
+		//点击移除选择的所有角色
+		$("#btnDoubleLeft_SysUserSelectRole").click(function(){
+
+			var allChoosedRoles = $("#Grid_SysUserChoosedRoles").datagrid('getData');
+			var allRows = [];
+			//插入所有行
+			for(var i=0;i<allChoosedRoles.rows.length;i++){
+				allRows.push(allChoosedRoles.rows[i]);
+				$("#Grid_SysUserUnchoosedRoles").datagrid('insertRow', {
+					row:{
+						name : allChoosedRoles.rows[i].name ,
+						code : allChoosedRoles.rows[i].code,
+						id : allChoosedRoles.rows[i].id
+					}
+				});
+			}
+			//删除所有行
+			for(var j =0;j<allRows.length;j++){
+				var index = $('#Grid_SysUserChoosedRoles').datagrid('getRowIndex',allRows[j]);
+				$('#Grid_SysUserChoosedRoles').datagrid('deleteRow',index);
+			}
+
+		});
+
+		// 给取消按钮添加点击事件
+		$("#btnCancel").on('click', function(){
+			hideDialog();
+		});
+	});
+
+	// 验证是否已经选择过某一资源
+	function checkResourcesChoosed(resourcesId){
+		var choosed = $("#Grid_SysUserChoosedRoles").datagrid("getData");
+		//alert(choosed.rows.length);
+		var isExist = false;
+		for(var j = 0; j < choosed.rows.length; j++){
+			//alert(choosed.rows[j].id);
+			if(resourcesId == choosed.rows[j].id){
+				isExist = true;
+				break;
+			}
+		}
+		if(isExist){
+			return true;
+		}
+		return false;
+	}
+	// 获取指定资源在已选择资源中的下标
+	function getChoosedIndex(resourcesId){
+		var choosed = $("#Grid_SysUserChoosedRoles").datagrid("getData");
+		for(var j = 0; j < choosed.rows.length; j++){
+			if(resourcesId == choosed.rows[j].id){
+				index = j;
+				break;
+			}
+		}
+		return index;
+	}
+	//为选择资源的下标
+	function getUnchoosedIndex(resourcesId){
+		var index = -1;
+		var unchoosed = $("#Grid_SysUserUnchoosedRoles").datagrid("getData");
+		for(var j = 0; j < unchoosed.rows.length; j++){
+			if(resourcesId == unchoosed.rows[j].id){
+				index = j;
+				break;
+			}
+		}
+		return index;
+	}
+</script>
+</body>
+</html>

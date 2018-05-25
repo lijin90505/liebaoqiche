@@ -1,0 +1,17 @@
+<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<!DOCTYPE>
+<html>
+<head>
+	<%@ include file="/WEB-INF/views/include/head.jsp"%>
+	<link href="${ctxResources}/css/pay.css" rel="stylesheet"/>
+</head>
+<body>
+	<%@ include file="/WEB-INF/views/include/loading.jsp"%>
+	<script type="text/javascript">
+		$(document).ready(function($){
+			window.open();
+	    })
+	</script>
+</body>
+</html>

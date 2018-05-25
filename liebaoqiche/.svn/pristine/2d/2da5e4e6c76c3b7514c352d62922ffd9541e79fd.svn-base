@@ -1,0 +1,114 @@
+package com.ibest.activity.dao;
+
+import java.util.List;
+
+import com.ibest.activity.dto.input.ActivityCardInputDTO;
+import com.ibest.integral.entity.Integral;
+import org.apache.ibatis.annotations.Param;
+
+import com.ibest.framework.common.persistence.MyBatisDao;
+import com.ibest.activity.entity.ActivityIntegral;
+
+import com.ibest.activity.dto.input.ActivityIntegralInputDTO;
+
+@MyBatisDao
+public interface ActivityIntegralDao {
+
+	/**
+	 * 新增
+	 * @param entity
+	 * @return
+	 */
+	public int insert(ActivityIntegral activityIntegral);
+	
+	/**
+	 * 根据主键ID删除
+	 * @param id
+	 * @return
+	 */
+	public int deleteById(String id);
+
+	/**
+	 * 
+	 * @param integralId
+	 * @return
+	 */
+	public List<ActivityIntegral> findByIntegralId(String integralId);
+	
+	/**
+	 * 删除所有
+	 * @return
+	 */
+	public int deleteAll();
+	
+	/**
+	 * 批量删除
+	 * @param ids
+	 * @return
+	 */
+	public int deleteByIds(@Param("ids") List<String> ids); 
+	
+	/**
+	 * 修改
+	 * @param entity
+	 * @return
+	 */
+	public int update(ActivityIntegral activityIntegral);
+	
+	/**
+	 * 根据Id获取唯一记录
+	 * @param id
+	 * @return
+	 */
+	public ActivityIntegral findById(String id);
+
+	/**
+	 * 根据活动Id获取卡券列表
+	 * @param activitySystemId
+	 * @return
+	 */
+	public List<ActivityIntegral> findByActivityId(String activitySystemId);
+	
+	/**
+	 * 根据指定对象查询唯一结果
+	 * @param entity
+	 * @return
+	 */
+	public ActivityIntegral findOneByObject(ActivityIntegralInputDTO activityIntegralInputDto);
+	
+	/**
+	 * 根据对象查询符合条件结果列表
+	 * @param entity
+	 * @return
+	 */
+	public List<ActivityIntegral> findByObject(ActivityIntegralInputDTO activityIntegralInputDto);
+	
+	
+	/**
+	 * 根据对象查询符合条件记录总条数
+	 * @param entity
+	 * @return
+	 */
+	public long countByObject(ActivityIntegralInputDTO activityIntegralInputDto);
+
+	/**
+	 * 根据活动编号删除
+	 * @param activityId
+	 * @return
+	 */
+	public int deleteByActivityId(String activityId);
+
+	/**
+	 * 根据活动编号查询已经选择积分
+	 * @param inputDTO
+	 * @returngetChoosedRole
+	 */
+	public List<Integral> getChoosedIntegral(ActivityIntegralInputDTO inputDTO);
+
+	/**
+	 * 根据活动编号查询未选择的积分
+	 * @param inputDTO
+	 * @return
+	 */
+	public List<Integral> getUnChoosedIntegral(ActivityIntegralInputDTO inputDTO);
+}

@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.activity.dao.SystemActivityDao">
+
+    <sql id="allColumns">
+    	lsa.id as id,    	
+    	lsa.activity_id as activityId,    	
+    	lsa.activity_name as activityName,    	
+    	lsa.activity_content as activityContent,    	
+    	lsa.start_time as startTime,    	
+    	lsa.end_time as endTime,    	
+    	lsa.activity_status as activityStatus,    	
+    	lsa.activity_url as activityUrl,    	
+    	lsa.picture_url as pictureUrl,    	
+    	lsa.system_id as systemId,    	
+    	lsa.system_name as systemName,    	
+    	lsa.creater as creater,    	
+    	lsa.create_time as createTime,    	
+    	lsa.modifier as modifier,    	
+    	lsa.modify_time as modifyTime,    	
+    	lsa.version as version, 
+    	lsa.is_delete as isDelete,   	
+    	lsa.remarks as remarks    	
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and lsa.id = #{id}
+		</if>
+		<if test="activityId != null and activityId != ''">
+			and lsa.activity_id = #{activityId}
+		</if>-->
+		<if test="systemId != null and systemId != ''">
+			and lsa.system_id = #{systemId}
+		</if>
+		<if test="activityStatus != null and activityStatus != ''">
+			and lsa.activity_status = #{activityStatus}
+		</if>
+		<if test="activityName != null and activityName != ''">
+			and CONCAT(
+			IFNULL(lac.activity_name,'')
+			) LIKE CONCAT('%%', #{activityName},'%%')
+		</if>
+		<!-- <if test="activityContent != null and activityContent != ''">
+			and lsa.activity_content = #{activityContent}
+		</if>
+		<if test="startTime != null">
+			and lsa.start_time = #{startTime}
+		</if>
+		<if test="endTime != null">
+			and lsa.end_time = #{endTime}
+		</if>
+		<if test="activityUrl != null and activityUrl != ''">
+			and lsa.activity_url = #{activityUrl}
+		</if>
+		<if test="pictureUrl != null and pictureUrl != ''">
+			and lsa.picture_url = #{pictureUrl}
+		</if>
+		<if test="systemName != null and systemName != ''">
+			and lsa.system_name = #{systemName}
+		</if>
+		<if test="creater != null and creater != ''">
+			and lsa.creater = #{creater}
+		</if>
+		<if test="createTime != null">
+			and lsa.create_time = #{createTime}
+		</if>
+		<if test="modifier != null and modifier != ''">
+			and lsa.modifier = #{modifier}
+		</if>
+		<if test="modifyTime != null">
+			and lsa.modify_time = #{modifyTime}
+		</if>
+		<if test="version != null and version != ''">
+			and lsa.version = #{version}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lsa.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lsa.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lsa.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lsa.UPDATE_DATE = #{updateDate}
+		</if>
+		-->
+		<if test="isDelete != null">
+			and lsa.IS_DELETE = #{isDelete}
+		</if>
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lsa.${order} ${desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_system_activity(
+			id,
+	    	activity_id,	    	
+	    	activity_name,	    	
+	    	activity_content,	    	
+	    	start_time,	    	
+	    	end_time,	    	
+	    	activity_status,	    	
+	    	activity_url,	    	
+	    	picture_url,	    	
+	    	system_id,	    	
+	    	system_name,	    	
+	    	creater,	    	
+	    	create_time,	    	
+	    	modifier,	    	
+	    	modify_time,	    	
+	    	version,	
+	    	is_delete,    	
+	    	remarks	    	
+		) values(
+			#{id},			 
+			#{activityId},			 
+			#{activityName},			 
+			#{activityContent},			 
+			#{startTime},			 
+			#{endTime},			 
+			#{activityStatus},			 
+			#{activityUrl},			 
+			#{pictureUrl},			 
+			#{systemId},			 
+			#{systemName},			 
+			#{creater},			 
+			#{createTime},			 
+			#{modifier},			 
+			#{modifyTime},			 
+			#{version},			 
+			#{isDelete},			 
+			#{remarks}			 
+		)
+	</insert>
+	
+	<select id="findById" resultType="SystemActivity">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_system_activity lsa
+			<include refid="joinOthers"/>
+		where
+			lsa.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="SystemActivity">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_system_activity lsa
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(lsa.id)
+		from
+			liebao_system_activity lsa
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="SystemActivity">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_system_activity lsa
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		<include refid="searchOrder"/>
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_system_activity set
+			activity_id=#{activityId},			
+			activity_name=#{activityName},			
+			activity_content=#{activityContent},			
+			start_time=#{startTime},			
+			end_time=#{endTime},			
+			activity_status=#{activityStatus},			
+			activity_url=#{activityUrl},			
+			picture_url=#{pictureUrl},			
+			system_id=#{systemId},			
+			system_name=#{systemName},			
+			creater=#{creater},			
+			create_time=#{createTime},			
+			modifier=#{modifier},			
+			modify_time=#{modifyTime},			
+			version=#{version},			
+			is_delete=#{isDelete},			
+			remarks=#{remarks}			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_system_activity where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_system_activity where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_system_activity set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_system_activity set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

@@ -1,0 +1,33 @@
+package com.ibest.activity.dto.input;
+
+import com.ibest.framework.common.persistence.BaseInputDTO;
+
+public class ActivityExpInputDTO extends BaseInputDTO {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	// activity_name
+	private String activityName;
+
+	// 活动状态
+	private Integer status;
+
+	public String getActivityName() {
+		return activityName;
+	}
+
+	public void setActivityName(String activityName) {
+		this.activityName = activityName;
+	}
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+}

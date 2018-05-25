@@ -1,0 +1,126 @@
+package com.ibest.experience.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.ibest.framework.common.utils.StringUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ibest.framework.common.utils.PageList;
+
+import com.ibest.experience.dao.UserExperienceCountDao;
+import com.ibest.experience.entity.UserExperience;
+import com.ibest.experience.entity.UserExperienceCount;
+import com.ibest.experience.dto.input.UserExperienceCountInputDTO;
+
+@Service
+@Transactional(readOnly=true)
+public class UserExperienceCountService {
+
+	@Autowired
+	protected UserExperienceCountDao userExperienceCountDao;
+	
+	public UserExperienceCount findById(String id) throws Exception{
+		return userExperienceCountDao.findById(id);
+	}
+	
+	@Transactional(readOnly=false)
+	public int insert(UserExperienceCount userExperienceCount) throws Exception{
+		userExperienceCount.preInsert();
+		int result = userExperienceCountDao.insert(userExperienceCount);
+		return result;
+	}
+
+	@Transactional(readOnly=false)
+	public int experienceupdate(UserExperienceCount userExperienceCount) throws Exception{
+		int result = userExperienceCountDao.update(userExperienceCount);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteById(String id) throws Exception{
+		int result = userExperienceCountDao.deleteById(id);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteByIds(String ids) throws Exception{
+		int result = userExperienceCountDao.deleteByIds(StringUtils.tokenizeToList(ids));
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int update(UserExperienceCount userExperienceCount) throws Exception{
+		userExperienceCount.preUpdate();
+		int result = userExperienceCountDao.update(userExperienceCount);
+		return result;
+	}
+	
+	public Integer queryNumByUserId(String userId) throws Exception{
+		return userExperienceCountDao.queryNumByUserId(userId);
+	}
+	
+	/**
+	 * 修改应用程序标识
+	 * @param findByObject
+	 */
+	public void showAppId(List<UserExperienceCount> findByObject){
+		for (UserExperienceCount userExperienceCount : findByObject) {
+			if(userExperienceCount.getAppId().equals("00")){
+				userExperienceCount.setAppId("APP");
+			}
+			if(userExperienceCount.getAppId().equals("01")){
+				userExperienceCount.setAppId("PC");
+			}
+			if(userExperienceCount.getAppId().equals("02")){
+				userExperienceCount.setAppId("Android");
+			}
+		}
+	}
+	
+	public List<UserExperienceCount> findByUserId(String userId) throws Exception{
+		return userExperienceCountDao.findByUserId(userId);
+	}
+	
+	/**
+	 * 分页查询
+	 * @param page
+	 * @param inputDto
+	 * @return
+	 * @throws Exception
+	 */
+	public PageList<UserExperienceCount> findByPage(PageList<UserExperienceCount> page, UserExperienceCountInputDTO inputDto) throws Exception{
+		
+		if(page == null){
+			page = new PageList<UserExperienceCount>();
+		}
+		/*List<UserExperienceCount> findByObject = userExperienceCountDao.findByObject(inputDto);
+		this.showAppId(findByObject);*/
+		long totalCount = userExperienceCountDao.countByObject(inputDto);
+		if(totalCount > 0){
+			// 设置记录总条数
+			page.setTotal(totalCount);
+			
+			// 设置分页参数，查询数据
+			inputDto.setLimitStart((page.getPage() - 1) * page.getPageSize());
+			inputDto.setLimitSize(page.getPageSize());
+			page.setRows(userExperienceCountDao.findByObject(inputDto));
+		}
+		
+		return page;
+	}
+	
+	/**
+	* 查询列表
+	*/
+	public UserExperienceCount findOneByObject(UserExperienceCountInputDTO inputDto) throws Exception{
+		return userExperienceCountDao.findOneByObject(inputDto);
+	}
+
+	public List<UserExperienceCount> findByObject(UserExperienceCountInputDTO inputDto) throws Exception{
+		return userExperienceCountDao.findByObject(inputDto);
+	}
+
+}

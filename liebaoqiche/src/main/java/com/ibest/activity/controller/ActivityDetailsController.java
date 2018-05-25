@@ -1,0 +1,590 @@
+package com.ibest.activity.controller;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import com.ibest.framework.common.utils.*;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.ibest.framework.common.enums.EnumsRtnMapResult;
+import com.ibest.framework.common.persistence.BaseController;
+import com.ibest.utils.ConstantUtils;
+import com.ibest.utils.RandomUtils;
+import com.ibest.activity.dto.input.ActivityDetailsInputDTO;
+import com.ibest.activity.entity.Activity;
+import com.ibest.activity.entity.ActivityDetails;
+import com.ibest.activity.entity.ActivityIntegral;
+import com.ibest.activity.entity.ActivitySystem;
+import com.ibest.activity.enums.EnumsActivityDetailsSatus;
+import com.ibest.activity.enums.EnumsActivityStatus;
+import com.ibest.activity.service.ActivityCardService;
+import com.ibest.activity.service.ActivityDetailsService;
+import com.ibest.activity.service.ActivityIntegralService;
+import com.ibest.activity.service.ActivityService;
+import com.ibest.activity.service.ActivitySystemService;
+
+import org.springframework.web.multipart.MultipartFile;
+
+@Controller
+@RequestMapping(value = "${adminPath}/activity/activityDetails")
+public class ActivityDetailsController extends BaseController {
+
+	private static final Logger logger = LoggerFactory.getLogger(ActivityDetailsController.class);
+	
+	private static final String SCHEME_TYPE_HTTPS = "https";
+
+	@Autowired
+	private ActivityDetailsService activityDetailsService;
+	
+	@Autowired
+	private ActivityService activityService;
+	
+	@Autowired
+	private ActivityIntegralService activityIntegralService;
+	
+	@Autowired
+	private ActivityCardService activityCardService;
+	
+	@Autowired
+	private ActivitySystemService activitySystemService;
+
+	/**
+	 * 进入到列表页
+	 */
+	@RequestMapping(value = "/")
+	public String index() {
+		return "module/activity/activityDetails/activityDetailsList";
+	}
+
+	/**
+	 * 进入到表单页-创建
+	 */
+	@RequestMapping(value = "/add")
+	public String add() {
+
+		return "module/activity/activityDetails/activityDetailsForm";
+	}
+
+	/**
+	 * 进入卡券关联
+	 */
+	@RequestMapping(value = "/card")
+	public String card(@RequestParam String id, Model model) {
+		model.addAttribute("activityId", id);
+		return "module/activity/activityDetails/relevanceCard";
+	}
+
+	/**
+	 * 进入积分关联
+	 */
+	@RequestMapping(value = "/integral")
+	public String integral(@RequestParam String id, Model model) {
+		model.addAttribute("activityId", id);
+		return "module/activity/activityDetails/relevanceIntegral";
+	}
+
+	/**
+	 * 进入经验值关联
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/checkAccredit")
+	public Map<String, Object> checkAccredit(@RequestParam String id, Model model) {
+		
+		Map<String, Object> rtnMap = new HashMap<String, Object>();		
+		try {
+			if (StringUtils.isNotEmpty(id)) {
+				Activity activity=activityService.findByDetailsId(id);				
+				if(activity != null && "2".equals(activity.getState())) {
+					setRtnCodeAndMsgBySuccess(rtnMap, "true");
+					return rtnMap;
+				}				
+			} 
+		} catch (Exception e) {
+			setRtnCodeAndMsg(EnumsRtnMapResult.EXCEPTION.getCode(), EnumsRtnMapResult.EXCEPTION.getMsg(), model);
+		}
+		setRtnCodeAndMsgBySuccess(rtnMap, "false");
+		return rtnMap;
+	
+	}
+	
+	
+	/**
+	 * 检测关联积分卡券经验值
+	 */
+	@RequestMapping(value = "/experience")
+	public String experience(@RequestParam String id, Model model) {
+		model.addAttribute("activityId", id);
+		return "module/activity/activityDetails/relevanceExperience";
+	}
+
+
+
+	@ResponseBody
+	@RequestMapping("/uploadImage")
+	public RtnMap uploadImage(@RequestParam(value = "image") MultipartFile imageFile, HttpServletRequest request, Model model) {
+
+		RtnMap rtnMap = new RtnMap();
+		rtnMap.success("上传成功");
+
+		if (imageFile != null) {
+			//String destFile = FileUploadUtils.getDestFile(imageFile.getOriginalFilename(), null, request);
+
+			try {
+				// 保存文件
+				//imageFile.transferTo(new File(request.getSession().getServletContext().getRealPath(File.separator) + destFile));
+				// 生成网络地址
+				//rtnMap.setRtnData(WebTools.getAppPath(request) + destFile.replaceAll("\\\\", "/"));
+				String basepath = File.separator + "resources" + File.separator + "upload" + File.separator + "tmp";
+				String path = FileUploadUtils.fileUpload(imageFile.getInputStream(), imageFile.getOriginalFilename(), basepath, request);
+				if (com.ibest.framework.common.utils.StringUtils.isNotEmpty(path) && GlobalConfig.getSchemeType() == 1) {
+					String subPath = path.substring(4);
+					rtnMap.setRtnData(SCHEME_TYPE_HTTPS + subPath);
+					model.addAttribute("imageUrl", subPath);
+				} else {
+					model.addAttribute("imageUrl", path);
+					rtnMap.setRtnData(path);
+				}
+			} catch (IllegalStateException e) {
+				e.printStackTrace();
+				rtnMap.exception(e.getLocalizedMessage());
+			} catch (IOException e) {
+				e.printStackTrace();
+				rtnMap.exception(e.getLocalizedMessage());
+			} catch (Exception e) {
+				e.printStackTrace();
+				rtnMap.exception(e.getLocalizedMessage());
+			}
+		} else {
+			rtnMap.failure("请上传文件");
+		}
+
+		return rtnMap;
+	}
+
+	/**
+	 * 进入到表单页，编辑
+	 */
+	@RequestMapping(value = "/edit")
+	public String edit(@RequestParam String id, Model model) {
+		try {
+			if (StringUtils.isNotEmpty(id)) {
+				ActivityDetails activityDetails = activityDetailsService.findById(id);
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				activityDetails.setStartTime(sdf.parse(activityDetails.getStartTime()));
+				activityDetails.setEndTime(sdf.parse(activityDetails.getEndTime()));
+				if (activityDetails != null) {
+					model.addAttribute("activityDetails", activityDetails);
+				} else {
+					setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "您查看的信息不存在！", model);
+				}
+			} else {
+				setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "请选择需要编辑的信息！", model);
+			}
+		} catch (Exception e) {
+			setRtnCodeAndMsg(EnumsRtnMapResult.EXCEPTION.getCode(), EnumsRtnMapResult.EXCEPTION.getMsg(), model);
+		}
+		return "module/activity/activityDetails/activityDetailsForm";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/updateIsPublish")
+	public Map<String, Object> updateIsPublish(ActivityDetails activityDetails) {
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		setRtnCodeAndMsgBySuccess(rtnMap, "保存成功");
+		try {			
+			String state = activityDetails.getState();			
+			if(!"0".equals(state)) {
+				Activity activity = activityService.findByDetailsId(activityDetails.getId());	
+				if (null != activity) {
+					boolean check=activityDetailsService.checkAccredit(activity.getId());
+					if (activity != null && check) {
+						setRtnCodeAndMsgByFailure(rtnMap, "活动内容已关联，不可变更状态");
+						return rtnMap;
+					}		
+				}
+			}
+			
+			boolean past=activityDetailsService.checkActivityPast(activityDetails.getId());
+			if(past) {
+				setRtnCodeAndMsgByFailure(rtnMap, "活动已过期，不可变更状态");
+				return rtnMap;
+			}	
+			
+			
+			ActivityDetails  activityDetails2=activityDetailsService.findById(activityDetails.getId());
+			activityDetails2.setState(state);
+			activityDetails2.setModifier(UserUtils.getCurrentUser().getRealname());
+			activityDetails2.setModifyTime(new Date());
+			
+			int result = activityDetailsService.update(activityDetails2);
+			if(result == 0){
+				setRtnCodeAndMsgByFailure(rtnMap, "保存失败");
+			}	
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			setRtnCodeAndMsgByFailure(rtnMap, "保存失败");
+		}
+		return rtnMap;
+	}
+
+	/**
+	 * 进入到详情页
+	 */
+	@RequestMapping(value = "/view")
+	public String view(@RequestParam String id, Model model) {
+		try {
+			if (StringUtils.isNotEmpty(id)) {
+				ActivityDetails activityDetails = activityDetailsService.findById(id);
+				if ("0".equals(activityDetails.getState())) {
+					activityDetails.setState(EnumsActivityDetailsSatus.getLabel(activityDetails.getState()));
+				} else if ("1".equals(activityDetails.getState())) {
+					activityDetails.setState(EnumsActivityDetailsSatus.getLabel(activityDetails.getState()));
+				}
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				activityDetails.setStartTime(sdf.parse(activityDetails.getStartTime()));
+				activityDetails.setEndTime(sdf.parse(activityDetails.getEndTime()));
+				if (activityDetails != null) {
+					model.addAttribute("activityDetails", activityDetails);
+					model.addAttribute("id", id);
+				} else {
+					setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "您查看的信息不存在！", model);
+				}
+			} else {
+				setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "请选择需要查看的信息！", model);
+			}
+		} catch (Exception e) {
+			setRtnCodeAndMsg(EnumsRtnMapResult.EXCEPTION.getCode(), EnumsRtnMapResult.EXCEPTION.getMsg(), model);
+		}
+		return "module/activity/activityDetails/activityDetailsDetail";
+	}
+
+	/**
+	 * 异步分页查询
+	 */
+	@ResponseBody
+	@RequiresPermissions("activityDetails:query")
+	@RequestMapping(value = "/list")
+	public PageList<ActivityDetails> list(ActivityDetailsInputDTO activityDetails, HttpServletRequest request) {
+
+		PageList<ActivityDetails> pageList = new PageList<ActivityDetails>();
+
+		try {
+			//设置分页参数
+			super.setPage(request, pageList);
+
+			pageList = activityDetailsService.findByPage(pageList, activityDetails);
+			
+			List<ActivityDetails> list=pageList.getRows();
+			for (ActivityDetails activityDetails2 : list) {				
+				boolean past=activityDetailsService.checkActivityPast(activityDetails2.getId());
+				if(past) {
+					activityDetails2.setState("1");
+					activityDetailsService.update(activityDetails2);
+				}			
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return pageList;
+	}
+
+	/**
+	 * 异步表单提交
+	 */
+	@ResponseBody
+	@RequiresPermissions("activityDetails:create")
+	@RequestMapping(value = "create")
+	public Map<String, Object> insert(ActivityDetails activityDetails, HttpServletRequest request) {
+
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		setRtnCodeAndMsgBySuccess(rtnMap, "保存成功");
+
+		String imageUrl = activityDetails.getImageUrl();
+		try {
+			ActivityDetails name = 
+					activityDetailsService.checkNameUnique(activityDetails.getActivityName());
+			if(name != null){
+				setRtnCodeAndMsgByFailure(rtnMap, "保存失败，活动名称已存在！");
+			}else{
+				// 将Base64图片数据保存成图片文件，修改对应的属性值
+				if(StringUtils.isNotEmpty(imageUrl) && imageUrl.startsWith("data:image/")){
+					String basepath = File.separator + "resources" + File.separator + "upload" + File.separator + "photo";
+					String destFile = FileUploadUtils.base64ToFile(request, imageUrl, basepath);
+					
+					activityDetails.setImageUrl(WebTools.getAppPath(request) + destFile.replaceAll("\\\\", "/"));
+				}
+				activityDetails.setIsDelete(ConstantUtils.UPDATE_SET_ZERO);
+				activityDetails.setId(RandomUtils.RandomUUID());
+				activityDetails.setState("1");
+				activityDetails.setCreater(UserUtils.getCurrentUser().getRealname());
+				activityDetails.setCreateTime(new Date());
+				activityDetails.setModifier(UserUtils.getCurrentUser().getRealname());
+				activityDetails.setModifyTime(new Date());
+				int result = activityDetailsService.insert(activityDetails);
+				if (result == 0) {
+					setRtnCodeAndMsgByFailure(rtnMap, "保存失败");
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+		return rtnMap;
+	}
+
+	@ResponseBody
+	@RequiresPermissions("activityDetails:update")
+	@RequestMapping(value = "update")
+	public Map<String, Object> update(ActivityDetails activityDetails, HttpServletRequest request) {
+
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		setRtnCodeAndMsgBySuccess(rtnMap, "保存成功");
+
+		String imageUrl = activityDetails.getImageUrl();
+		try {
+			ActivityDetails activity = activityDetailsService.findById(activityDetails.getId());
+			SimpleDateFormat  sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			String oldName =
+						activityDetailsService.findById(activityDetails.getId()).getActivityName();
+			if(!oldName.equals(activityDetails.getActivityName())){
+				ActivityDetails unique = 
+						activityDetailsService.checkNameUnique(activityDetails.getActivityName());
+				if(unique!=null){
+					setRtnCodeAndMsgByFailure(rtnMap, "保存失败，活动名称已存在！");
+				}else{
+					// 将Base64图片数据保存成图片文件，修改对应的属性值
+					if(StringUtils.isNotEmpty(imageUrl) && imageUrl.startsWith("data:image/")){
+						String basepath = File.separator + "resources" + File.separator + "upload" + File.separator + "photo";
+						String destFile = FileUploadUtils.base64ToFile(request, imageUrl, basepath);
+						
+						activity.setImageUrl(WebTools.getAppPath(request) + destFile.replaceAll("\\\\", "/"));
+					}
+					activity.setActivityName(activityDetails.getActivityName());
+					activity.setActivityContent(activityDetails.getActivityContent());
+					activity.setStartTime(sdf.parse(activityDetails.getStartTime()));
+					activity.setEndTime(sdf.parse(activityDetails.getEndTime()));
+					activity.setModifier(UserUtils.getCurrentUser().getRealname());
+					activity.setCreateTime(activity.getCreateTime());
+					activity.setModifyTime(new Date());
+					activity.setRemarks(activityDetails.getRemarks());
+					int result = activityDetailsService.update(activity);
+					if (result == 0) {
+						setRtnCodeAndMsgByFailure(rtnMap, "保存失败");
+					}
+				}
+			}else
+			{
+				// 将Base64图片数据保存成图片文件，修改对应的属性值
+				if(StringUtils.isNotEmpty(imageUrl) && imageUrl.startsWith("data:image/")){
+					String basepath = File.separator + "resources" + File.separator + "upload" + File.separator + "photo";
+					String destFile = FileUploadUtils.base64ToFile(request, imageUrl, basepath);
+					
+					activity.setImageUrl(WebTools.getAppPath(request) + destFile.replaceAll("\\\\", "/"));
+				}
+				activity.setActivityName(activityDetails.getActivityName());
+				activity.setActivityContent(activityDetails.getActivityContent());
+				activity.setStartTime(sdf.parse(activityDetails.getStartTime()));
+				activity.setEndTime(sdf.parse(activityDetails.getEndTime()));
+				activity.setModifier(UserUtils.getCurrentUser().getRealname());
+				activity.setCreateTime(activity.getCreateTime());
+				activity.setModifyTime(new Date());
+				activity.setRemarks(activityDetails.getRemarks());
+				int result = activityDetailsService.update(activity);
+				if (result == 0) {
+					setRtnCodeAndMsgByFailure(rtnMap, "保存失败");
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+		return rtnMap;
+	}
+
+	@ResponseBody
+	@RequiresPermissions("activityDetails:delete")
+	@RequestMapping(value = "delete")
+	public Map<String, Object> delete(@RequestParam(required = true) String ids) {
+
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		setRtnCodeAndMsgBySuccess(rtnMap, "删除成功");
+
+		try {
+			int result = activityDetailsService.deleteByIds(ids);
+			if (result == 0) {
+				setRtnCodeAndMsgByFailure(rtnMap, "删除失败");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+		return rtnMap;
+	}
+
+	//`````````````````````````````卡券`````````````````````````````````
+
+	/**
+	 * 查询活动拥有的卡券
+	 *
+	 * @param activityId
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "activityCard")
+	public ActivityDetails activityCard(@RequestParam("activityId") String activityId) {
+		ActivityDetails activityDetails = null;
+		try {
+			activityDetails = activityDetailsService.getActivityCard(activityId);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			e.printStackTrace();
+		}
+		return activityDetails;
+	}
+
+	/**
+	 * 授权卡券
+	 *
+	 * @param activityId 活动id
+	 * @param allCardsId 卡券id
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "accreditCard")
+	public Map<String, Object> accreditCard(@RequestParam(value = "activityId", required = true) String activityId, @RequestParam("allCardsId") String allCardsId) {
+
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		setRtnCodeAndMsgBySuccess(rtnMap, "授权成功");
+
+		try {
+			//进行授权
+			activityDetailsService.accreditCard(activityId, allCardsId);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+		return rtnMap;
+	}
+
+	//`````````````````````````````积分`````````````````````````````````
+
+	/**
+	 * 查询活动拥有的积分规则
+	 *
+	 * @param activityId
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "activityIntegral")
+	public ActivityDetails activityIntegral(@RequestParam("activityId") String activityId) {
+		ActivityDetails activityDetails = null;
+		try {
+			activityDetails = activityDetailsService.getActivityIntegral(activityId);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			e.printStackTrace();
+		}
+		return activityDetails;
+	}
+
+	/**
+	 * 授权积分
+	 *
+	 * @param activityId     活动id
+	 * @param allIntegralsId 积分id
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "accreditIntegral")
+	public Map<String, Object> accreditIntegral(@RequestParam(value = "activityId", required = true) String activityId, @RequestParam("allIntegralsId") String allIntegralsId) {
+
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		setRtnCodeAndMsgBySuccess(rtnMap, "授权成功");
+
+		try {
+			//进行授权
+			activityDetailsService.accreditIntegral(activityId, allIntegralsId);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+		return rtnMap;
+	}
+
+
+	//`````````````````````````````经验值`````````````````````````````````
+
+	/**
+	 * 查询活动拥有的经验值
+	 *
+	 * @param activityId
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "activityExperience")
+	public ActivityDetails activityExperience(@RequestParam("activityId") String activityId) {
+		ActivityDetails activityDetails = null;
+		try {
+			activityDetails = activityDetailsService.getActivityExperience(activityId);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			e.printStackTrace();
+		}
+		return activityDetails;
+	}
+
+	/**
+	 * 授权积分
+	 *
+	 * @param activityId       活动id
+	 * @param allExperiencesId 积分id
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "accreditExperience")
+	public Map<String, Object> accreditExperience(@RequestParam(value = "activityId", required = true) String activityId, @RequestParam("allExperiencesId") String allExperiencesId) {
+
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		setRtnCodeAndMsgBySuccess(rtnMap, "授权成功");
+
+		try {
+			//进行授权
+			activityDetailsService.accreditExperience(activityId, allExperiencesId);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+		return rtnMap;
+	}
+
+	/**
+	 * 异步分页查询
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/activityDetails")
+	public List<ActivityDetails> activityDetails(ActivityDetailsInputDTO inputDTO)
+			throws Exception {
+		return activityDetailsService.findByObject(inputDTO);
+	}
+}

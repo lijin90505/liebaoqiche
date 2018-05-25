@@ -1,0 +1,186 @@
+package com.ibest.accesssystem.entity;
+
+import java.util.Date;
+import java.util.List;
+
+import com.ibest.activity.entity.Activity;
+import com.ibest.activity.entity.ActivityDetails;
+import com.ibest.card.entity.Coupon;
+import com.ibest.framework.common.persistence.BaseEntity;
+import com.ibest.integral.entity.PointRule;
+import com.ibest.pay.entity.PayChannel;
+
+public class AccessSystem extends BaseEntity {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+					
+	// 系统名称
+	private String name;
+				
+	// 系统标识
+	private String identification;
+				
+	// 密钥
+	private String secret;
+				
+	// 创建人
+	private String creater;
+				
+	// 创建时间
+	private Date createTime;
+				
+	// 修改人
+	private String modifier;
+				
+	// 修改时间
+	private Date modifyTime;
+				
+	// 版本
+	private String version;
+
+	private List<PointRule> sysChoosePointRuleList;
+	private List<PointRule> sysUnChoosePointRuleList;
+
+	private List<Activity> sysChooseActivityList;
+	private List<Activity> sysUnChooseActivityList;
+
+	private List<Coupon> sysChooseCouponList;
+	private List<Coupon> sysUnChooseCouponList;
+
+	private List<PayChannel> sysChoosedPayChannelList;
+	private List<PayChannel> sysUnChoosedPayChannelList;
+
+	public List<PayChannel> getSysChoosedPayChannelList() {
+		return sysChoosedPayChannelList;
+	}
+
+	public void setSysChoosedPayChannelList(List<PayChannel> sysChoosedPayChannelList) {
+		this.sysChoosedPayChannelList = sysChoosedPayChannelList;
+	}
+
+	public List<PayChannel> getSysUnChoosedPayChannelList() {
+		return sysUnChoosedPayChannelList;
+	}
+
+	public void setSysUnChoosedPayChannelList(List<PayChannel> sysUnChoosedPayChannelList) {
+		this.sysUnChoosedPayChannelList = sysUnChoosedPayChannelList;
+	}
+
+	public List<PointRule> getSysChoosePointRuleList() {
+		return sysChoosePointRuleList;
+	}
+
+	public void setSysChoosePointRuleList(List<PointRule> sysChoosePointRuleList) {
+		this.sysChoosePointRuleList = sysChoosePointRuleList;
+	}
+
+	public List<PointRule> getSysUnChoosePointRuleList() {
+		return sysUnChoosePointRuleList;
+	}
+
+	public void setSysUnChoosePointRuleList(List<PointRule> sysUnChoosePointRuleList) {
+		this.sysUnChoosePointRuleList = sysUnChoosePointRuleList;
+	}
+
+
+	public List<Coupon> getSysChooseCouponList() {
+		return sysChooseCouponList;
+	}
+
+	public void setSysChooseCouponList(List<Coupon> sysChooseCouponList) {
+		this.sysChooseCouponList = sysChooseCouponList;
+	}
+
+	public List<Coupon> getSysUnChooseCouponList() {
+		return sysUnChooseCouponList;
+	}
+
+	public void setSysUnChooseCouponList(List<Coupon> sysUnChooseCouponList) {
+		this.sysUnChooseCouponList = sysUnChooseCouponList;
+	}
+
+	public List<Activity> getSysChooseActivityList() {
+		return sysChooseActivityList;
+	}
+
+	public void setSysChooseActivityList(List<Activity> sysChooseActivityList) {
+		this.sysChooseActivityList = sysChooseActivityList;
+	}
+
+	public List<Activity> getSysUnChooseActivityList() {
+		return sysUnChooseActivityList;
+	}
+
+	public void setSysUnChooseActivityList(List<Activity> sysUnChooseActivityList) {
+		this.sysUnChooseActivityList = sysUnChooseActivityList;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getIdentification() {
+		return identification;
+	}
+
+	public void setIdentification(String identification) {
+		this.identification = identification;
+	}
+
+	public String getSecret() {
+		return secret;
+	}
+
+	public void setSecret(String secret) {
+		this.secret = secret;
+	}
+
+	public String getCreater(){
+		return creater;
+	}
+	
+	public void setCreater(String creater){
+		this.creater = creater;
+	}
+				
+	public Date getCreateTime(){
+		return createTime;
+	}
+	
+	public void setCreateTime(Date createTime){
+		this.createTime = createTime;
+	}
+				
+	public String getModifier(){
+		return modifier;
+	}
+	
+	public void setModifier(String modifier){
+		this.modifier = modifier;
+	}
+				
+	public Date getModifyTime(){
+		return modifyTime;
+	}
+	
+	public void setModifyTime(Date modifyTime){
+		this.modifyTime = modifyTime;
+	}
+				
+	public String getVersion(){
+		return version;
+	}
+	
+	public void setVersion(String version){
+		this.version = version;
+	}
+					
+}

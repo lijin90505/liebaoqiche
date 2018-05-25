@@ -1,0 +1,249 @@
+package com.ibest.experience.controller;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.ibest.framework.common.enums.EnumsRtnMapResult;
+import com.ibest.framework.common.persistence.BaseController;
+import com.ibest.framework.common.utils.PageList;
+import com.ibest.framework.common.utils.UserUtils;
+import com.ibest.utils.ConstantUtils;
+import com.ibest.utils.RandomUtils;
+import com.ibest.experience.dto.input.UserExperienceInputDTO;
+import com.ibest.experience.entity.UserExperience;
+import com.ibest.experience.entity.UserExperienceCount;
+import com.ibest.experience.service.UserExperienceCountService;
+import com.ibest.experience.service.UserExperienceService;
+
+@Controller
+@RequestMapping(value="${adminPath}/experience/userExperience")
+public class UserExperienceController extends BaseController {
+	
+	private static final Logger logger = LoggerFactory.getLogger(UserExperienceController.class);
+	
+	@Autowired
+	private UserExperienceService userExperienceService;
+	@Autowired
+	private UserExperienceCountService userExperienceCountService;
+	
+	/**
+	* 进入到列表页
+	*/
+	@RequestMapping(value="/")
+	public String index(){
+		return "module/experience/userExperience/userExperienceList";
+	}
+	
+	/**
+	* 进入到表单页-创建
+	*/
+	@RequestMapping(value="/add")
+	public String add(){
+		
+		return "module/experience/userExperience/userExperienceForm";
+	}
+	
+	/**
+	* 进入到表单页，编辑
+	*/
+	@RequestMapping(value="/edit")
+	public String edit(@RequestParam String id, Model model){
+		try {
+			if(StringUtils.isNotEmpty(id)){
+				UserExperience userExperience = userExperienceService.findById(id);
+				if(userExperience != null){
+					model.addAttribute("userExperience", userExperience);
+				}else{
+					setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "您查看的信息不存在！", model);
+				}
+			}else{
+				setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "请选择需要编辑的信息！", model);
+			}
+		} catch (Exception e) {
+			setRtnCodeAndMsg(EnumsRtnMapResult.EXCEPTION.getCode(), EnumsRtnMapResult.EXCEPTION.getMsg(), model);
+		}
+		return "module/experience/userExperience/userExperienceForm";
+	}
+	
+	/**
+	* 进入到详情页
+	*/
+	@RequestMapping(value="/view")
+	public String view(@RequestParam String id, Model model){
+		try {
+			if(StringUtils.isNotEmpty(id)){
+				UserExperience userExperience = userExperienceService.findById(id);
+				if(userExperience != null){
+					model.addAttribute("userExperience", userExperience);
+				}else{
+					setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "您查看的信息不存在！", model);
+				}
+			}else{
+				setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "请选择需要查看的信息！", model);
+			}
+		} catch (Exception e) {
+			setRtnCodeAndMsg(EnumsRtnMapResult.EXCEPTION.getCode(), EnumsRtnMapResult.EXCEPTION.getMsg(), model);
+		}
+		return "module/experience/userExperience/userExperienceDetail";
+	}
+
+	/**
+	* 异步分页查询
+	*/
+	@ResponseBody
+	@RequiresPermissions("userExperience:query")
+	@RequestMapping(value="/list")
+	public PageList<UserExperience> list(UserExperienceInputDTO userExperience, HttpServletRequest request){
+		
+		PageList<UserExperience> pageList = new PageList<UserExperience>();
+		
+		try {
+			//设置分页参数
+			super.setPage(request, pageList);
+		
+			pageList = userExperienceService.findByPage(pageList, userExperience);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return pageList;
+	}
+	
+	/**
+	* 异步表单提交
+	*/
+	@ResponseBody
+	@RequiresPermissions("userExperience:create")
+	@RequestMapping(value="create")
+	public Map<String, Object> insert(UserExperience userExperience){
+
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		setRtnCodeAndMsgBySuccess(rtnMap, "保存成功");
+		
+		try {
+			userExperience.setId(RandomUtils.RandomUUID());
+			userExperience.setCreater(UserUtils.getCurrentUser().getRealname());
+			userExperience.setCreateTime(new Date());
+			userExperience.setModifier(UserUtils.getCurrentUser().getRealname());
+			userExperience.setModifyTime(new Date());
+			int result = userExperienceService.insert(userExperience);
+			if(result == 0){
+				setRtnCodeAndMsgByFailure(rtnMap, "保存失败");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+		return rtnMap;
+	}
+	
+	/**
+	 * 跳转经验操作界面
+	 * @param userExperience
+	 * @return
+	 */
+	@RequestMapping(value="/experienceQuery")
+	public String integralEdit(Model model){
+		
+		return "module/experience/userExperience/userExperienceEdit";
+	}
+	
+	/*
+	 *经验操作 
+	 */
+	@ResponseBody
+	@RequiresPermissions("userExperience:operation")
+	@RequestMapping(value="operation")
+	public Map<String, Object> operation(UserExperience userExperience){
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		setRtnCodeAndMsgBySuccess(rtnMap, "保存成功");
+		
+		try{
+			Integer numByUserId = 
+					userExperienceCountService.queryNumByUserId(userExperience.getUserId());
+			if(userExperience.getType().equals("01")){
+				if(numByUserId == null){
+					setRtnCodeAndMsgByFailure(rtnMap, "操作失败,当前用户未获得经验值!");
+				}else{
+					int now = userExperience.getConsumeNum();
+					int before=numByUserId.intValue();
+					if(now>before){
+						setRtnCodeAndMsgByFailure(rtnMap, "操作失败,当前用户经验值不够!");
+					}else{
+						boolean flag = userExperienceService.experienceUpdateFrank(userExperience);
+						if(flag == false){
+							setRtnCodeAndMsgByFailure(rtnMap, "操作失败");
+						}
+					}
+				}
+			}else{
+				boolean flag = userExperienceService.experienceUpdateFrank(userExperience);
+				if(flag == false){
+					setRtnCodeAndMsgByFailure(rtnMap, "操作失败");
+				}
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+		
+		return rtnMap;
+	}
+	@ResponseBody
+	@RequiresPermissions("userExperience:update")
+	@RequestMapping(value="update")
+	public Map<String, Object> update(UserExperience userExperience){
+
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		setRtnCodeAndMsgBySuccess(rtnMap, "保存成功");
+		
+		try {
+			SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd");
+			userExperience.setModifier(UserUtils.getCurrentUser().getRealname());
+			userExperience.setModifyTime(dateFormat.parse(dateFormat.format(new Date())));
+			int result = userExperienceService.update(userExperience);
+			if(result == 0){
+				setRtnCodeAndMsgByFailure(rtnMap, "保存失败");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+		return rtnMap;
+	}
+	
+	@ResponseBody
+	@RequiresPermissions("userExperience:delete")
+	@RequestMapping(value="delete")
+	public Map<String, Object> delete(@RequestParam(required=true) String ids){
+		
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		setRtnCodeAndMsgBySuccess(rtnMap, "删除成功");
+		
+		try {
+			int result = userExperienceService.deleteByIds(ids);
+			if(result == 0){
+				setRtnCodeAndMsgByFailure(rtnMap, "删除失败");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+		return rtnMap;
+	}
+}

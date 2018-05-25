@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.card.dao.UserCouponUsedRecordDao">
+
+    <sql id="allColumns">
+    	lucur.id as id,    	
+    	lucur.coupon_code as couponCode,    	
+    	lucur.user_id as userId,    	
+    	lucur.user_name as userName,    	
+    	lucur.coupon_name as couponName,    	
+    	lucur.coupon_content as couponContent,    	
+    	lucur.status as status,    	
+    	lucur.coupon_get_id as couponGetId,    	
+    	lucur.coupon_get_name as couponGetName,
+    	lucur.coupon_use_id as couponUseId,
+    	lucur.coupon_use_name as couponUseName,
+    	lucur.coupon_get_time as couponGetTime,
+    	lucur.coupon_used_time as couponUsedTime,    	
+    	lucur.erminal_id as erminalId,    	
+    	lucur.system_sign as systemSign,    	
+    	lucur.system_sign_name as systemSignName,    	
+    	lucur.creater as creater,    	
+    	lucur.create_time as createTime,    	
+    	lucur.modifier as modifier,    	
+    	lucur.modify_time as modifyTime,    	
+    	lucur.version as version,    	
+    	lucur.remarks as remarks    	
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and lucur.id = #{id}
+		</if>
+		<if test="couponCode != null and couponCode != ''">
+			and lucur.coupon_code = #{couponCode}
+		</if>
+		<if test="userId != null and userId != ''">
+			and lucur.user_id = #{userId}
+		</if>-->
+	    <if test="userName != null and userName != ''">
+		    and CONCAT(
+		    IFNULL(lucur.user_name,'')
+		    ) LIKE CONCAT('%%', #{userName},'%%')
+	    </if>
+		<if test="couponName != null and couponName != ''">
+			and CONCAT(
+			IFNULL(lucur.coupon_name,'')
+			) LIKE CONCAT('%%', #{couponName},'%%')
+		</if>
+	    <if test="status != null and status != ''">
+		    and lucur.status = #{status}
+	    </if>
+		<!--<if test="couponContent != null and couponContent != ''">
+			and lucur.coupon_content = #{couponContent}
+		</if>
+		<if test="couponGetId != null">
+			and lucur.coupon_get_id = #{couponGetId}
+		</if>
+		<if test="couponUseId != null">
+			and lucur.coupon_use_id = #{couponUseId}
+		</if>
+		<if test="couponGetTime != null">
+			and lucur.coupon_get_time = #{couponGetTime}
+		</if>
+		<if test="couponUsedTime != null">
+			and lucur.coupon_used_time = #{couponUsedTime}
+		</if>
+		<if test="erminalId != null and erminalId != ''">
+			and lucur.erminal_id = #{erminalId}
+		</if>-->
+		<if test="systemSign != null and systemSign != ''">
+			and lucur.system_sign = #{systemSign}
+		</if>
+		<!--<if test="systemSignName != null and systemSignName != ''">
+			and lucur.system_sign_name = #{systemSignName}
+		</if>
+		<if test="creater != null and creater != ''">
+			and lucur.creater = #{creater}
+		</if>
+		<if test="createTime != null">
+			and lucur.create_time = #{createTime}
+		</if>
+		<if test="modifier != null and modifier != ''">
+			and lucur.modifier = #{modifier}
+		</if>
+		<if test="modifyTime != null">
+			and lucur.modify_time = #{modifyTime}
+		</if>
+		<if test="version != null and version != ''">
+			and lucur.version = #{version}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lucur.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lucur.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lucur.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lucur.UPDATE_DATE = #{updateDate}
+		</if>
+		-->
+		<if test="isDelete != null">
+			and lucur.IS_DELETE = #{isDelete}
+		</if>
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lucur.${order} ${desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_user_coupon_used_record(
+			id,
+	    	coupon_code,	    	
+	    	user_id,	    	
+	    	user_name,	    	
+	    	coupon_name,	    	
+	    	coupon_content,	    	
+	    	status,	    	
+	    	coupon_get_id,	    	
+	    	coupon_get_name,
+	    	coupon_use_id,
+	    	coupon_use_name,
+	    	coupon_get_time,
+	    	coupon_used_time,	    	
+	    	erminal_id,	    	
+	    	system_sign,	    	
+	    	system_sign_name,	    	
+	    	is_delete,
+	    	creater,
+	    	create_time,
+	    	modifier,	    	
+	    	modify_time,	    	
+	    	version,	    	
+	    	remarks	    	
+		) values(
+			#{id},
+			#{couponCode},
+			#{userId},
+			#{userName},
+			#{couponName},			 
+			#{couponContent},			 
+			#{status},			 
+			#{couponGetId},
+			#{couponGetName},
+			#{couponUseId},
+			#{couponUseName},
+			#{couponGetTime},
+			#{couponUsedTime},			 
+			#{erminalId},			 
+			#{systemSign},			 
+			#{systemSignName},			 
+			#{isDelete},
+			#{creater},
+			#{createTime},			 
+			#{modifier},			 
+			#{modifyTime},			 
+			#{version},			 
+			#{remarks}			 
+		)
+	</insert>
+	
+	<select id="findById" resultType="UserCouponUsedRecord">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_user_coupon_used_record lucur
+			<include refid="joinOthers"/>
+		where
+			lucur.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="UserCouponUsedRecord">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_user_coupon_used_record lucur
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(lucur.id)
+		from
+			liebao_user_coupon_used_record lucur
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="UserCouponUsedRecord">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_user_coupon_used_record lucur
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		<include refid="searchOrder"/>
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_user_coupon_used_record set
+			coupon_code=#{couponCode},			
+			user_id=#{userId},			
+			user_name=#{userName},			
+			coupon_name=#{couponName},			
+			coupon_content=#{couponContent},			
+			status=#{status},			
+			coupon_get_id=#{couponGetId},
+			coupon_get_id=#{couponGetName},
+			coupon_use_id=#{couponUseId},
+			coupon_use_name=#{couponUseName},
+			coupon_get_time=#{couponGetTime},
+			coupon_used_time=#{couponUsedTime},			
+			erminal_id=#{erminalId},			
+			system_sign=#{systemSign},			
+			system_sign_name=#{systemSignName},
+			is_delete=#{isDelete},
+			creater=#{creater},			
+			create_time=#{createTime},			
+			modifier=#{modifier},			
+			modify_time=#{modifyTime},			
+			version=#{version},			
+			remarks=#{remarks}			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_user_coupon_used_record where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_user_coupon_used_record where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_user_coupon_used_record set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_user_coupon_used_record set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

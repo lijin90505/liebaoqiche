@@ -1,0 +1,642 @@
+/* 框架主题样式修改 */
+.app-header {
+	background: #fff;
+	height: 60px;	
+	overflow: hidden;
+}
+
+.linkIndexTitle{
+	width:200px;
+	height:60px;
+	display:block;
+	background:#666;
+	border-bottom:1px solid #2b2e33;
+	float:left;
+	color:#fff;
+	line-height:60px;
+	text-align:center;
+	font-size:18px;
+}
+
+.linkIndex{
+	height:60px;
+	display:block;
+	float:left;
+}
+
+.linkIndex>img{
+	height:36px;
+	margin-top:12px;
+	margin-left:20px;
+}
+
+.app-slider {
+	background: #272c31;
+}
+
+.app-footer {
+	background: black;
+}
+
+.app-module {
+	padding: 10px 15px;
+	cursor: pointer;
+}
+
+.app-module.on {
+	background: blue;
+	color: white;
+}
+
+.app-mobule:hover {
+	background: red;
+}
+
+.perPic{
+	float:right;
+	height:24px;
+	margin-top:18px;
+	margin-right:20px;
+}
+
+.perMes{
+	float:left;
+	cursor:pointer;
+	position:relative;
+}
+
+.perMes>i{
+	float:left;
+	color:#FFF;
+}
+
+.perMes>span{
+	float:left;
+	color:#FFF;
+	line-height:24px;
+	margin-left:8px;
+}
+
+.perMes:hover>i,.perMes:hover>span{
+	color:#f1aa21!important;
+}
+
+.exidBtn{
+	color:#ccc;
+	line-height:24px;
+	margin-left:20px;
+	border-left:1px solid #ccc;
+	padding-left:20px;
+}
+
+.exidBtn:hover{
+	color:#f1aa21;
+}
+
+/*个人信息*/
+
+.header{
+    width:100%;
+    height: 60px;
+    background-color: #e5e9f1;
+}
+
+.person-con{
+    position: relative;
+}
+
+.person-pic{
+    float:right;
+    height: 40px;
+    margin:10px 20px;
+    cursor: pointer;
+    color:#666;
+}
+
+.person-pic-img{
+	float:left;
+	width: 36px;
+    height: 36px;
+    border:2px solid #d4d4d4;
+    border-radius: 38px;
+    background-color:#fff;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: contain;
+}
+
+.person-pic-mes{
+	float:left;
+	line-height:40px;
+	margin:0 5px;
+}
+
+.person-pic-icon{
+	float:left;
+	font-size:12px;
+	margin-top:11px;
+}
+
+.person-news{
+	float:right;
+	width: 60px;
+    height: 32px;
+    line-height:32px;
+    margin:14px 20px;
+    cursor: pointer;
+}
+
+.person-news>b{
+	float:left;
+	margin-top:5px;
+	color:#264dbe;
+	font-size:20px;
+}
+
+.person-news>span{
+	float:left;
+	color:#666;
+	font-size:12px;
+	margin-left:5px;
+}
+
+.person-mes{
+    position: absolute;
+    top: 56px;
+    right: 2px;
+    z-index: 1000;
+    width: 220px;
+    height: 340px;
+    background: rgba(75,75,75,.9);
+    display:none;
+}
+
+.person-mes.showLog{
+	display:block!important;
+}
+
+.headPortrait{
+    width:100%;
+    height:135px;
+    padding-top:20px;
+}
+
+.headPortrait>i {
+    display: block;
+    margin:0 auto;
+    width: 80px;
+    height: 80px;
+    border:2px solid #ccc;
+    border-radius: 80px;
+    text-align: center;
+    line-height: 80px;
+    background-color: #fff;
+    background-position: center center;
+    background-size: contain;
+}
+
+.headPortrait-mes{
+    padding-top:10px;
+}
+
+.reMessage{
+	margin-top:15px;
+	text-align:center;
+	line-height:20px;
+}
+
+.reMessage>a{
+	border:1px solid #fff;
+	color:#fff;
+	padding:5px 10px;
+	border-radius:5px;
+	margin:0 10px;
+}
+
+.reMessage>a:hover{
+	color:#407de3;
+	border:1px solid #407de3;
+}
+
+.pic-left-mes:after {
+    content: "";
+    display: inline-block;
+    width: 100%;
+    overflow: hidden;
+    height: 0;
+}
+
+.headPortrait-mes>p {
+    width: 180px;
+    float: left;
+    margin-left: 30px;
+}
+
+.headPortrait-mes>p>span {
+    float: left;
+    height: 25px;
+    line-height: 25px;
+    font-size: 12px;
+    color:#ccc;
+}
+
+.pic-right-mes{
+    width:110px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    margin-left: 5px;
+    color:#fff!important;
+}
+
+.pic-left-mes {
+    width: 55px;
+    color: #ccc;
+    font-size: 12px;
+    line-height: 25px;
+    font-weight: normal;
+    display: inline-block;
+    text-align: justify;
+    vertical-align: middle;
+    margin-right: 5px;
+}
+
+
+/* .person_bottom{
+	width: 200px;
+	margin:10px;
+	display: -webkit-flex; Safari
+  	display: flex;
+  	justify-content:space-between;
+}
+
+.person_bottom>button{
+	width:80px;
+    height: 30px;
+    background-color: #407de3;
+    color: #fff;
+    border: none;
+    outline: none;
+    margin:10px;
+    border-radius: 3px;
+    cursor: pointer;
+} */
+
+.exitBtn{
+	width: 200px;
+	height: 30px;
+    background-color:#fff;
+    color: #407de3;
+    border: none;
+    outline: none;
+    margin:10px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.exitBtn:hover{
+	background-color:#f6f6f6;
+}
+
+/*个人信息*/
+
+
+/* 侧边栏 */
+.mySlider{
+	width:220px !important;
+	background-color:#4b4b4b;
+	overflow-y: auto;
+}
+
+/*.mySlider_con{
+	width:100%;
+	height:100%;
+	background:rgba(75,75,75,.8);
+}*/
+
+.slider-list{
+	line-height:46px;
+	cursor:pointer;
+	color:#f1f1f1;
+	height:46px;
+	overflow:hidden;
+}
+
+.slider-list.active{
+	height:auto!important;
+}
+
+.slider-first{
+	line-height:46px;
+	padding-left:10px;
+	position:relative;
+}
+
+.slider-first:hover{
+	background:#f6f6f6;
+	color:#264dbe;
+}
+
+
+.slider-first>span{
+	display:inline-block;
+	width:140px;
+}
+
+.sliderIcon{
+	float: left;
+    width: 30px;
+    height: 46px;
+    display: -webkit-flex;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sm_slider{
+	padding-left:25px;
+	background:#1f252b;
+	color:#999;
+}
+
+.sm_slider>i{
+	color:#999;
+	width:20px;
+	text-align: center;
+}
+
+.sm_slider:hover{
+	color:#fff;
+}
+
+.sm_slider:hover>i{
+	color:#fff;
+}
+
+.sm_slider.on{
+	color:#264dbe;
+	background:#F6F6F6;
+}
+
+.sm_slider.on>i{
+	color:#fff;
+}
+
+.rightDown{
+	position:absolute;
+	top:12px;
+	transition: -webkit-transform 0.5s ease-out;
+	-webkit-transition: -webkit-transform 0.5s ease-out;
+    -moz-transition: -moz-transform 0.5s ease-out;
+    -o-transition: -o-transform 0.5s ease-out;
+    -ms-transition: -ms-transform 0.5s ease-out;
+}
+
+.slider-list.active .rightDown{
+	transform: rotateZ(90deg);
+	webkit-transform: rotateZ(90deg);
+    -moz-transform: rotateZ(90deg);
+    -o-transform: rotateZ(90deg);
+    -ms-transform: rotateZ(90deg);
+}
+
+
+/* tab标签页 */
+.tabs-header{
+	background:#fff!important;
+	padding:0!important;
+	border-top: 5px solid #f6f6f6;
+}
+
+.tabs{
+	height:36px!important;
+	border-color:#264dbe;
+	border-width: 0 0 2px 0;
+}
+
+.tabs li{
+	height:36px!important;
+	margin:0!important;
+}
+
+.tabs li a.tabs-inner{
+	height: 36px!important;
+    line-height: 36px!important;
+}
+
+.tabs li a.tabs-inner{
+	border-radius:0;
+	border:none;
+	border-right:1px solid #d9d9d9;	
+    border-bottom: none;
+    background:#fff!important;
+    padding: 0 25px!important;
+}
+
+.tabs li.tabs-selected{
+	background:#264dbe!important;
+}
+
+.tabs li.tabs-selected a.tabs-inner{
+	border-bottom: none!important;
+	background:#264dbe!important;
+	color:#fff;
+}
+
+.tabs li.tabs-selected .tabs-close{
+	color:#fff;
+}
+
+
+.btnLink{
+	padding-top:50px;
+}
+    	
+.btnLink>a{
+	display:block;
+	margin:20px auto;
+	width:40px;
+	height:24px;
+	padding-top:6px!important;
+}
+
+/** 详情页面 table 样式 */
+.detail-table tr{
+	font-size:12px;
+}
+
+.detail-table tr td:nth-child(1),.detail-table tr td:nth-child(3){
+	padding: 10px;
+	background: #f7f7f7;
+	text-align: right;
+	width:15%;
+	color: #3c3c3c;
+}
+.detail-table tr td:nth-child(2),.detail-table tr td:nth-child(4){
+	padding-left: 5px;
+	text-align: left;
+	width:35%;
+	color: #c3c3c3;
+}
+
+.remarks{
+	word-wrap:break-word;
+	word-break:break-all;
+}
+
+.personPic{
+	width:90px;
+	height:90px;
+	margin: auto;
+}
+
+/* 表格分块标题样式 */
+.chapter {
+	height: 30px !important; 
+	line-height: 30px !important; 
+	padding: 5px 10px !important; 
+	border-left: 5px solid #264dbe !important;
+	font-weight: bold !important;
+	color: #3c3c3c !important;
+	text-align: left !important;
+	background: white !important;
+	font-size: 16px !important;
+	border-right: none !important;
+	border-bottom: none !important;
+}
+
+table tr td div,table tr td p{
+	word-break: break-word;
+}
+
+
+
+/* 错误页面 */
+
+.error_page{
+	width:300px;
+	margin:40px auto 0;
+}
+
+.error_page img{
+	width:100%;
+}
+
+.error_page p{
+	text-align:center;
+	color:#666;
+	margin-top:30px;
+}
+
+/* 错误页面 */
+
+/* 错误页面 */
+
+.user_updownload{
+	position:relative;
+}
+
+.user_updownload_file{
+	position: absolute;
+    top: 10px;
+    left: 0;
+    width: 90px;
+    height: 30px;
+    overflow: hidden;
+    opacity: 0;
+    z-index: 10;
+    font-size:0;
+    cursor:pointer;
+}
+
+.user_updownload_btn{
+	position:absolute;
+	top:10px;
+	left:0;
+	z-index:0;
+	display:block;
+	width:90px;
+	height:30px;
+	line-height:30px;
+	text-align:center;
+	color:#fff;
+	border-radius:10px;
+	background:#0b87ff;
+}
+
+#app-tabs>div.tabs-panels {
+	width: 100%!important;
+	padding-left: 10px;
+	padding-top: 10px;
+	padding-right: 10px;
+	box-sizing: border-box;
+	background-color:#f6f6f6;
+}
+
+
+/* easyui 样式重置 */
+.color-darkblue, .button-darkblue, .button-primary, .color-primary, .progressbar-darkblue .progressbar-value .progressbar-text{
+	background-color: #264dbe !important;
+}
+
+.color-blue, .button-blue, .button-default, .color-info, .progressbar-blue .progressbar-value .progressbar-text{
+	background-color: #264dbe !important;	
+}
+
+.color-green, .button-green, .button-success, .color-success, .progressbar-green .progressbar-value .progressbar-text{
+	background-color: #64e16b !important;
+}
+
+.color-red, .button-red, .button-danger, .color-important, .progressbar-red .progressbar-value .progressbar-text{
+	background-color: #f88380 !important;	
+}
+
+.easyui-linkbutton.reset{
+	background-color: #64e16b !important;
+	color:#fff;
+}
+
+.datagrid-header td, .datagrid-body td, .datagrid-footer td{
+	border:none !important;
+}
+
+.datagrid-header, .datagrid-td-rownumber{
+	background-color: #edeefe !important;
+}
+
+.datagrid-htable span{
+	color:#666 !important;
+	font-size:14px !important;
+}
+
+.datagrid-btable div{
+	color:#999 !important;
+	font-size:14px !important;
+}
+
+.datagrid-toolbar .textbox{
+	border:1px solid #264dbe;
+	border-radius:4px;
+}
+
+.datagrid-toolbar .textbox-focused{
+	box-shadow:0 0 5px 0 #264dbe;
+}
+
+.datagrid-pager span{
+	font-size:14px;
+}
+
+.panel-header, .accordion, .accordion .accordion-header{
+	background: #fff;
+}
+
+.panel-header{
+	border-bottom:none;
+}
+
+.datagrid-row-alt{
+	background:#f6f6f6;
+}
+
+/* easyui 样式重置 */

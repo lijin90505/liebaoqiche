@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.activity.dao.ActivityCardDao">
+
+    <sql id="allColumns">
+    	lac.id as id,    	
+    	lac.card_id as cardId,    	
+    	lac.activity_id as activityId,    	
+    	lac.is_delete as isDelete,    	
+    	lac.creater as creater,    	
+    	lac.create_time as createTime,    	
+    	lac.modifier as modifier,    	
+    	lac.modify_time as modifyTime,    	
+    	lac.version as version,    	
+    	lac.remarks as remarks    	
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and lac.id = #{id}
+		</if>
+		<if test="cardId != null and cardId != ''">
+			and lac.card_id = #{cardId}
+		</if>
+		<if test="activityId != null and activityId != ''">
+			and lac.activity_id = #{activityId}
+		</if>
+		<if test="creater != null and creater != ''">
+			and lac.creater = #{creater}
+		</if>
+		<if test="createTime != null">
+			and lac.create_time = #{createTime}
+		</if>
+		<if test="modifier != null and modifier != ''">
+			and lac.modifier = #{modifier}
+		</if>
+		<if test="modifyTime != null">
+			and lac.modify_time = #{modifyTime}
+		</if>
+		<if test="version != null and version != ''">
+			and lac.version = #{version}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lac.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lac.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lac.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lac.UPDATE_DATE = #{updateDate}
+		</if>
+		<if test="isDelete != null">
+			and lac.IS_DELETE = #{isDelete}
+		</if>
+		-->
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lac.${order} ${desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_activity_card(
+			id,
+	    	card_id,	    	
+	    	activity_id,	    	
+	    	is_delete,	    	
+	    	creater,	    	
+	    	create_time,	    	
+	    	modifier,	    	
+	    	modify_time,	    	
+	    	version,	    	
+	    	remarks	    	
+		) values(
+			#{id},
+			#{cardId},
+			#{activityId},
+			#{isDelete},			 
+			#{creater},			 
+			#{createTime},			 
+			#{modifier},			 
+			#{modifyTime},			 
+			#{version},			 
+			#{remarks}			 
+		)
+	</insert>
+	
+	<select id="findById" resultType="ActivityCard">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_activity_card lac
+			<include refid="joinOthers"/>
+		where
+			lac.id = #{id}
+	</select>
+	
+	<update id="deleteAll">
+		delete from liebao_activity_card
+	</update>
+	
+	<!-- 检查是否关联卡券 -->
+	<select id="checkByActivityId" resultType="Integer">
+		select count(1) from liebao_activity_card lac 
+		where
+		lac.activity_id = #{activityId} 
+		and lac.is_delete = '0'
+	</select>
+	
+	<select id="findByActivityId" resultType="ActivityCard">
+		select
+		<include refid="allColumns"/>
+		from
+		liebao_activity_card lac
+		where
+		lac.activity_id = #{activityId}
+	</select>
+	
+	<select id="findOneByObject" resultType="ActivityCard">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_activity_card lac
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(lac.id)
+		from
+			liebao_activity_card lac
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="getChoosedCard" resultType="Card" >
+		SELECT lpc.* FROM liebao_card lpc
+		INNER JOIN liebao_activity_card lpcpa ON lpc.ID=lpcpa.card_id
+		INNER JOIN liebao_activity la ON la.ID=lpcpa.activity_id
+		INNER JOIN liebao_activity_details lad ON lad.ID=la.activity_details_id
+		WHERE lad.id=#{activityId}
+		AND lpc.IS_DELETE = 0
+		order by lpc.ID
+	</select>
+	
+	<select id="getUnChoosedCard" resultType="Card" >
+		SELECT lpc.* FROM liebao_card lpc
+		WHERE lpc.ID NOT IN
+		(SELECT card_id FROM liebao_activity_card
+		WHERE activity_id=#{activityId} )
+		AND IS_DELETE = 0 AND state = '0'
+		order by lpc.ID
+	</select>
+	
+	<delete id="deleteByActivityId">
+		delete from liebao_activity_card where activity_id = #{activity_id}
+	</delete>
+	
+	<delete id="deleteByAll">
+		delete from liebao_activity_card
+	</delete>
+	
+	<select id="findByCardId" resultType="ActivityCard">
+		select 1 from liebao_activity_card where is_delete ='0'
+		and card_id = #{cardId}
+	</select>
+	
+	<select id="findByObject" resultType="ActivityCard">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_activity_card lac
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		order by create_time desc
+		<include refid="searchOrder"/>
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_activity_card set
+			card_id=#{cardId},			
+			activity_id=#{activityId},			
+			is_delete=#{isDelete},			
+			creater=#{creater},			
+			create_time=#{createTime},			
+			modifier=#{modifier},			
+			modify_time=#{modifyTime},			
+			version=#{version},			
+			remarks=#{remarks}			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_activity_card where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_activity_card where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_activity_card set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_activity_card set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

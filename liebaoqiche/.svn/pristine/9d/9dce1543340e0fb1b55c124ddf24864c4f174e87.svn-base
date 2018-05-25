@@ -1,0 +1,159 @@
+<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<!DOCTYPE>
+<html>
+<head>
+	<title>SystemExpStatistics</title>
+	<%@ include file="/WEB-INF/views/include/head.jsp"%>
+</head>
+<body>
+	<%@ include file="/WEB-INF/views/include/loading.jsp"%>
+	<div class="easyui-layout" data-options="fit:true">
+		<div data-options="region:'center'">
+    		<table style="width: 100%;">
+    			<tbody>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						id
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemExpStatistics.id}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						is_delete
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemExpStatistics.isDelete}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						sys_exp_rule_id
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemExpStatistics.sysExpRuleId}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						sys_exp_rule_name
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemExpStatistics.sysExpRuleName}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						sys_exp_level_id
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemExpStatistics.sysExpLevelId}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						sys_exp_level_name
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemExpStatistics.sysExpLevelName}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						total_exp
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemExpStatistics.totalExp}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						system_id
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemExpStatistics.systemId}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						system_name
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemExpStatistics.systemName}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						creater
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemExpStatistics.creater}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						create_time
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemExpStatistics.createTime}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						modifier
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemExpStatistics.modifier}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						modify_time
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemExpStatistics.modifyTime}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						version
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemExpStatistics.version}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						remark
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemExpStatistics.remark}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						<label class="label-top">备注:</label>
+    						<input class="easyui-textbox" name="remarks" style="width:99.5%; height:80px;" data-options="multiline:true">
+    					</td>
+    				</tr>
+    			</tbody>
+    		</table>
+		</div>
+		<div data-options="region:'south',border:false" style="text-align:left; padding:5px;">
+            <a id="btnCancel_SystemExpStatistics" href="javascript:void(0)" class="easyui-linkbutton button-warning" style="width: 80px;"><i class="fa fa-remove fa-lg"></i>&nbsp;&nbsp;取消</a>
+        </div>
+   	</div>
+    
+    <!-- js脚本，必须写在body中，tab的url加载模式只会异步加载body中的内容到tab中 -->
+	<script type="text/javascript">
+		require(['jquery','common'], function($){
+			// 给保存按钮添加点击事件
+			$("#btnCancel_SystemExpStatistics").on('click', function(){
+				history.go(-1);
+			});
+		});
+	</script>
+</body>
+</html>

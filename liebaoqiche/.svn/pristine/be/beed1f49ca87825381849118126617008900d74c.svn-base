@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.recon.dao.PaySystemLocalReconDao">
+
+    <sql id="allColumns">
+    	lpslr.id as id,    	
+    	lpslr.order_id as orderId,    	
+    	lpslr.transaction_id as transactionId,    	
+    	lpslr.rencon_type as renconType,    	
+    	lpslr.rencon_time as renconTime,    	
+    	lpslr.bill_type as billType,    	
+    	lpslr.trade_amount as tradeAmount,    	
+    	lpslr.trade_time as tradeTime,    	
+    	lpslr.trade_type as tradeType,    	
+    	lpslr.trade_state as tradeState,    	
+    	lpslr.recon_state as reconState,    	
+    	lpslr.fail_message as failMessage,    	
+    	lpslr.creater as creater,    	
+    	lpslr.create_time as createTime,    	
+    	lpslr.modifier as modifier,    	
+    	lpslr.modify_time as modifyTime,    	
+    	lpslr.remarks as remarks    	
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and lpslr.id = #{id}
+		</if>
+		<if test="transactionId != null and transactionId != ''">
+			and lpslr.transaction_id = #{transactionId}
+		</if>
+		<if test="renconType != null and renconType != ''">
+			and lpslr.rencon_type = #{renconType}
+		</if>
+		<if test="tradeAmount != null and tradeAmount != ''">
+			and lpslr.trade_amount = #{tradeAmount}
+		</if>
+		<if test="tradeType != null and tradeType != ''">
+			and lpslr.trade_type = #{tradeType}
+		</if>
+		<if test="tradeState != null and tradeState != ''">
+			and lpslr.trade_state = #{tradeState}
+		</if>
+		<if test="reconState != null and reconState != ''">
+			and lpslr.recon_state = #{reconState}
+		</if>
+		<if test="failMessage != null and failMessage != ''">
+			and lpslr.fail_message = #{failMessage}
+		</if>
+		<if test="creater != null and creater != ''">
+			and lpslr.creater = #{creater}
+		</if>
+		<if test="createTime != null">
+			and lpslr.create_time = #{createTime}
+		</if>
+		<if test="modifier != null and modifier != ''">
+			and lpslr.modifier = #{modifier}
+		</if>
+		<if test="modifyTime != null">
+			and lpslr.modify_time = #{modifyTime}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lpslr.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lpslr.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lpslr.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lpslr.UPDATE_DATE = #{updateDate}
+		</if>
+		<if test="isDelete != null">
+			and lpslr.IS_DELETE = #{isDelete}
+		</if>
+		-->
+		<if test="orderId != null and orderId != ''">
+			and lpslr.order_id = #{orderId}
+		</if>
+		<if test="renconTime != null and renconTime != ''">
+			and lpslr.rencon_time = #{renconTime}
+		</if>
+		<if test="tradeTime != null and tradeTime != ''">
+			and lpslr.trade_time = #{tradeTime}
+		</if>
+		<if test="billType != null and billType != ''">
+			and lpslr.bill_type = #{billType}
+		</if>
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lpslr.#{order} #{desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_pay_system_local_recon(
+	    	order_id,	    	
+	    	transaction_id,	    	
+	    	rencon_type,	    	
+	    	rencon_time,	    	
+	    	bill_type,	    	
+	    	trade_amount,	    	
+	    	trade_time,	    	
+	    	trade_type,	    	
+	    	trade_state,	    	
+	    	recon_state,	    	
+	    	fail_message,	    	
+	    	creater,	    	
+	    	create_time,	    	
+	    	modifier,	    	
+	    	modify_time,	    	
+	    	remarks	    	
+		) values(
+			#{orderId},			 
+			#{transactionId},			 
+			#{renconType},			 
+			#{renconTime},			 
+			#{billType},			 
+			#{tradeAmount},			 
+			#{tradeTime},			 
+			#{tradeType},			 
+			#{tradeState},			 
+			#{reconState},			 
+			#{failMessage},			 
+			#{creater},			 
+			#{createTime},			 
+			#{modifier},			 
+			#{modifyTime},			 
+			#{remarks}			 
+		)
+	</insert>
+	
+	<select id="findById" resultType="PaySystemLocalRecon">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_pay_system_local_recon lpslr
+			<include refid="joinOthers"/>
+		where
+			lpslr.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="PaySystemLocalRecon">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_pay_system_local_recon lpslr
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(lpslr.id)
+		from
+			liebao_pay_system_local_recon lpslr
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="PaySystemLocalRecon">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_pay_system_local_recon lpslr
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+			order by lpslr.trade_time desc
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_pay_system_local_recon set
+			order_id=#{orderId},			
+			transaction_id=#{transactionId},			
+			rencon_type=#{renconType},			
+			rencon_time=#{renconTime},			
+			bill_type=#{billType},			
+			trade_amount=#{tradeAmount},			
+			trade_time=#{tradeTime},			
+			trade_type=#{tradeType},			
+			trade_state=#{tradeState},			
+			recon_state=#{reconState},			
+			fail_message=#{failMessage},			
+			creater=#{creater},			
+			create_time=#{createTime},			
+			modifier=#{modifier},			
+			modify_time=#{modifyTime},			
+			remarks=#{remarks}			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_pay_system_local_recon where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_pay_system_local_recon where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_pay_system_local_recon set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_pay_system_local_recon set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

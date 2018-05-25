@@ -1,0 +1,81 @@
+package com.ibest.activity.dao;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.ibest.framework.common.persistence.MyBatisDao;
+import com.ibest.activity.entity.ActivityDetails;
+import com.ibest.accesssystem.entity.AccessSystem;
+import com.ibest.activity.dto.input.ActivityDetailsInputDTO;
+
+@MyBatisDao
+public interface ActivityDetailsDao {
+
+	/**
+	 * 新增
+	 * @param entity
+	 * @return
+	 */
+	public int insert(ActivityDetails activityDetails);
+	
+	/**
+	 * 根据主键ID删除
+	 * @param id
+	 * @return
+	 */
+	public int deleteById(String id);
+	
+	/**
+	 * 批量删除
+	 * @param ids
+	 * @return
+	 */
+	public int deleteByIds(@Param("ids") List<String> ids); 
+	
+	/**
+	 * 修改
+	 * @param entity
+	 * @return
+	 */
+	public int update(ActivityDetails activityDetails);
+	
+	/**
+	 * 根据Id获取唯一记录
+	 * @param id
+	 * @return
+	 */
+	public ActivityDetails findById(String id);
+	
+	public ActivityDetails checkNameUnique(String activityName);
+	
+	/**
+	 * 根据对象查询符合条件结果列表
+	 * @param accessSystemInputDto
+	 * @return
+	 */
+	public List<ActivityDetails> findByPublish();
+	
+	/**
+	 * 根据指定对象查询唯一结果
+	 * @param entity
+	 * @return
+	 */
+	public ActivityDetails findOneByObject(ActivityDetailsInputDTO activityDetailsInputDto);
+	
+	/**
+	 * 根据对象查询符合条件结果列表
+	 * @param entity
+	 * @return
+	 */
+	public List<ActivityDetails> findByObject(ActivityDetailsInputDTO activityDetailsInputDto);
+	
+	
+	/**
+	 * 根据对象查询符合条件记录总条数
+	 * @param entity
+	 * @return
+	 */
+	public long countByObject(ActivityDetailsInputDTO activityDetailsInputDto);
+	
+}

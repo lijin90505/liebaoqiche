@@ -1,0 +1,224 @@
+package com.ibest.recon.entity;
+
+import java.util.Date;
+
+import com.ibest.framework.common.persistence.BaseEntity;
+
+public class OutSystemLocalRecon extends BaseEntity {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+					
+	/**
+	 * 订单号
+	 */ 
+	private String orderId;
+				
+	/**
+	 * 支付系统流水号
+	 */ 
+	private String transactionId;
+				
+	/**
+	 * 对账类型;00微信;01支付宝;02银联
+	 */ 
+	private String renconType;
+				
+	/**
+	 * 对账日期:20180424
+	 */ 
+	private String renconTime;
+				
+	/**
+	 * 账单类型;00支付成功;01退款
+	 */ 
+	private String billType;
+				
+	/**
+	 * 交易金额
+	 */ 
+	private String tradeAmount;
+				
+	/**
+	 * 交易时间
+	 */ 
+	private String tradeTime;
+				
+	/**
+	 * 支付类型
+	 */ 
+	private String tradeType;
+				
+	/**
+	 * 支付状态
+	 */ 
+	private String tradeState;
+				
+	/**
+	 * 对账状态;00成功；01状态不一致；02金额不一致
+	 */ 
+	private String reconState;
+				
+	/**
+	 * 对账失败原因
+	 */ 
+	private String failMessage;
+				
+	/**
+	 * 创建人
+	 */ 
+	private String creater;
+				
+	/**
+	 * 创建时间
+	 */ 
+	private Date createTime;
+				
+	/**
+	 * 修改人
+	 */ 
+	private String modifier;
+				
+	/**
+	 * 修改时间
+	 */ 
+	private Date modifyTime;
+									
+	public String getOrderId(){
+		return orderId;
+	}
+	
+	public void setOrderId(String orderId){
+		this.orderId = orderId;
+	}
+	
+				
+	public String getTransactionId(){
+		return transactionId;
+	}
+	
+	public void setTransactionId(String transactionId){
+		this.transactionId = transactionId;
+	}
+	
+				
+	public String getRenconType(){
+		return renconType;
+	}
+	
+	public void setRenconType(String renconType){
+		this.renconType = renconType;
+	}
+	
+				
+	public String getRenconTime(){
+		return renconTime;
+	}
+	
+	public void setRenconTime(String renconTime){
+		this.renconTime = renconTime;
+	}
+	
+				
+	public String getBillType(){
+		return billType;
+	}
+	
+	public void setBillType(String billType){
+		this.billType = billType;
+	}
+	
+				
+	public String getTradeAmount(){
+		return tradeAmount;
+	}
+	
+	public void setTradeAmount(String tradeAmount){
+		this.tradeAmount = tradeAmount;
+	}
+	
+				
+	public String getTradeTime(){
+		return tradeTime;
+	}
+	
+	public void setTradeTime(String tradeTime){
+		this.tradeTime = tradeTime;
+	}
+	
+				
+	public String getTradeType(){
+		return tradeType;
+	}
+	
+	public void setTradeType(String tradeType){
+		this.tradeType = tradeType;
+	}
+	
+				
+	public String getTradeState(){
+		return tradeState;
+	}
+	
+	public void setTradeState(String tradeState){
+		this.tradeState = tradeState;
+	}
+	
+				
+	public String getReconState(){
+		return reconState;
+	}
+	
+	public void setReconState(String reconState){
+		this.reconState = reconState;
+	}
+	
+				
+	public String getFailMessage(){
+		return failMessage;
+	}
+	
+	public void setFailMessage(String failMessage){
+		this.failMessage = failMessage;
+	}
+	
+				
+	public String getCreater(){
+		return creater;
+	}
+	
+	public void setCreater(String creater){
+		this.creater = creater;
+	}
+	
+				
+	public Date getCreateTime(){
+		return createTime;
+	}
+	
+	public void setCreateTime(Date createTime){
+		this.createTime = createTime;
+	}
+	
+				
+	public String getModifier(){
+		return modifier;
+	}
+	
+	public void setModifier(String modifier){
+		this.modifier = modifier;
+	}
+	
+				
+	public Date getModifyTime(){
+		return modifyTime;
+	}
+	
+	public void setModifyTime(Date modifyTime){
+		this.modifyTime = modifyTime;
+	}
+	
+				}

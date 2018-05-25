@@ -1,0 +1,675 @@
+package com.ibest.pay.controller;
+
+import java.io.File;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.ibest.framework.common.enums.EnumsRtnMapResult;
+import com.ibest.framework.common.persistence.BaseController;
+import com.ibest.framework.common.utils.DateUtil;
+import com.ibest.framework.common.utils.ExcelUtils;
+import com.ibest.framework.common.utils.PageList;
+import com.ibest.pay.dto.input.PayInfoCount;
+import com.ibest.pay.dto.input.PayInfoInputDTO;
+import com.ibest.pay.dto.input.PayInfoTime;
+import com.ibest.pay.entity.PayInfo;
+import com.ibest.pay.enums.EnumsDevice;
+import com.ibest.pay.enums.EnumsOrderStatus;
+import com.ibest.pay.enums.EnumsPayType;
+import com.ibest.pay.service.PayInfoService;
+
+@Controller
+@RequestMapping(value="${adminPath}/pay/payInfo")
+public class PayInfoController extends BaseController {
+	
+	private static final Logger logger = LoggerFactory.getLogger(PayInfoController.class);
+	
+	private static final String TEMPLATE_EXPORT = "payInfoExportTemplate.xlsx";
+	
+	@Autowired
+	private PayInfoService payInfoService;
+	
+	/**
+	* 进入到列表页
+	*/
+	@RequestMapping(value="/")
+	public String index(){
+		return "module/pay/payInfo/payInfoList";
+	}
+	
+	/**
+	* 进入到表单页-创建
+	*/
+	@RequestMapping(value="/add")
+	public String add(){
+		
+		return "module/pay/payInfo/payInfoForm";
+	}
+	
+	/**
+	 * 订单号流水号查询
+	 * @throws Exception 
+	 */
+	@ResponseBody
+	@RequestMapping(value="/findAll")
+	public String findAll(String orderNo) throws Exception {
+		List<PayInfo> p = payInfoService.findAllOrderId();
+		List<String> orderId = new ArrayList<String>();
+		p.forEach(x -> {
+			orderId.add(x.getOrderId());
+			if(x.getSerialNo()!=null || x.getSerialNo()!="")
+				orderId.add(x.getSerialNo());
+		});
+		if(orderId.contains(orderNo))
+			return "false";
+		return "true";
+	}
+	/**
+	* 进入到表单页，编辑
+	*/
+	@RequestMapping(value="/edit")
+	public String edit(@RequestParam String id, Model model){
+		try {
+			if(StringUtils.isNotEmpty(id)){
+				PayInfo payInfo = payInfoService.findById(id);
+				if(payInfo != null){
+					model.addAttribute("payInfo", payInfo);
+				}else{
+					setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "您查看的信息不存在！", model);
+				}
+			}else{
+				setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "请选择需要编辑的信息！", model);
+			}
+		} catch (Exception e) {
+			setRtnCodeAndMsg(EnumsRtnMapResult.EXCEPTION.getCode(), EnumsRtnMapResult.EXCEPTION.getMsg(), model);
+		}
+		return "module/pay/payInfo/payInfoForm";
+	}
+	
+	/**
+	* 进入到详情页
+	*/
+	@RequestMapping(value="/view")
+	public String view(@RequestParam String id, Model model){
+		try {
+			if(StringUtils.isNotEmpty(id)){
+				PayInfo payInfo = payInfoService.findById(id);
+				if(payInfo != null){
+					model.addAttribute("payInfo", payInfo);
+				}else{
+					setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "您查看的信息不存在！", model);
+				}
+			}else{
+				setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "请选择需要查看的信息！", model);
+			}
+		} catch (Exception e) {
+			setRtnCodeAndMsg(EnumsRtnMapResult.EXCEPTION.getCode(), EnumsRtnMapResult.EXCEPTION.getMsg(), model);
+		}
+		return "module/pay/payInfo/payInfoDetail";
+	}
+
+	/**
+	* 异步分页查询
+	*/
+	@ResponseBody
+	@RequiresPermissions("payInfo:query")
+	@RequestMapping(value="/list")
+	public PageList<PayInfo> list(PayInfoInputDTO payInfo, HttpServletRequest request){
+		
+		PageList<PayInfo> pageList = new PageList<PayInfo>();
+		
+		try {
+			//设置分页参数
+			super.setPage(request, pageList);
+		
+			pageList = payInfoService.findByPage(pageList, payInfo);
+			
+			List<PayInfo> payInfoList = pageList.getRows();
+			List<PayInfo> list = new ArrayList<PayInfo>();
+			if(payInfoList!=null && payInfoList.size()>0) {
+				for (PayInfo info : payInfoList) {
+					
+					info.setPayType(EnumsPayType.getDesc(info.getPayType()));
+					
+					info.setDeviceId(EnumsDevice.getDesc(info.getDeviceId()));
+					
+					if(info.getOrderStatus()!=null) {
+						info.setOrderStatus(EnumsOrderStatus.getDesc(info.getOrderStatus()));
+					}
+					info.setAmount(changeF2Y(info.getAmount())+"元");
+					list.add(info);
+				}
+			}
+			pageList.setRows(list);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return pageList;
+	}
+	
+	public static String changeF2Y(String amount){    
+        return BigDecimal.valueOf(Long.valueOf(amount)).divide(new BigDecimal(100)).toString();    
+    }
+	
+	/**
+	* 异步表单提交
+	*/
+	@ResponseBody
+	@RequiresPermissions("payInfo:create")
+	@RequestMapping(value="create")
+	public Map<String, Object> insert(PayInfo payInfo){
+
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		setRtnCodeAndMsgBySuccess(rtnMap, "保存成功");
+		
+		try {
+			int result = payInfoService.insert(payInfo);
+			if(result == 0){
+				setRtnCodeAndMsgByFailure(rtnMap, "保存失败");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+		return rtnMap;
+	}
+	
+	@ResponseBody
+	@RequiresPermissions("payInfo:update")
+	@RequestMapping(value="update")
+	public Map<String, Object> update(PayInfo payInfo){
+
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		setRtnCodeAndMsgBySuccess(rtnMap, "保存成功");
+		
+		try {
+			int result = payInfoService.update(payInfo);
+			if(result == 0){
+				setRtnCodeAndMsgByFailure(rtnMap, "保存失败");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+		return rtnMap;
+	}
+	
+	@ResponseBody
+	@RequiresPermissions("payInfo:delete")
+	@RequestMapping(value="delete")
+	public Map<String, Object> delete(@RequestParam(required=true) String ids){
+		
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		setRtnCodeAndMsgBySuccess(rtnMap, "删除成功");
+		
+		try {
+			int result = payInfoService.deleteByIds(ids);
+			if(result == 0){
+				setRtnCodeAndMsgByFailure(rtnMap, "删除失败");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+		return rtnMap;
+	}
+	
+	/**
+	 * 交易金额
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/countAmount")
+	public String countAmount(PayInfoTime payInfoTime) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Calendar calendar = Calendar.getInstance();
+		// 默认查询当天的交易量
+		String endDate = payInfoTime.getEndDate();
+		String beginDate = payInfoTime.getBeginDate();
+		if (null == endDate && null == beginDate) {
+			endDate = sdf2.format(new Date());
+			calendar.setTime(new Date());
+			calendar.add(Calendar.DAY_OF_MONTH, -1);
+			Date time = calendar.getTime();
+			beginDate = sdf.format(time) + " 23:59:59";
+			payInfoTime.setBeginDate(beginDate);
+			payInfoTime.setEndDate(endDate);
+		}
+		try {
+			String countAmount = payInfoService.countAmount(payInfoTime);
+			return changeF2Y(countAmount);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return "";
+	}
+
+	/**
+	 * 交易量
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/countNum")
+	public String countPayInfoNum(PayInfoTime payInfoTime) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Calendar calendar = Calendar.getInstance();
+		// 默认查询当天的交易量
+		String endDate = payInfoTime.getEndDate();
+		String beginDate = payInfoTime.getBeginDate();
+		if (null == endDate && null == beginDate) {
+			endDate = sdf2.format(new Date());
+			calendar.setTime(new Date());
+			calendar.add(Calendar.DAY_OF_MONTH, -1);
+			Date time = calendar.getTime();
+			beginDate = sdf.format(time) + " 23:59:59";
+			payInfoTime.setBeginDate(beginDate);
+			payInfoTime.setEndDate(endDate);
+		}
+		try {
+			String payInfoNum = payInfoService.countPayInfoNum(payInfoTime);
+			return payInfoNum;
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return "";
+	}
+
+	/**
+	 * 平均完成时间
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/countTime")
+	public String countTime(PayInfoTime payInfoTime) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Calendar calendar = Calendar.getInstance();
+		// 默认查询当天的交易量
+		String endDate = payInfoTime.getEndDate();
+		String beginDate = payInfoTime.getBeginDate();
+		if (null == endDate && null == beginDate) {
+			endDate = sdf2.format(new Date());
+			calendar.setTime(new Date());
+			calendar.add(Calendar.DAY_OF_MONTH, -1);
+			Date time = calendar.getTime();
+			beginDate = sdf.format(time) + " 23:59:59";
+			payInfoTime.setBeginDate(beginDate);
+			payInfoTime.setEndDate(endDate);
+		}
+		try {
+			String time = payInfoService.countPayInfoTime(payInfoTime);
+			return time;
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return "";
+	}
+
+	/**
+	 * 支付成功转换率
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/countRate")
+	public String countConversionRate(PayInfoTime payInfoTime) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Calendar calendar = Calendar.getInstance();
+		// 默认查询当天的交易量
+		String endDate = payInfoTime.getEndDate();
+		String beginDate = payInfoTime.getBeginDate();
+		if (null == endDate && null == beginDate) {
+			endDate = sdf2.format(new Date());
+			calendar.setTime(new Date());
+			calendar.add(Calendar.DAY_OF_MONTH, -1);
+			Date time = calendar.getTime();
+			beginDate = sdf.format(time) + " 23:59:59";
+			payInfoTime.setBeginDate(beginDate);
+			payInfoTime.setEndDate(endDate);
+		}
+		try {
+			String rate = payInfoService.countPayInfoRate(payInfoTime);
+			return rate;
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return "";
+	}
+
+	/**
+	 * 首页的柱状图
+	 * @throws Exception 
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/countAmounts")
+	public Object countAmounts() throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		PayInfoTime payInfoTime =  weekTime();
+		String total = payInfoService.countAmount(payInfoTime);
+		
+		List<PayInfoCount> lp = payInfoService.countAmounts(payInfoTime);
+		double[] data = new double[7];
+		for (PayInfoCount p : lp) {
+			// 应该是查出一个星期每天的数据，这是在某一天为空的情况下处理
+			if(lp.size()!=7) {
+				String s = getWeekOfDate(p.getTime());
+				switch (s) {
+				case "1":
+					data[0]=Double.parseDouble(changeF2Y(p.getMoney()));
+					break;
+				case "2":
+					data[1]=Double.parseDouble(changeF2Y(p.getMoney()));
+					break;
+				case "3":
+					data[2]=Double.parseDouble(changeF2Y(p.getMoney()));
+					break;
+				case "4":
+					data[3]=Double.parseDouble(changeF2Y(p.getMoney()));
+					break;
+				case "5":
+					data[4]=Double.parseDouble(changeF2Y(p.getMoney()));
+					break;
+				case "6":
+					data[5]=Double.parseDouble(changeF2Y(p.getMoney()));
+					break;
+				case "7":
+					data[6]=Double.parseDouble(changeF2Y(p.getMoney()));
+					break;
+				}
+			}
+		}
+		map.put("allCount", changeF2Y(total));
+		map.put("data", data);
+		return map;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/countNums")
+	public Object countNums() throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		PayInfoTime payInfoTime =  weekTime();
+		String total = payInfoService.countPayInfoNum(payInfoTime);
+		
+		List<PayInfoCount> lp = payInfoService.countNums(payInfoTime);
+		int[] data = new int[7];
+		for (PayInfoCount p : lp) {
+			// 应该是查出一个星期每天的数据，这是在某一天为空的情况下处理
+			if(lp.size()!=7) {
+				String s = getWeekOfDate(p.getTime());
+				switch (s) {
+				case "1":
+					data[0]=Integer.parseInt(p.getMoney());
+					break;
+				case "2":
+					data[1]=Integer.parseInt(p.getMoney());
+					break;
+				case "3":
+					data[2]=Integer.parseInt(p.getMoney());
+					break;
+				case "4":
+					data[3]=Integer.parseInt(p.getMoney());
+					break;
+				case "5":
+					data[4]=Integer.parseInt(p.getMoney());
+					break;
+				case "6":
+					data[5]=Integer.parseInt(p.getMoney());
+					break;
+				case "7":
+					data[6]=Integer.parseInt(p.getMoney());
+					break;
+				}
+			}
+		}
+		map.put("allCount", total);
+		map.put("data", data);
+		return map;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/countTimes")
+	public Object countTimes() throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		PayInfoTime payInfoTime =  weekTime();
+		String total = payInfoService.countPayInfoTime(payInfoTime);
+		
+		List<PayInfoCount> lp = payInfoService.countTimes(payInfoTime);
+		double[] data = new double[7];
+		for (PayInfoCount p : lp) {
+			// 应该是查出一个星期每天的数据，这是在某一天为空的情况下处理
+			if(lp.size()!=7) {
+				String s = getWeekOfDate(p.getTime());
+				switch (s) {
+				case "1":
+					data[0]=Double.parseDouble(p.getMoney());
+					break;
+				case "2":
+					data[1]=Double.parseDouble(p.getMoney());
+					break;
+				case "3":
+					data[2]=Double.parseDouble(p.getMoney());
+					break;
+				case "4":
+					data[3]=Double.parseDouble(p.getMoney());
+					break;
+				case "5":
+					data[4]=Double.parseDouble(p.getMoney());
+					break;
+				case "6":
+					data[5]=Double.parseDouble(p.getMoney());
+					break;
+				case "7":
+					data[6]=Double.parseDouble(p.getMoney());
+					break;
+				}
+			}
+		}
+		map.put("allCount", changeF2Y(total));
+		map.put("data", data);
+		return map;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/countRates")
+	public Object countRates() throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		PayInfoTime payInfoTime =  weekTime();
+		String total = payInfoService.countPayInfoRate(payInfoTime);
+		
+		List<PayInfoCount> lp = payInfoService.countRates(payInfoTime);
+		double[] data = new double[7];
+		for (PayInfoCount p : lp) {
+			// 应该是查出一个星期每天的数据，这是在某一天为空的情况下处理
+			if(lp.size()!=7) {
+				String s = getWeekOfDate(p.getTime());
+				switch (s) {
+				case "1":
+					data[0]=Double.parseDouble(p.getMoney());
+					break;
+				case "2":
+					data[1]=Double.parseDouble(p.getMoney());
+					break;
+				case "3":
+					data[2]=Double.parseDouble(p.getMoney());
+					break;
+				case "4":
+					data[3]=Double.parseDouble(p.getMoney());
+					break;
+				case "5":
+					data[4]=Double.parseDouble(p.getMoney());
+					break;
+				case "6":
+					data[5]=Double.parseDouble(p.getMoney());
+					break;
+				case "7":
+					data[6]=Double.parseDouble(p.getMoney());
+					break;
+				}
+			}
+		}
+		map.put("allCount", changeF2Y(total));
+		map.put("data", data);
+		return map;
+	}
+	/**
+	 * 获得上周的时间段
+	 */
+	public static PayInfoTime weekTime() {
+		PayInfoTime payInfoTime = new PayInfoTime();
+		Calendar cal = Calendar.getInstance();
+		//n为推迟的周数，1本周，-1向前推迟一周，2下周，依次类推
+		int n = -1;
+		String monday;
+		String sunday;
+		cal.add(Calendar.DATE, n*7);
+		cal.set(Calendar.DAY_OF_WEEK,Calendar.MONDAY);
+		monday = new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime());
+		cal.set(Calendar.DAY_OF_WEEK,Calendar.SUNDAY);
+		cal.add(Calendar.DATE, (1)*7);
+		sunday = new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime());
+		payInfoTime.setBeginDate(monday+" 00:00:00");
+		payInfoTime.setEndDate(sunday+" 23:59:59");
+		return payInfoTime;
+	}
+	
+	/**
+	 * 将时间转为星期
+	 */
+	public static String getWeekOfDate(String dates) {      
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Date date;
+		try {
+			date = sdf.parse(dates);
+//		    String[] weekOfDays = {"星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"};        
+		    String[] weekOfDays = {"7", "1", "2", "3", "4", "5", "6"};        
+		    Calendar calendar = Calendar.getInstance();      
+		    if(date != null){        
+		         calendar.setTime(date);      
+		    }        
+		    int w = calendar.get(Calendar.DAY_OF_WEEK) - 1;      
+		    if (w < 0){        
+		        w = 0;      
+		    }      
+	    	return weekOfDays[w];    
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "exportPayInfo")
+	@RequiresPermissions("payInfo:exportPayInfo")
+	public String exportPayInfo(HttpServletResponse response,HttpSession session,PayInfoInputDTO payInfo) {
+		try {
+			List<PayInfo> details = payInfoService.findByList(payInfo);
+			String rootPath = session.getServletContext().getRealPath("/");
+			File file = new File(rootPath+"resources"+File.separator + "template" + File.separator + TEMPLATE_EXPORT);
+			InputStream is = FileUtils.openInputStream(file);
+			//创建workbook对象
+			Workbook wb = ExcelUtils.creteWorkbook(TEMPLATE_EXPORT, is);
+			Sheet sheet=wb.getSheetAt(0);
+			Row rootRow = sheet.getRow(1);
+			if(details != null){
+				for (int j = 0; j < details.size(); j++) {
+					Row row = getRow(rootRow,j+2,sheet,25);
+					createCell(row, rootRow, 10);
+					PayInfo info = details.get(j);
+					row.getCell(0).setCellValue(info.getOrderId());//订单号
+					row.getCell(1).setCellValue(info.getSerialNo());//订单流水号
+					row.getCell(2).setCellValue(info.getAmount()+"元");//订单金额
+					
+					//支付类型
+					if(info.getPayType()!=null) {
+						row.getCell(2).setCellValue(EnumsPayType.getDesc(info.getPayType()));
+					}
+					//接入系统 
+					row.getCell(4).setCellValue(info.getOutSystemId()); 
+					
+					//设备类型
+					row.getCell(5).setCellValue(info.getDeviceId()); 
+					
+					//订单状态
+					if(info.getOrderStatus()!=null) {
+						row.getCell(6).setCellValue(EnumsOrderStatus.getDesc(info.getOrderStatus()));
+					}
+					//订单支付时间
+					row.getCell(7).setCellValue(info.getOrderSendTime()==null?"":DateUtil.formatDate(info.getOrderSendTime(),"yyyy-MM-dd HH:mm:ss"));
+					//订单完成时间
+					row.getCell(8).setCellValue(info.getDoneTime()==null?"":DateUtil.formatDate(info.getDoneTime(),"yyyy-MM-dd HH:mm:ss"));
+					//用户id
+					row.getCell(9).setCellValue(info.getUserId());//名称
+				}
+			}
+
+			if (wb != null) {
+				// 得到文件的扩展名
+				String type = "TEMPLATE_EXPORT.xlsx".substring("TEMPLATE_EXPORT.xlsx".lastIndexOf("."));
+				String fileName = new String(("本地订单流水信息").getBytes("utf-8"),"iso-8859-1")
+						+ (StringUtils.isNotEmpty(type) ? type : ".xls");
+				response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+				response.setContentType("application/vnd.ms-excel");
+				// 获取文件输出流
+				ServletOutputStream out = response.getOutputStream();
+				// 将文件内容写入
+				wb.write(out);
+				out.flush();
+				out.close();
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public Row getRow(Row rootRow,int rowIndex,Sheet sheet,int height){
+		Row row = sheet.getRow(rowIndex);
+		if(row == null){
+			row = sheet.createRow(rowIndex);
+		}
+		row.setRowStyle(rootRow.getRowStyle());
+		row.setHeightInPoints(height);
+		return row;
+	}
+
+	public void createCell(Row row,Row rootRow,int column){
+		for (int i = 0; i < column; i++) {
+			Cell cell = row.getCell(i);
+			if(cell == null){
+				cell = row.createCell(i);
+			}
+			if(i == column-1){
+				cell.setCellStyle(rootRow.getCell(7).getCellStyle());
+			}else{
+				cell.setCellStyle(rootRow.getCell(0).getCellStyle());
+			}
+		}
+	}
+}

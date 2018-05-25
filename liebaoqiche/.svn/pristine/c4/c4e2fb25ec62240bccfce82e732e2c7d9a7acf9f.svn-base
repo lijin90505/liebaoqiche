@@ -1,0 +1,494 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ibest.user.dao.UserDao">
+	
+	<sql id="allColumns">
+    	lu.id as id,
+		lu.username as username,
+		lu.password as password,
+		lu.realname as realname,
+		lu.phone as phone,
+		lu.email as email,
+		lu.sex as sex,
+		lu.birthday as birthday,
+		lu.auth_phone as authPhone,
+		lu.idcard as idcard,
+		lu.car_vin as carVin,
+		lu.address as address,
+		lu.register_type as registerType,
+		lu.modified as modified,
+		lu.locked as locked,
+		lu.level_id as levelId,
+		lul.level_name AS levelName,
+		lu.experience_count_id as experienceCountId,
+		lu.integral_count_id as IntegralCountId,
+		lu.create_time as createTime,
+		lu.modify_time as modifyTime,
+		lu.create_user_id as createUserId,
+		lu.create_user_name as createUserName,
+		lu.modify_user_id as modifyUserId,
+		lu.modify_user_name as modifyUserName,
+		lu.is_delete as isDelete,
+		lu.remarks as remarks
+    </sql>
+	
+	<sql id="joinOthers">
+	</sql>
+	
+	<sql id="searchParam">
+		<if test="username != null and username != ''">
+			and binary su.USERNAME = #{username}
+		</if>
+	</sql>
+	
+	<sql id="searchWhere">
+		<!-- 根据需要自行设置，同时同步InputDTO中的参数-->
+		<!--<if test="keyword != null and keyword !=''">
+			AND CONCAT(
+			IFNULL(username, ''),
+			IFNULL(realname, ''),
+			IFNULL(phone, ''),
+			IFNULL(email, ''),
+			IFNULL(idcard, ''),
+			IFNULL(car_vin, '')
+			) LIKE CONCAT('%%', #{keyword}, '%%')
+		</if>-->
+		<if test="username != null and username != ''">
+			AND CONCAT(
+			IFNULL(lu.username, '')
+			) LIKE CONCAT('%%', #{username}, '%%')
+		</if>
+		<if test="realname != null and realname != ''">
+			AND CONCAT(
+			IFNULL(lu.realname, '')
+			) LIKE CONCAT('%%', #{realname}, '%%')
+		</if>
+		<if test="phone != null and phone != ''">
+			AND CONCAT(
+			IFNULL(lu.phone, '')
+			) LIKE CONCAT('%%', #{phone}, '%%')
+		</if>
+		<!--<if test="email != null and email != ''">
+			and lu.email = #{email}
+		</if>-->
+		<if test="sex != null">
+			and lu.sex = #{sex}
+		</if>
+		<!--<if test="birthday != null">
+			and lu.birthday = #{birthday}
+		</if>
+		<if test="authPhone != null and authPhone != ''">
+			and lu.auth_phone = #{authPhone}
+		</if>
+		<if test="idcard != null and idcard != ''">
+			and lu.idcard LIKE CONCAT('%%', #{idcard}, '%%')
+		</if>
+		<if test="carVin != null and carVin != ''">
+			and lu.car_vin LIKE CONCAT('%%', #{carVin}, '%%')
+		</if>
+		<if test="address != null and address != ''">
+			and lu.address = #{address}
+		</if>-->
+		<if test="registerType != null">
+			and lu.register_type = #{registerType}
+		</if>
+		<!--<if test="modified != null">
+			and lu.modified = #{modified}
+		</if>-->
+		<if test="locked != null">
+			and lu.locked = #{locked}
+		</if>
+		<if test="levelId != null">
+			and lu.level_id = #{levelId}
+		</if>
+		<!--<if test="createTime != null">
+			and lu.create_time = #{createTime}
+		</if>
+		<if test="modifyTime != null">
+			and lu.modify_time = #{modifyTime}
+		</if>
+		<if test="createUserId != null and createUserId != ''">
+			and lu.create_user_id = #{createUserId}
+		</if>
+		<if test="createUserName != null and createUserName != ''">
+			and lu.create_user_name = #{createUserName}
+		</if>
+		<if test="modifyUserId != null and modifyUserId != ''">
+			and lu.modify_user_id = #{modifyUserId}
+		</if>
+		<if test="modifyUserName != null and modifyUserName != ''">
+			and lu.modify_user_name = #{modifyUserName}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lu.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lu.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lu.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lu.UPDATE_DATE = #{updateDate}
+		</if>-->
+		<if test="isDelete != null">
+			and lu.IS_DELETE = #{isDelete}
+		</if>
+	
+	</sql>
+	
+	<sql id="searchOrder">
+		<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lu.${order} ${desc}
+		</if>
+	</sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_user(
+			id,
+	    	username,	    	
+	    	password,	    	
+	    	realname,	    	
+	    	phone,	    	
+	    	email,	    	
+	    	sex,	    	
+	    	birthday,	    	
+	    	auth_phone,	    	
+	    	idcard,	    	
+	    	car_vin,	    	
+	    	address,	    	
+	    	register_type,	    	
+	    	modified,	    	
+	    	locked,	    	
+	    	level_id,	    	
+	    	create_time,	    	
+	    	modify_time,	    	
+	    	create_user_id,	    	
+	    	create_user_name,	    	
+	    	modify_user_id,	    	
+	    	modify_user_name,	    	
+	    	is_delete,
+	    	remarks
+		) values(
+			#{id},
+			#{username},			 
+			#{password},			 
+			#{realname},			 
+			#{phone},			 
+			#{email},			 
+			#{sex},			 
+			#{birthday},			 
+			#{authPhone},			 
+			#{idcard},			 
+			#{carVin},			 
+			#{address},			 
+			#{registerType},			 
+			#{modified},			 
+			#{locked},			 
+			#{levelId},			 
+			#{createTime},			 
+			#{modifyTime},			 
+			#{createUserId},			 
+			#{createUserName},			 
+			#{modifyUserId},			 
+			#{modifyUserName},			 
+			#{isDelete},
+			#{remarks}
+		)
+	</insert>
+	
+	<select id="findById" resultType="User">
+		select
+		lu.id as id,
+		lu.username as username,
+		lu.password as password,
+		lu.realname as realname,
+		lu.phone as phone,
+		lu.email as email,
+		lu.sex as sex,
+		lu.birthday as birthday,
+		lu.auth_phone as authPhone,
+		lu.idcard as idcard,
+		lu.car_vin as carVin,
+		lu.address as address,
+		lu.register_type as registerType,
+		lu.modified as modified,
+		lu.locked as locked,
+		lu.level_id as levelId,
+		lul.level_name AS levelName,
+		lu.experience_count_id as experienceCountId,
+		sum(luec.number) AS experienceNumber,
+		sum(luic.number) AS integralNumber,
+		lu.integral_count_id as IntegralCountId,
+		lu.create_time as createTime,
+		lu.modify_time as modifyTime,
+		lu.create_user_id as createUserId,
+		lu.create_user_name as createUserName,
+		lu.modify_user_id as modifyUserId,
+		lu.modify_user_name as modifyUserName,
+		lu.is_delete as isDelete,
+		lu.remarks as remarks
+		from
+		liebao_user lu
+		LEFT JOIN liebao_user_auth_apply luap ON lu.id = luap.user_id
+		LEFT JOIN liebao_user_level lul ON luap.level_id = lul.id
+		LEFT JOIN liebao_user_integral_count luic ON lu.id = luic.user_id
+		LEFT JOIN liebao_user_experience_count luec ON lu.id =luec.user_id
+		where
+		lu.id = #{id}
+		GROUP BY lu.realname
+		<include refid="joinOthers"/>
+	</select>
+	
+	<select id="countUserByObject" resultType="Integer">
+		select
+		count(su.id)
+		from
+		liebao_user su
+		<where>
+			<include refid="searchParam"/>
+		</where>
+	</select>
+	
+	<select id="findOneByObject" resultType="User">
+		select
+		<include refid="allColumns"/>
+		from
+		liebao_user lu
+		<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findAllUsers" resultType="User">
+		select
+		lu.id as id,
+		lu.username as username,
+		lu.password as password,
+		lu.realname as realname,
+		lu.phone as phone,
+		lu.email as email,
+		lu.sex as sex,
+		lu.birthday as birthday,
+		lu.auth_phone as authPhone,
+		lu.idcard as idcard,
+		lu.car_vin as carVin,
+		lu.address as address,
+		lu.register_type as registerType,
+		lu.modified as modified,
+		lu.locked as locked,
+		lu.level_id as levelId,
+		lu.experience_count_id as experienceCountId,
+		lu.integral_count_id as IntegralCountId,
+		lu.create_time as createTime,
+		lu.modify_time as modifyTime,
+		lu.create_user_id as createUserId,
+		lu.create_user_name as createUserName,
+		lu.modify_user_id as modifyUserId,
+		lu.modify_user_name as modifyUserName,
+		lu.is_delete as isDelete,
+		lu.remarks as remarks
+		from
+		liebao_user lu
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+		count(lu.id)
+		from
+		liebao_user lu
+		<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findCarVinsByObject" resultType="User">
+		select
+		lu.id as id,
+		lu.car_vin as carVin
+		from
+		liebao_user lu
+		<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		<include refid="searchOrder"/>
+		<if test="limitStart != null and limitSize != null">
+			LIMIT #{limitStart},#{limitSize}
+		</if>
+	</select>
+	
+	<select id="findByObject" resultType="User">
+	select
+		lu.id as id,
+			lu.username as username,
+			lu.password as password,
+			lu.realname as realname,
+			lu.phone as phone,
+			lu.email as email,
+			lu.sex as sex,
+			lu.birthday as birthday,
+			lu.auth_phone as authPhone,
+			lu.idcard as idcard,
+			lu.car_vin as carVin,
+			lu.address as address,
+			lu.register_type as registerType,
+			lu.modified as modified,
+			lu.locked as locked,
+			lu.level_id as levelId,
+			lu.level_name AS levelName,
+			lu.experience_count_id as experienceCountId,
+			lu.experienceNumber AS experienceNumber,
+			lu.integralNumber AS integralNumber,
+			lu.integral_count_id as IntegralCountId,
+			lu.create_time as createTime,
+			lu.modify_time as modifyTime,
+			lu.create_user_id as createUserId,
+			lu.create_user_name as createUserName,
+			lu.modify_user_id as modifyUserId,
+			lu.modify_user_name as modifyUserName,
+			lu.is_delete as isDelete,
+			lu.remarks as remarks from
+		(select
+			lu.id,
+			lu.username,
+			lu.password,
+			lu.realname,
+			lu.phone,
+			lu.email,
+			lu.sex,
+			lu.birthday,
+			lu.auth_phone,
+			lu.idcard,
+			lu.car_vin,
+			lu.address,
+			lu.register_type,
+			lu.modified,
+			lu.locked,
+			lu.level_id,
+			lul.level_name,
+			lu.experience_count_id,
+			sum(luec.number) AS experienceNumber,
+			sum(luic.number) AS integralNumber,
+			lu.integral_count_id,
+			lu.create_time,
+			lu.modify_time,
+			lu.create_user_id,
+			lu.create_user_name,
+			lu.modify_user_id,
+			lu.modify_user_name,
+			lu.is_delete,
+			lu.remarks
+			from
+			liebao_user lu
+			LEFT JOIN liebao_user_auth_apply luap ON lu.id = luap.user_id
+			LEFT JOIN liebao_user_level lul ON luap.level_id = lul.id
+			LEFT JOIN liebao_user_integral_count luic ON lu.id = luic.user_id
+			LEFT JOIN liebao_user_experience_count luec ON lu.id =luec.user_id
+			GROUP BY lu.realname) as lu
+		<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		order by lu.modify_time desc
+		<include refid="searchOrder"/>
+		<if test="limitStart != null and limitSize != null">
+			LIMIT #{limitStart},#{limitSize}
+		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_user set
+			realname=#{realname},
+			phone=#{phone},
+			email=#{email},			
+			sex=#{sex},			
+			birthday=#{birthday},			
+			auth_phone=#{authPhone},			
+			idcard=#{idcard},			
+			car_vin=#{carVin},			
+			address=#{address},			
+			locked=#{locked},
+			level_id=#{levelId},			
+			modify_time=#{modifyTime},
+			modify_user_id=#{modifyUserId},
+			modify_user_name=#{modifyUserName},			
+			is_delete=#{isDelete},
+			remarks=#{remarks}
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_user where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_user where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_user set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_user set is_delete = 1 where id in
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+	
+	<!-- 根据手机号查询 -->
+	<select id="findByPhone" resultType="User">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_user lu
+		where
+			lu.phone = #{phone}
+	</select>
+	
+	<!-- 根据邮箱查询 -->
+	<select id="findByEmail" resultType="User">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_user lu
+		where
+			lu.email = #{email}
+	</select>
+	
+	<!-- 根据邮箱查询 -->
+	<select id="findByUserName" resultType="User">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_user lu
+		where
+			lu.username = #{username}
+	</select>
+	
+	<!--批量处理认证申请，通过/拒绝，重复操作忽略 -->
+	<update id="handle">
+		UPDATE liebao_user
+		<set>
+			locked = #{locked},
+			modify_time = NOW()
+		</set>
+		<where>
+			id IN
+			<foreach collection="ids" open="(" close=")" separator="," item="id">
+				#{id}
+			</foreach>
+		</where>
+	</update>
+</mapper>

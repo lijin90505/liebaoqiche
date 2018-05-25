@@ -1,0 +1,85 @@
+package com.ibest.experience.service;
+
+import com.ibest.framework.common.utils.StringUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ibest.framework.common.utils.PageList;
+
+import com.ibest.experience.dao.ExpDao;
+import com.ibest.experience.entity.Exp;
+import com.ibest.experience.dto.input.ExpInputDTO;
+
+@Service
+@Transactional(readOnly=true)
+public class ExpService {
+
+	@Autowired
+	protected ExpDao expDao;
+	
+	public Exp findById(String id) throws Exception{
+		return expDao.findById(id);
+	}
+	
+	@Transactional(readOnly=false)
+	public int insert(Exp exp) throws Exception{
+		exp.preInsert();
+		int result = expDao.insert(exp);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteById(String id) throws Exception{
+		int result = expDao.deleteById(id);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteByIds(String ids) throws Exception{
+		int result = expDao.deleteByIds(StringUtils.tokenizeToList(ids));
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int update(Exp exp) throws Exception{
+		exp.preUpdate();
+		int result = expDao.update(exp);
+		return result;
+	}
+	
+	/**
+	 * 分页查询
+	 * @param page
+	 * @param inputDto
+	 * @return
+	 * @throws Exception
+	 */
+	public PageList<Exp> findByPage(PageList<Exp> page, ExpInputDTO inputDto) throws Exception{
+		
+		if(page == null){
+			page = new PageList<Exp>();
+		}
+		
+		long totalCount = expDao.countByObject(inputDto);
+		if(totalCount > 0){
+			// 设置记录总条数
+			page.setTotal(totalCount);
+			
+			// 设置分页参数，查询数据
+			inputDto.setLimitStart((page.getPage() - 1) * page.getPageSize());
+			inputDto.setLimitSize(page.getPageSize());
+			page.setRows(expDao.findByObject(inputDto));
+		}
+		
+		return page;
+	}
+	
+	/**
+	* 查询列表
+	*/
+	public Exp findByObject(ExpInputDTO inputDto) throws Exception{
+		return expDao.findOneByObject(inputDto);
+	}
+
+}

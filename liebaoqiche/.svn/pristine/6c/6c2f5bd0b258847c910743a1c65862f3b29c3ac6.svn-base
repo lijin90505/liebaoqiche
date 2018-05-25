@@ -1,0 +1,97 @@
+package com.ibest.activity.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.ibest.framework.common.utils.StringUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ibest.framework.common.utils.PageList;
+
+import com.ibest.activity.dao.ActivityIntegralDao;
+import com.ibest.activity.entity.ActivityIntegral;
+import com.ibest.activity.dto.input.ActivityIntegralInputDTO;
+
+@Service
+@Transactional(readOnly=true)
+public class ActivityIntegralService {
+
+	@Autowired
+	protected ActivityIntegralDao activityIntegralDao;
+	
+	public ActivityIntegral findById(String id) throws Exception{
+		return activityIntegralDao.findById(id);
+	}
+
+	public List<ActivityIntegral> findByActivityId(String activitySystemId) throws Exception{
+		return activityIntegralDao.findByActivityId(activitySystemId);
+	}
+	
+	@Transactional(readOnly=false)
+	public int insert(ActivityIntegral activityIntegral) throws Exception{
+		activityIntegral.preInsert();
+		int result = activityIntegralDao.insert(activityIntegral);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteById(String id) throws Exception{
+		int result = activityIntegralDao.deleteById(id);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteByIds(String ids) throws Exception{
+		int result = activityIntegralDao.deleteByIds(StringUtils.tokenizeToList(ids));
+		return result;
+	}
+	
+	public List<ActivityIntegral> findByIntegralId(String integralId) throws Exception{
+		return activityIntegralDao.findByIntegralId(integralId);
+	}
+	
+	
+	@Transactional(readOnly=false)
+	public int update(ActivityIntegral activityIntegral) throws Exception{
+		activityIntegral.preUpdate();
+		int result = activityIntegralDao.update(activityIntegral);
+		return result;
+	}
+	
+	/**
+	 * 分页查询
+	 * @param page
+	 * @param inputDto
+	 * @return
+	 * @throws Exception
+	 */
+	public PageList<ActivityIntegral> findByPage(PageList<ActivityIntegral> page, ActivityIntegralInputDTO inputDto) throws Exception{
+		
+		if(page == null){
+			page = new PageList<ActivityIntegral>();
+		}
+		
+		long totalCount = activityIntegralDao.countByObject(inputDto);
+		if(totalCount > 0){
+			// 设置记录总条数
+			page.setTotal(totalCount);
+			
+			// 设置分页参数，查询数据
+			inputDto.setLimitStart((page.getPage() - 1) * page.getPageSize());
+			inputDto.setLimitSize(page.getPageSize());
+			page.setRows(activityIntegralDao.findByObject(inputDto));
+		}
+		
+		return page;
+	}
+	
+	/**
+	* 查询列表
+	*/
+	public ActivityIntegral findByObject(ActivityIntegralInputDTO inputDto) throws Exception{
+		return activityIntegralDao.findOneByObject(inputDto);
+	}
+
+}

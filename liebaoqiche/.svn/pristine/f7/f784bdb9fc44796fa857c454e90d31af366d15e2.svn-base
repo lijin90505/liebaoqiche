@@ -1,0 +1,158 @@
+package com.ibest.accesssystem.entity;
+
+import java.util.Date;
+
+import com.ibest.framework.common.persistence.BaseEntity;
+
+public class CouponPermissionAssignment extends BaseEntity {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+					
+	// 卡券生成编号
+	private String couponBuildId;
+				
+	// 卡券生成名称
+	private String couponBuildName;
+				
+	// coupon_get_id
+	private String couponGetId;
+				
+	// 卡券获取名称
+	private String couponGetName;
+				
+	// 卡券用途编号
+	private String couponUseId;
+				
+	// 卡券用途名称
+	private String couponUseName;
+				
+	// 系统标识
+	private String systemSign;
+				
+	// 系统标识名称
+	private String systemSignName;
+						
+	// 创建人
+	private String creater;
+				
+	// 修改时间
+	private Date createTime;
+				
+	// 修改人
+	private String modifier;
+				
+	// 修改时间
+	private Date modifyTime;
+				
+	// 版本
+	private String version;
+									
+	public String getCouponBuildId(){
+		return couponBuildId;
+	}
+	
+	public void setCouponBuildId(String couponBuildId){
+		this.couponBuildId = couponBuildId;
+	}
+				
+	public String getCouponBuildName(){
+		return couponBuildName;
+	}
+	
+	public void setCouponBuildName(String couponBuildName){
+		this.couponBuildName = couponBuildName;
+	}
+				
+	public String getCouponGetId(){
+		return couponGetId;
+	}
+	
+	public void setCouponGetId(String couponGetId){
+		this.couponGetId = couponGetId;
+	}
+				
+	public String getCouponGetName(){
+		return couponGetName;
+	}
+	
+	public void setCouponGetName(String couponGetName){
+		this.couponGetName = couponGetName;
+	}
+				
+	public String getCouponUseId(){
+		return couponUseId;
+	}
+	
+	public void setCouponUseId(String couponUseId){
+		this.couponUseId = couponUseId;
+	}
+				
+	public String getCouponUseName(){
+		return couponUseName;
+	}
+	
+	public void setCouponUseName(String couponUseName){
+		this.couponUseName = couponUseName;
+	}
+				
+	public String getSystemSign(){
+		return systemSign;
+	}
+	
+	public void setSystemSign(String systemSign){
+		this.systemSign = systemSign;
+	}
+				
+	public String getSystemSignName(){
+		return systemSignName;
+	}
+	
+	public void setSystemSignName(String systemSignName){
+		this.systemSignName = systemSignName;
+	}
+						
+	public String getCreater(){
+		return creater;
+	}
+	
+	public void setCreater(String creater){
+		this.creater = creater;
+	}
+				
+	public Date getCreateTime(){
+		return createTime;
+	}
+	
+	public void setCreateTime(Date createTime){
+		this.createTime = createTime;
+	}
+				
+	public String getModifier(){
+		return modifier;
+	}
+	
+	public void setModifier(String modifier){
+		this.modifier = modifier;
+	}
+				
+	public Date getModifyTime(){
+		return modifyTime;
+	}
+	
+	public void setModifyTime(Date modifyTime){
+		this.modifyTime = modifyTime;
+	}
+				
+	public String getVersion(){
+		return version;
+	}
+	
+	public void setVersion(String version){
+		this.version = version;
+	}
+					
+}

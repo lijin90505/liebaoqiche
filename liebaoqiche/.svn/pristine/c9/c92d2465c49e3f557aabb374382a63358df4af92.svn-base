@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.accesssystem.dao.ActivityPointPermissionAssignmentDao">
+
+    <sql id="allColumns">
+    	lappa.id as id,    	
+    	lappa.activity_point_relevance_id as activityPointRelevanceId,    	
+    	lappa.activity_id as activityId,    	
+    	lappa.activity_name as activityName,    	
+    	lappa.point_type_id as pointTypeId,    	
+    	lappa.point_type_name as pointTypeName,    	
+    	lappa.point_rule_id as pointRuleId,    	
+    	lappa.point_rule_name as pointRuleName,    	
+    	lappa.activity_start_time as activityStartTime,    	
+    	lappa.activity_end_time as activityEndTime,    	
+    	lappa.system_sign as systemSign,    	
+    	lappa.system_sign_name as systemSignName, 
+    	lappa.is_delete as isDelete,     	
+    	lappa.creater as creater,    	
+    	lappa.create_time as createTime,    	
+    	lappa.modifier as modifier,    	
+    	lappa.modify_time as modifyTime,    	
+    	lappa.version as version,    	
+    	lappa.remark as remark    	
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and lappa.id = #{id}
+		</if>
+		<if test="activityPointRelevanceId != null and activityPointRelevanceId != ''">
+			and lappa.activity_point_relevance_id = #{activityPointRelevanceId}
+		</if>
+		<if test="activityId != null and activityId != ''">
+			and lappa.activity_id = #{activityId}
+		</if>
+		<if test="activityName != null and activityName != ''">
+			and lappa.activity_name = #{activityName}
+		</if>
+		<if test="pointTypeId != null and pointTypeId != ''">
+			and lappa.point_type_id = #{pointTypeId}
+		</if>
+		<if test="pointTypeName != null and pointTypeName != ''">
+			and lappa.point_type_name = #{pointTypeName}
+		</if>
+		<if test="pointRuleId != null and pointRuleId != ''">
+			and lappa.point_rule_id = #{pointRuleId}
+		</if>
+		<if test="pointRuleName != null and pointRuleName != ''">
+			and lappa.point_rule_name = #{pointRuleName}
+		</if>
+		<if test="activityStartTime != null">
+			and lappa.activity_start_time = #{activityStartTime}
+		</if>
+		<if test="activityEndTime != null">
+			and lappa.activity_end_time = #{activityEndTime}
+		</if>
+		<if test="systemSign != null and systemSign != ''">
+			and lappa.system_sign = #{systemSign}
+		</if>
+		<if test="systemSignName != null and systemSignName != ''">
+			and lappa.system_sign_name = #{systemSignName}
+		</if>
+		<if test="creater != null and creater != ''">
+			and lappa.creater = #{creater}
+		</if>
+		<if test="createTime != null">
+			and lappa.create_time = #{createTime}
+		</if>
+		<if test="modifier != null and modifier != ''">
+			and lappa.modifier = #{modifier}
+		</if>
+		<if test="modifyTime != null">
+			and lappa.modify_time = #{modifyTime}
+		</if>
+		<if test="version != null and version != ''">
+			and lappa.version = #{version}
+		</if>
+		<if test="remark != null and remark != ''">
+			and lappa.remark = #{remark}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lappa.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lappa.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lappa.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lappa.UPDATE_DATE = #{updateDate}
+		</if>
+		<if test="isDelete != null">
+			and lappa.IS_DELETE = #{isDelete}
+		</if>
+		-->
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lappa.${order} ${desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_activity_point_permission_assignment(
+	    	id,	    	
+	    	activity_point_relevance_id,	    	
+	    	activity_id,	    	
+	    	activity_name,	    	
+	    	point_type_id,	    	
+	    	point_type_name,	    	
+	    	point_rule_id,	    	
+	    	point_rule_name,	    	
+	    	activity_start_time,	    	
+	    	activity_end_time,	    	
+	    	system_sign,	    	
+	    	system_sign_name,
+	    	is_delete, 	    	
+	    	creater,	    	
+	    	create_time,	    	
+	    	modifier,	    	
+	    	modify_time,	    	
+	    	version,	    	
+	    	remark	    	
+		) values(
+			#{id},			 
+			#{activityPointRelevanceId},			 
+			#{activityId},			 
+			#{activityName},			 
+			#{pointTypeId},			 
+			#{pointTypeName},			 
+			#{pointRuleId},			 
+			#{pointRuleName},			 
+			#{activityStartTime},			 
+			#{activityEndTime},			 
+			#{systemSign},			 
+			#{systemSignName},
+			#{isDelete},			 
+			#{creater},			 
+			#{createTime},			 
+			#{modifier},			 
+			#{modifyTime},			 
+			#{version},			 
+			#{remark}			 
+		)
+	</insert>
+	
+	<select id="findById" resultType="ActivityPointPermissionAssignment">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_activity_point_permission_assignment lappa
+			<include refid="joinOthers"/>
+		where
+			lappa.id = #{id} and lappa.is_delete = 0
+	</select>
+	
+	<select id="findOneByObject" resultType="ActivityPointPermissionAssignment">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_activity_point_permission_assignment lappa
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(lappa.id)
+		from
+			liebao_activity_point_permission_assignment lappa
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="ActivityPointPermissionAssignment">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_activity_point_permission_assignment lappa
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		<include refid="searchOrder"/>
+  		<if test="limitStart != null and limitSize != null">
+         	 LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_activity_point_permission_assignment set
+			activity_point_relevance_id=#{activityPointRelevanceId},			
+			activity_id=#{activityId},			
+			activity_name=#{activityName},			
+			point_type_id=#{pointTypeId},			
+			point_type_name=#{pointTypeName},			
+			point_rule_id=#{pointRuleId},			
+			point_rule_name=#{pointRuleName},			
+			activity_start_time=#{activityStartTime},			
+			activity_end_time=#{activityEndTime},			
+			system_sign=#{systemSign},			
+			system_sign_name=#{systemSignName},	
+			is_delete=#{isDelete},		
+			creater=#{creater},			
+			create_time=#{createTime},			
+			modifier=#{modifier},			
+			modify_time=#{modifyTime},			
+			version=#{version},			
+			remark=#{remark}			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_activity_point_permission_assignment where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_activity_point_permission_assignment where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_activity_point_permission_assignment set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_activity_point_permission_assignment set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

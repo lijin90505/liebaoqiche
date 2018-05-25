@@ -1,0 +1,90 @@
+package com.ibest.experience.service;
+
+import com.ibest.framework.common.utils.StringUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ibest.framework.common.utils.PageList;
+
+import com.ibest.experience.dao.ExpLevelDao;
+import com.ibest.experience.entity.ExpLevel;
+import com.ibest.experience.dto.input.ExpLevelInputDTO;
+
+import java.util.List;
+
+@Service
+@Transactional(readOnly=true)
+public class ExpLevelService {
+
+	@Autowired
+	protected ExpLevelDao expLevelDao;
+	
+	public ExpLevel findById(String id) throws Exception{
+		return expLevelDao.findById(id);
+	}
+	
+	@Transactional(readOnly=false)
+	public int insert(ExpLevel expLevel) throws Exception{
+		expLevel.preInsert();
+		int result = expLevelDao.insert(expLevel);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteById(String id) throws Exception{
+		int result = expLevelDao.deleteById(id);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteByIds(String ids) throws Exception{
+		int result = expLevelDao.deleteByIds(StringUtils.tokenizeToList(ids));
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int update(ExpLevel expLevel) throws Exception{
+		expLevel.preUpdate();
+		int result = expLevelDao.update(expLevel);
+		return result;
+	}
+	
+	/**
+	 * 分页查询
+	 * @param page
+	 * @param inputDto
+	 * @return
+	 * @throws Exception
+	 */
+	public PageList<ExpLevel> findByPage(PageList<ExpLevel> page, ExpLevelInputDTO inputDto) throws Exception{
+		
+		if(page == null){
+			page = new PageList<ExpLevel>();
+		}
+		
+		long totalCount = expLevelDao.countByObject(inputDto);
+		if(totalCount > 0){
+			// 设置记录总条数
+			page.setTotal(totalCount);
+			
+			// 设置分页参数，查询数据
+			inputDto.setLimitStart((page.getPage() - 1) * page.getPageSize());
+			inputDto.setLimitSize(page.getPageSize());
+			page.setRows(expLevelDao.findByObject(inputDto));
+		}
+		
+		return page;
+	}
+	
+	/**
+	* 查询列表
+	*/
+	public ExpLevel findOneByObject(ExpLevelInputDTO inputDto) throws Exception{
+		return expLevelDao.findOneByObject(inputDto);
+	}
+
+	public List<ExpLevel> findByObject(ExpLevelInputDTO inputDto) throws Exception{
+		return expLevelDao.findByObject(inputDto);
+	}
+}

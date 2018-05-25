@@ -1,0 +1,41 @@
+package com.ibest.accesssystem.dto.input;
+
+import com.ibest.framework.common.persistence.BaseInputDTO;
+
+public class SystemActivityInputDTO extends BaseInputDTO {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private String activityId;
+
+	private String accessSystemId;
+
+	private String state;
+
+	public String getActivityId() {
+		return activityId;
+	}
+
+	public void setActivityId(String activityId) {
+		this.activityId = activityId;
+	}
+
+	public String getAccessSystemId() {
+		return accessSystemId;
+	}
+
+	public void setAccessSystemId(String accessSystemId) {
+		this.accessSystemId = accessSystemId;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
+}

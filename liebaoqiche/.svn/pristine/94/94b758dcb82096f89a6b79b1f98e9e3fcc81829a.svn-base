@@ -1,0 +1,88 @@
+package com.ibest.activity.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.ibest.framework.common.utils.StringUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ibest.framework.common.utils.PageList;
+
+import com.ibest.activity.dao.SystemActivityManageDao;
+import com.ibest.activity.entity.SystemActivityManage;
+import com.ibest.activity.dto.input.SystemActivityManageInputDTO;
+
+@Service
+@Transactional(readOnly=true)
+public class SystemActivityManageService {
+
+	@Autowired
+	protected SystemActivityManageDao systemActivityManageDao;
+	
+	public SystemActivityManage findById(String id) throws Exception{
+		return systemActivityManageDao.findById(id);
+	}
+	
+	@Transactional(readOnly=false)
+	public int insert(SystemActivityManage systemActivityManage) throws Exception{
+		systemActivityManage.preInsert();
+		int result = systemActivityManageDao.insert(systemActivityManage);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteById(String id) throws Exception{
+		int result = systemActivityManageDao.deleteById(id);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteByIds(String ids) throws Exception{
+		int result = systemActivityManageDao.deleteByIds(StringUtils.tokenizeToList(ids));
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int update(SystemActivityManage systemActivityManage) throws Exception{
+		systemActivityManage.preUpdate();
+		int result = systemActivityManageDao.update(systemActivityManage);
+		return result;
+	}
+	
+	/**
+	 * 分页查询
+	 * @param page
+	 * @param inputDto
+	 * @return
+	 * @throws Exception
+	 */
+	public PageList<SystemActivityManage> findByPage(PageList<SystemActivityManage> page, SystemActivityManageInputDTO inputDto) throws Exception{
+		
+		if(page == null){
+			page = new PageList<SystemActivityManage>();
+		}
+		
+		long totalCount = systemActivityManageDao.countByObject(inputDto);
+		if(totalCount > 0){
+			// 设置记录总条数
+			page.setTotal(totalCount);
+			
+			// 设置分页参数，查询数据
+			inputDto.setLimitStart((page.getPage() - 1) * page.getPageSize());
+			inputDto.setLimitSize(page.getPageSize());
+			page.setRows(systemActivityManageDao.findByObject(inputDto));
+		}
+		
+		return page;
+	}
+	
+	/**
+	* 查询列表
+	*/
+	public SystemActivityManage findByObject(SystemActivityManageInputDTO inputDto) throws Exception{
+		return systemActivityManageDao.findOneByObject(inputDto);
+	}
+
+}

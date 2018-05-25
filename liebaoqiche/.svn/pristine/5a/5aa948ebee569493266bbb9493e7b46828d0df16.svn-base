@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.activity.dao.ActivityExpDao">
+
+    <sql id="allColumns">
+    	lae.id as id,    	
+    	lae.is_delete as isDelete,    	
+    	lae.exp_id as expId,    	
+    	lae.exp as exp,
+    	lae.activity_id as activityId,    	
+    	lae.activity_name as activityName,    	
+    	lae.status as status,    	
+    	lae.creater as creater,    	
+    	lae.create_time as createTime,    	
+    	lae.modifier as modifier,    	
+    	lae.modify_time as modifyTime,    	
+    	lae.version as version,    	
+    	lae.remark as remark    	
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and lae.id = #{id}
+		</if>
+		<if test="expId != null and expId != ''">
+			and lae.exp_id = #{expId}
+		</if>
+		<if test="exp != null and exp != ''">
+			and lae.exp = #{exp}
+		</if>
+		<if test="activityId != null and activityId != ''">
+			and lae.activity_id = #{activityId}
+		</if>-->
+	    <if test="activityName != null and activityName != ''">
+		    and CONCAT(
+		    IFNULL(lae.activity_name,'')
+		    ) LIKE CONCAT('%%', #{activityName},'%%')
+	    </if>
+	    <if test="status != null">
+		    and lae.status = #{status}
+	    </if>
+		<!-- <if test="creater != null and creater != ''">
+			and lae.creater = #{creater}
+		</if>
+		<if test="createTime != null">
+			and lae.create_time = #{createTime}
+		</if>
+		<if test="modifier != null and modifier != ''">
+			and lae.modifier = #{modifier}
+		</if>
+		<if test="modifyTime != null">
+			and lae.modify_time = #{modifyTime}
+		</if>
+		<if test="version != null and version != ''">
+			and lae.version = #{version}
+		</if>
+		<if test="remark != null and remark != ''">
+			and lae.remark = #{remark}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lae.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lae.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lae.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lae.UPDATE_DATE = #{updateDate}
+		</if>
+		-->
+		<if test="isDelete != null">
+			and lae.IS_DELETE = #{isDelete}
+		</if>
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lae.${order} ${desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_activity_exp(
+			id,
+	    	is_delete,	    	
+	    	exp_id,	    	
+	    	exp,
+	    	activity_id,	    	
+	    	activity_name,	    	
+	    	status,	    	
+	    	creater,	    	
+	    	create_time,	    	
+	    	modifier,	    	
+	    	modify_time,	    	
+	    	version,	    	
+	    	remark	    	
+		) values(
+			#{id},
+			#{isDelete},
+			#{expId},
+			#{exp},
+			#{activityId},			 
+			#{activityName},			 
+			#{status},			 
+			#{creater},			 
+			#{createTime},			 
+			#{modifier},			 
+			#{modifyTime},			 
+			#{version},			 
+			#{remark}			 
+		)
+	</insert>
+	
+	<select id="findById" resultType="ActivityExp">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_activity_exp lae
+			<include refid="joinOthers"/>
+		where
+			lae.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="ActivityExp">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_activity_exp lae
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(lae.id)
+		from
+			liebao_activity_exp lae
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="ActivityExp">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_activity_exp lae
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		<include refid="searchOrder"/>
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_activity_exp set
+			is_delete=#{isDelete},			
+			exp_id=#{expId},			
+			exp=#{exp},
+			activity_id=#{activityId},			
+			activity_name=#{activityName},			
+			status=#{status},			
+			creater=#{creater},			
+			create_time=#{createTime},			
+			modifier=#{modifier},			
+			modify_time=#{modifyTime},			
+			version=#{version},			
+			remark=#{remark}			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_activity_exp where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_activity_exp where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_activity_exp set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_activity_exp set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

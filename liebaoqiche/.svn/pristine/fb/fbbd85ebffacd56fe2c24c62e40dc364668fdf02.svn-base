@@ -1,0 +1,114 @@
+package com.ibest.experience.entity;
+
+import java.util.Date;
+
+import com.ibest.framework.common.persistence.BaseEntity;
+
+public class ExpRule extends BaseEntity {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+							
+	// 所得经验值
+	private Integer exp;
+				
+	// 规则名称
+	private String name;
+				
+	// 规则详情
+	private String detail;
+	
+	// 记录时间
+	private Date createTime;
+				
+	// 修改时间
+	private Date modifyTime;
+				
+	// 创建人ID
+	private String createUserId;
+				
+	// 创建人名称
+	private String createUserName;
+				
+	// 修改人ID
+	private String modifyUserId;
+				
+	// 修改人名称
+	private String modifyUserName;
+									
+	public Integer getExp(){
+		return exp;
+	}
+	
+	public void setExp(Integer exp){
+		this.exp = exp;
+	}
+				
+	public String getName(){
+		return name;
+	}
+	
+	public void setName(String name){
+		this.name = name;
+	}
+				
+	public String getDetail(){
+		return detail;
+	}
+	
+	public void setDetail(String detail){
+		this.detail = detail;
+	}
+	
+	public Date getCreateTime(){
+		return createTime;
+	}
+	
+	public void setCreateTime(Date createTime){
+		this.createTime = createTime;
+	}
+				
+	public Date getModifyTime(){
+		return modifyTime;
+	}
+	
+	public void setModifyTime(Date modifyTime){
+		this.modifyTime = modifyTime;
+	}
+				
+	public String getCreateUserId(){
+		return createUserId;
+	}
+	
+	public void setCreateUserId(String createUserId){
+		this.createUserId = createUserId;
+	}
+				
+	public String getCreateUserName(){
+		return createUserName;
+	}
+	
+	public void setCreateUserName(String createUserName){
+		this.createUserName = createUserName;
+	}
+				
+	public String getModifyUserId(){
+		return modifyUserId;
+	}
+	
+	public void setModifyUserId(String modifyUserId){
+		this.modifyUserId = modifyUserId;
+	}
+				
+	public String getModifyUserName(){
+		return modifyUserName;
+	}
+	
+	public void setModifyUserName(String modifyUserName){
+		this.modifyUserName = modifyUserName;
+	}
+			
+}

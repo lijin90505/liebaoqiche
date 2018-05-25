@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.experience.dao.SystemExpStatisticsDao">
+
+    <sql id="allColumns">
+    	lses.id as id,    	
+    	lses.is_delete as isDelete,    	
+    	lses.sys_exp_rule_id as sysExpRuleId,    	
+    	lses.sys_exp_rule_name as sysExpRuleName,    	
+    	lses.sys_exp_level_id as sysExpLevelId,    	
+    	lses.sys_exp_level_name as sysExpLevelName,    	
+    	lses.platform as platform,
+    	lses.total_exp as totalExp,
+    	lses.system_id as systemId,    	
+    	lses.system_name as systemName,    	
+    	lses.creater as creater,    	
+    	lses.create_time as createTime,    	
+    	lses.modifier as modifier,    	
+    	lses.modify_time as modifyTime,    	
+    	lses.version as version,    	
+    	lses.remarks as remarks    	
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and lses.id = #{id}
+		</if>
+		<if test="sysExpRuleId != null and sysExpRuleId != ''">
+			and lses.sys_exp_rule_id = #{sysExpRuleId}
+		</if>
+		<if test="sysExpRuleName != null and sysExpRuleName != ''">
+			and lses.sys_exp_rule_name = #{sysExpRuleName}
+		</if>
+		<if test="sysExpLevelId != null and sysExpLevelId != ''">
+			and lses.sys_exp_level_id = #{sysExpLevelId}
+		</if>
+		<if test="sysExpLevelName != null and sysExpLevelName != ''">
+			and lses.sys_exp_level_name = #{sysExpLevelName}
+		</if>-->
+		<if test="platform != null and platform != ''">
+			and lses.platform = #{platform}
+		</if>
+		<!--<if test="totalExp != null">
+			and lses.total_exp = #{totalExp}
+		</if>
+		<if test="systemId != null and systemId != ''">
+			and lses.system_id = #{systemId}
+		</if>
+		<if test="systemName != null and systemName != ''">
+			and lses.system_name = #{systemName}
+		</if>
+		<if test="creater != null and creater != ''">
+			and lses.creater = #{creater}
+		</if>
+		<if test="createTime != null">
+			and lses.create_time = #{createTime}
+		</if>
+		<if test="modifier != null and modifier != ''">
+			and lses.modifier = #{modifier}
+		</if>
+		<if test="modifyTime != null">
+			and lses.modify_time = #{modifyTime}
+		</if>
+		<if test="version != null and version != ''">
+			and lses.version = #{version}
+		</if>
+		<if test="remarks != null and remarks != ''">
+			and lses.remarks = #{remarks}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lses.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lses.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lses.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lses.UPDATE_DATE = #{updateDate}
+		</if>
+		-->
+		<if test="isDelete != null">
+			and lses.IS_DELETE = #{isDelete}
+		</if>
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lses.${order} ${desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_system_exp_statistics(
+	    	is_delete,	    	
+	    	sys_exp_rule_id,	    	
+	    	sys_exp_rule_name,	    	
+	    	sys_exp_level_id,	    	
+	    	sys_exp_level_name,	    	
+	    	flatform,
+	    	total_exp,
+	    	system_id,	    	
+	    	system_name,	    	
+	    	creater,	    	
+	    	create_time,	    	
+	    	modifier,	    	
+	    	modify_time,	    	
+	    	version,	    	
+	    	remarks	    	
+		) values(
+			#{isDelete},			 
+			#{sysExpRuleId},			 
+			#{sysExpRuleName},			 
+			#{sysExpLevelId},			 
+			#{sysExpLevelName},			 
+			#{flatform},
+			#{totalExp},
+			#{systemId},			 
+			#{systemName},			 
+			#{creater},			 
+			#{createTime},			 
+			#{modifier},			 
+			#{modifyTime},			 
+			#{version},			 
+			#{remarks}			 
+		)
+	</insert>
+	
+	<select id="findById" resultType="SystemExpStatistics">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_system_exp_statistics lses
+			<include refid="joinOthers"/>
+		where
+			lses.id = #{id} where lses.is_delete = 0
+	</select>
+	
+	<select id="findOneByObject" resultType="SystemExpStatistics">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_system_exp_statistics lses
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(lses.id)
+		from
+			liebao_system_exp_statistics lses
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="SystemExpStatistics">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_system_exp_statistics lses
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		<include refid="searchOrder"/>
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_system_exp_statistics set
+			is_delete=#{isDelete},			
+			sys_exp_rule_id=#{sysExpRuleId},			
+			sys_exp_rule_name=#{sysExpRuleName},			
+			sys_exp_level_id=#{sysExpLevelId},			
+			sys_exp_level_name=#{sysExpLevelName},			
+			flatform=#{flatform},
+			total_exp=#{totalExp},
+			system_id=#{systemId},			
+			system_name=#{systemName},			
+			creater=#{creater},			
+			create_time=#{createTime},			
+			modifier=#{modifier},			
+			modify_time=#{modifyTime},			
+			version=#{version},			
+			remarks=#{remarks}
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_system_exp_statistics where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_system_exp_statistics where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_system_exp_statistics set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_system_exp_statistics set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

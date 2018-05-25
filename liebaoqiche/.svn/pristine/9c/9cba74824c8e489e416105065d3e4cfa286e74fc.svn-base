@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.accesssystem.dao.SysExpRuleDao">
+
+    <sql id="allColumns">
+    	lser.id as id,    	
+    	lser.exp_rule_id as expRuleId,    	
+    	lser.out_system_id as outSystemId,    	
+    	lser.out_system_name as outSystemName,  
+    	lser.is_delete as isDelete,   	
+    	lser.create_time as createTime,    	
+    	lser.modify_time as modifyTime,    	
+    	lser.create_user_id as createUserId,    	
+    	lser.create_user_name as createUserName,    	
+    	lser.modify_user_id as modifyUserId,    	
+    	lser.modify_user_name as modifyUserName    	
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and lser.id = #{id}
+		</if>
+		<if test="expRuleId != null and expRuleId != ''">
+			and lser.exp_rule_id = #{expRuleId}
+		</if>
+		<if test="outSystemId != null and outSystemId != ''">
+			and lser.out_system_id = #{outSystemId}
+		</if>
+		<if test="outSystemName != null and outSystemName != ''">
+			and lser.out_system_name = #{outSystemName}
+		</if>
+		<if test="createTime != null">
+			and lser.create_time = #{createTime}
+		</if>
+		<if test="modifyTime != null">
+			and lser.modify_time = #{modifyTime}
+		</if>
+		<if test="createUserId != null and createUserId != ''">
+			and lser.create_user_id = #{createUserId}
+		</if>
+		<if test="createUserName != null and createUserName != ''">
+			and lser.create_user_name = #{createUserName}
+		</if>
+		<if test="modifyUserId != null and modifyUserId != ''">
+			and lser.modify_user_id = #{modifyUserId}
+		</if>
+		<if test="modifyUserName != null and modifyUserName != ''">
+			and lser.modify_user_name = #{modifyUserName}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lser.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lser.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lser.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lser.UPDATE_DATE = #{updateDate}
+		</if>-->
+	    <if test="isDelete != null">
+		    and lser.IS_DELETE = #{isDelete}
+	    </if>
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lser.${order} ${desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_sys_exp_rule(
+			id,
+	    	exp_rule_id,	    	
+	    	out_system_id,	    	
+	    	out_system_name,
+	    	is_delete,	    	
+	    	create_time,	    	
+	    	modify_time,	    	
+	    	create_user_id,	    	
+	    	create_user_name,	    	
+	    	modify_user_id,	    	
+	    	modify_user_name	    	
+		) values(
+			#{id},			 
+			#{expRuleId},			 
+			#{outSystemId},			 
+			#{outSystemName},
+			#{isDelete},			 
+			#{createTime},			 
+			#{modifyTime},			 
+			#{createUserId},			 
+			#{createUserName},			 
+			#{modifyUserId},			 
+			#{modifyUserName}			 
+		)
+	</insert>
+	
+	<select id="findById" resultType="SysExpRule">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_sys_exp_rule lser
+			<include refid="joinOthers"/>
+		where
+			lser.id = #{id} and lser.is_delete = 0
+	</select>
+	
+	<select id="findOneByObject" resultType="SysExpRule">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_sys_exp_rule lser
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(lser.id)
+		from
+			liebao_sys_exp_rule lser
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="SysExpRule">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_sys_exp_rule lser
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		<include refid="searchOrder"/>
+  		<if test="limitStart != null and limitSize != null">
+         	 LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_sys_exp_rule set
+			exp_rule_id=#{expRuleId},			
+			out_system_id=#{outSystemId},			
+			out_system_name=#{outSystemName},
+			is_delete=#{isDelete},			
+			create_time=#{createTime},			
+			modify_time=#{modifyTime},			
+			create_user_id=#{createUserId},			
+			create_user_name=#{createUserName},			
+			modify_user_id=#{modifyUserId},			
+			modify_user_name=#{modifyUserName}			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_sys_exp_rule where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_sys_exp_rule where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_sys_exp_rule set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_sys_exp_rule set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

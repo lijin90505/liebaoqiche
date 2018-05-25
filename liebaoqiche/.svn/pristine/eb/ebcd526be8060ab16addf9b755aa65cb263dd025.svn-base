@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.accesssystem.dao.SystemActivityDao">
+	
+	<sql id="allColumns">
+    	lsa.id as id,    	
+    	lsa.activity_id as activityId,    	
+    	lsa.access_system_id as accessSystemId,    	
+    	lsa.state as state,    	
+    	lsa.is_delete as isDelete,
+    	lsa.creater as creater,
+    	lsa.create_time as createTime,    	
+    	lsa.modifier as modifier,    	
+    	lsa.modify_time as modifyTime,    	
+    	lsa.version as version,    	
+    	lsa.remarks as remarks    	
+    </sql>
+	
+	<sql id="joinOthers">
+	</sql>
+	
+	<sql id="searchWhere">
+		<!-- 根据需要自行设置，同时同步InputDTO中的参数-->
+		<if test="id != null and id != ''">
+			and lsa.id = #{id}
+		</if>
+		<if test="activityId != null and activityId != ''">
+			and lsa.activity_id = #{activityId}
+		</if>
+		<if test="accessSystemId != null and accessSystemId != ''">
+			and CONCAT(
+			IFNULL(lsa.access_system_id,'')
+			) LIKE CONCAT('%%', #{accessSystemId},'%%')
+		</if>
+		<if test="state != null and state != ''">
+			and lsa.state = #{state}
+		</if>
+		<!--<if test="creater != null and creater != ''">
+			and lsa.creater = #{creater}
+		</if>
+		<if test="createTime != null">
+			and lsa.create_time = #{createTime}
+		</if>
+		<if test="modifier != null and modifier != ''">
+			and lsa.modifier = #{modifier}
+		</if>
+		<if test="modifyTime != null">
+			and lsa.modify_time = #{modifyTime}
+		</if>
+		<if test="version != null and version != ''">
+			and lsa.version = #{version}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lsa.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lsa.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lsa.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lsa.UPDATE_DATE = #{updateDate}
+		</if>
+		-->
+		<if test="isDelete != null">
+			and lsa.IS_DELETE = #{isDelete}
+		</if>
+	</sql>
+	
+	<sql id="searchOrder">
+		<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lsa.${order} ${desc}
+		</if>
+	</sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_system_activity(
+		id,
+		activity_id,
+		access_system_id,
+		state,
+		creater,
+		create_time,
+		is_delete,
+		modifier,
+		modify_time,
+		version,
+		remarks
+		) values(
+		#{id},
+		#{activityId},
+		#{accessSystemId},
+		#{state},
+		#{creater},
+		#{createTime},
+		#{isDelete},
+		#{modifier},
+		#{modifyTime},
+		#{version},
+		#{remarks}
+		)
+	</insert>
+	
+	<select id="findById" resultType="SystemActivity">
+		select
+		lsa.id as id,
+		lsa.activity_id as activityId,
+		lsa.access_system_id as accessSystemId,
+		lsa.state as state,
+		lsa.creater as creater,
+		lsa.create_time as createTime,
+		lsa.modifier as modifier,
+		lsa.modify_time as modifyTime,
+		lsa.is_delete as isDelete,
+		las.name as accessSystemName,
+		las.identification as identification,
+		lad.activity_name as activityName,
+		lsa.version as version,
+		lsa.remarks as remarks
+		from
+		liebao_system_activity lsa
+		LEFT JOIN liebao_activity la ON lsa.activity_id = la.id
+		LEFT JOIN liebao_activity_details lad ON la.activity_details_id = lad.id
+		LEFT JOIN liebao_access_system las ON lsa.access_system_id = las.id
+		<include refid="joinOthers"/>
+		where
+		lsa.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="SystemActivity">
+		select
+		<include refid="allColumns"/>
+		from
+		liebao_system_activity lsa
+		<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+		count(lsa.id)
+		from
+		liebao_system_activity lsa
+		<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="getChoosedActivity" resultType="Activity" >
+		SELECT lpc.* FROM liebao_activity lpc
+		INNER JOIN liebao_system_activity lpcpa ON lpc.ID=lpcpa.activity_id
+		INNER JOIN liebao_access_system las ON las.identification=lpcpa.access_system_id
+		WHERE las.identification=#{accessSystemId}
+		AND lpc.IS_DELETE = 0
+		order by lpc.ID
+	</select>
+	
+	<select id="getUnChoosedActivity" resultType="Activity" >
+		SELECT lpc.* FROM liebao_activity lpc
+		WHERE lpc.ID NOT IN
+		(SELECT activity_id FROM liebao_system_activity
+		WHERE access_system_id=#{identification} )
+		AND IS_DELETE = 0
+		order by lpc.ID
+	</select>
+	
+	<delete id="deleteBySystemSign">
+		delete from liebao_system_activity where access_system_id = #{identification}
+	</delete>
+	
+	<select id="findByObject" resultType="SystemActivity">
+		select
+		lsa.id as id,
+		lsa.activity_id as activityId,
+		lsa.access_system_id as accessSystemId,
+		lsa.state as state,
+		lsa.creater as creater,
+		lsa.create_time as createTime,
+		lsa.is_delete as isDelete,
+		lsa.modifier as modifier,
+		lsa.modify_time as modifyTime,
+		las.name as accessSystemName,
+		lad.activity_name as activityName,
+		lsa.version as version,
+		lsa.remarks as remarks
+		from
+		liebao_system_activity lsa
+		LEFT JOIN liebao_activity la ON lsa.activity_id = la.id
+		LEFT JOIN liebao_activity_details lad ON la.activity_details_id = lad.id
+		LEFT JOIN liebao_access_system las ON lsa.access_system_id = las.id
+		<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		order by lsa.modify_time desc
+		<include refid="searchOrder"/>
+		<if test="limitStart != null and limitSize != null">
+			LIMIT #{limitStart},#{limitSize}
+		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_system_activity set
+		activity_id=#{activityId},
+		access_system_id=#{accessSystemId},
+		state=#{state},
+		creater=#{creater},
+		create_time=#{createTime},
+		is_delete=#{isDelete},
+		modifier=#{modifier},
+		modify_time=#{modifyTime},
+		version=#{version},
+		remarks=#{remarks}
+		where
+		id = #{id}
+	</update>
+	
+	<!-- 物理删除
+	<delete id="deleteById">
+		delete from liebao_system_activity where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_system_activity where id in
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_system_activity set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_system_activity set is_delete = 1 where id in
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

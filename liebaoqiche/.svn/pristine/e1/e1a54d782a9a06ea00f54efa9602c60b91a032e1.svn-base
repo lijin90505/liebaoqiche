@@ -1,0 +1,109 @@
+package com.ibest.card.service;
+
+import java.text.SimpleDateFormat;
+import java.util.List;
+
+import com.ibest.framework.common.utils.StringUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ibest.framework.common.utils.PageList;
+
+import com.ibest.card.dao.CardDao;
+import com.ibest.card.entity.Card;
+import com.ibest.card.dto.input.CardInputDTO;
+
+@Service
+@Transactional(readOnly=true)
+public class CardService {
+
+	@Autowired
+	protected CardDao cardDao;
+	
+	public Card findById(String id) throws Exception{
+		return cardDao.findById(id);
+	}
+	
+	public Card checkNameUnique(String name) throws Exception{
+		return cardDao.checkNameUnique(name);
+	}
+	
+	@Transactional(readOnly=false)
+	public int insert(Card card) throws Exception{
+		card.preInsert();
+		int result = cardDao.insert(card);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteById(String id) throws Exception{
+		int result = cardDao.deleteById(id);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteByIds(String ids) throws Exception{
+		int result = cardDao.deleteByIds(StringUtils.tokenizeToList(ids));
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int update(Card card) throws Exception{
+		card.preUpdate();
+		int result = cardDao.update(card);
+		return result;
+	}
+	
+	/**
+	 * 分页查询
+	 * @param page
+	 * @param inputDto
+	 * @return
+	 * @throws Exception
+	 */
+	public PageList<Card> findByPage(PageList<Card> page, CardInputDTO inputDto) throws Exception{
+		
+		if(page == null){
+			page = new PageList<Card>();
+		}
+		
+		long totalCount = cardDao.countByObject(inputDto);
+		if(totalCount > 0){
+			// 设置记录总条数
+			page.setTotal(totalCount);
+			
+			// 设置分页参数，查询数据
+			inputDto.setLimitStart((page.getPage() - 1) * page.getPageSize());
+			inputDto.setLimitSize(page.getPageSize());
+			List<Card> cardList = cardDao.findByObject(inputDto);
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:MM:ss");
+			SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+			for (Card card : cardList) {
+				if (null != card.getEffectiveDate()){
+					card.setStartTime(sdf.format(card.getEffectiveDate()).substring(0,10));
+				}
+				if (null != card.getEndDate()) {
+					card.setEndTime(sdf.format(card.getEndDate()).substring(0,10));
+				}
+			}
+			page.setRows(cardList);
+		}
+		
+		return page;
+	}
+	
+	/**
+	* 查询列表
+	*/
+	public Card findOneByObject(CardInputDTO inputDto) throws Exception{
+		return cardDao.findOneByObject(inputDto);
+	}
+
+	/**
+	 * 查询列表
+	 */
+	public List<Card> findByObject(CardInputDTO inputDto) throws Exception{
+		return cardDao.findByObject(inputDto);
+	}
+}

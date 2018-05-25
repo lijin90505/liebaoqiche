@@ -1,0 +1,88 @@
+package com.ibest.activity.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.ibest.framework.common.utils.StringUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ibest.framework.common.utils.PageList;
+
+import com.ibest.activity.dao.SystemActivityDao;
+import com.ibest.activity.entity.SystemActivity;
+import com.ibest.activity.dto.input.SystemActivityInputDTO;
+
+@Service
+@Transactional(readOnly=true)
+public class SystemActivityService {
+
+	@Autowired
+	protected SystemActivityDao systemActivityDao;
+	
+	public SystemActivity findById(String id) throws Exception{
+		return systemActivityDao.findById(id);
+	}
+	
+	@Transactional(readOnly=false)
+	public int insert(SystemActivity systemActivity) throws Exception{
+		systemActivity.preInsert();
+		int result = systemActivityDao.insert(systemActivity);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteById(String id) throws Exception{
+		int result = systemActivityDao.deleteById(id);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteByIds(String ids) throws Exception{
+		int result = systemActivityDao.deleteByIds(StringUtils.tokenizeToList(ids));
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int update(SystemActivity systemActivity) throws Exception{
+		systemActivity.preUpdate();
+		int result = systemActivityDao.update(systemActivity);
+		return result;
+	}
+	
+	/**
+	 * 分页查询
+	 * @param page
+	 * @param inputDto
+	 * @return
+	 * @throws Exception
+	 */
+	public PageList<SystemActivity> findByPage(PageList<SystemActivity> page, SystemActivityInputDTO inputDto) throws Exception{
+		
+		if(page == null){
+			page = new PageList<SystemActivity>();
+		}
+		
+		long totalCount = systemActivityDao.countByObject(inputDto);
+		if(totalCount > 0){
+			// 设置记录总条数
+			page.setTotal(totalCount);
+			
+			// 设置分页参数，查询数据
+			inputDto.setLimitStart((page.getPage() - 1) * page.getPageSize());
+			inputDto.setLimitSize(page.getPageSize());
+			page.setRows(systemActivityDao.findByObject(inputDto));
+		}
+		
+		return page;
+	}
+	
+	/**
+	* 查询列表
+	*/
+	public SystemActivity findByObject(SystemActivityInputDTO inputDto) throws Exception{
+		return systemActivityDao.findOneByObject(inputDto);
+	}
+
+}

@@ -1,0 +1,97 @@
+package com.ibest.pay.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ibest.framework.common.utils.PageList;
+import com.ibest.framework.common.utils.StringUtils;
+import com.ibest.pay.dao.PayRefundInfoDao;
+import com.ibest.pay.dto.input.RefundInfoInputDTO;
+import com.ibest.pay.entity.PayRefundInfo;
+
+@Service
+@Transactional(readOnly=true)
+public class PayRefundInfoService {
+
+	@Autowired
+	protected PayRefundInfoDao refundInfoDao;
+	
+	public PayRefundInfo findById(String id) throws Exception{
+		return refundInfoDao.findById(id);
+	}
+	
+	@Transactional(readOnly=false)
+	public int insert(PayRefundInfo refundInfo) throws Exception{
+		refundInfo.preInsert();
+		int result = refundInfoDao.insert(refundInfo);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteById(String id) throws Exception{
+		int result = refundInfoDao.deleteById(id);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteByIds(String ids) throws Exception{
+		int result = refundInfoDao.deleteByIds(StringUtils.tokenizeToList(ids));
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int update(PayRefundInfo refundInfo) throws Exception{
+		refundInfo.preUpdate();
+		int result = refundInfoDao.update(refundInfo);
+		return result;
+	}
+	
+	/**
+	 * 分页查询
+	 * @param page
+	 * @param inputDto
+	 * @return
+	 * @throws Exception
+	 */
+	public PageList<PayRefundInfo> findByPage(PageList<PayRefundInfo> page, RefundInfoInputDTO inputDto) throws Exception{
+		
+		if(page == null){
+			page = new PageList<PayRefundInfo>();
+		}
+		
+		long totalCount = refundInfoDao.countByObject(inputDto);
+		if(totalCount > 0){
+			// 设置记录总条数
+			page.setTotal(totalCount);
+			
+			// 设置分页参数，查询数据
+			inputDto.setLimitStart((page.getPage() - 1) * page.getPageSize());
+			inputDto.setLimitSize(page.getPageSize());
+			page.setRows(refundInfoDao.findByObject(inputDto));
+		}
+		
+		return page;
+	}
+	
+	/**
+	* 查询列表
+	*/
+	public PayRefundInfo findByObject(RefundInfoInputDTO inputDto) throws Exception{
+		return refundInfoDao.findOneByObject(inputDto);
+	}
+	
+	/**
+	 * 查询退款信息
+	 * @Title: findByPayInfo  
+	 * @param: @param info
+	 * @param: @throws Exception
+	 * @return:PayRefundInfo
+	 * @author:WeiJia
+	 * @date 2018年3月20日 上午9:16:13
+	 */
+	public PayRefundInfo findByRefundInfo(PayRefundInfo payRefundInfo) throws Exception{
+		return refundInfoDao.findByRefundInfo(payRefundInfo);
+	}
+
+}

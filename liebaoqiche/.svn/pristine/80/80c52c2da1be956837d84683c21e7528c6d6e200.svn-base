@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.activity.dao.SystemActivityStatisticsDao">
+
+    <sql id="allColumns">
+    	lsas.id as id,    	
+    	lsas.is_delete as isDelete,    	
+    	lsas.activity_id as activityId,    	
+    	lsas.activity_name as activityName,    	
+    	lsas.activity_content as activityContent,    	
+    	lsas.start_time as startTime,    	
+    	lsas.end_time as endTime,    	
+    	lsas.status as status,    	
+    	lsas.join_people_num as joinPeopleNum,    	
+    	lsas.accumulation_people_num as accumulationPeopleNum,    	
+    	lsas.back_people_num as backPeopleNum,    	
+    	lsas.system_id as systemId,    	
+    	lsas.system_name as systemName,    	
+    	lsas.creater as creater,    	
+    	lsas.create_time as createTime,    	
+    	lsas.modifier as modifier,    	
+    	lsas.modify_time as modifyTime,    	
+    	lsas.version as version,    	
+    	lsas.remarks as remarks
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and lsas.id = #{id}
+		</if>
+		<if test="activityId != null and activityId != ''">
+			and lsas.activity_id = #{activityId}
+		</if>-->
+		<if test="activityName != null and activityName != ''">
+			and CONCAT(
+			IFNULL(lsas.activity_name,'')
+			) LIKE CONCAT('%%', #{activityName},'%%')
+		</if>
+	    <if test="status != null">
+		    and lsas.status = #{status}
+	    </if>
+	    <if test="systemId != null and systemId != ''">
+		    and lsas.system_id = #{systemId}
+	    </if>
+		<!-- <if test="activityContent != null and activityContent != ''">
+			and lsas.activity_content = #{activityContent}
+		</if>
+		<if test="startTime != null">
+			and lsas.start_time = #{startTime}
+		</if>
+		<if test="endTime != null">
+			and lsas.end_time = #{endTime}
+		</if>
+		<if test="joinPeopleNum != null">
+			and lsas.join_people_num = #{joinPeopleNum}
+		</if>
+		<if test="accumulationPeopleNum != null">
+			and lsas.accumulation_people_num = #{accumulationPeopleNum}
+		</if>
+		<if test="backPeopleNum != null and backPeopleNum != ''">
+			and lsas.back_people_num = #{backPeopleNum}
+		</if>
+		<if test="systemName != null and systemName != ''">
+			and lsas.system_name = #{systemName}
+		</if>
+		<if test="creater != null and creater != ''">
+			and lsas.creater = #{creater}
+		</if>
+		<if test="createTime != null">
+			and lsas.create_time = #{createTime}
+		</if>
+		<if test="modifier != null and modifier != ''">
+			and lsas.modifier = #{modifier}
+		</if>
+		<if test="modifyTime != null">
+			and lsas.modify_time = #{modifyTime}
+		</if>
+		<if test="version != null and version != ''">
+			and lsas.version = #{version}
+		</if>
+		<if test="remarks != null and remarks != ''">
+			and lsas.remarks = #{remarks}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lsas.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lsas.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lsas.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lsas.UPDATE_DATE = #{updateDate}
+		</if>
+		-->
+		<if test="isDelete != null">
+			and lsas.IS_DELETE = #{isDelete}
+		</if>
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lsas.${order} ${desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_system_activity_statistics(
+	    	is_delete,	    	
+	    	activity_id,	    	
+	    	activity_name,	    	
+	    	activity_content,	    	
+	    	start_time,	    	
+	    	end_time,	    	
+	    	status,	    	
+	    	join_people_num,	    	
+	    	accumulation_people_num,	    	
+	    	back_people_num,	    	
+	    	system_id,	    	
+	    	system_name,	    	
+	    	creater,	    	
+	    	create_time,	    	
+	    	modifier,	    	
+	    	modify_time,	    	
+	    	version,	    	
+	    	remarks
+		) values(
+			#{isDelete},			 
+			#{activityId},			 
+			#{activityName},			 
+			#{activityContent},			 
+			#{startTime},			 
+			#{endTime},			 
+			#{status},			 
+			#{joinPeopleNum},			 
+			#{accumulationPeopleNum},			 
+			#{backPeopleNum},			 
+			#{systemId},			 
+			#{systemName},			 
+			#{creater},			 
+			#{createTime},			 
+			#{modifier},			 
+			#{modifyTime},			 
+			#{version},			 
+			#{remarks}
+		)
+	</insert>
+	
+	<select id="findById" resultType="SystemActivityStatistics">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_system_activity_statistics lsas
+			<include refid="joinOthers"/>
+		where
+			lsas.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="SystemActivityStatistics">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_system_activity_statistics lsas
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(lsas.id)
+		from
+			liebao_system_activity_statistics lsas
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="SystemActivityStatistics">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_system_activity_statistics lsas
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		<include refid="searchOrder"/>
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_system_activity_statistics set
+			is_delete=#{isDelete},			
+			activity_id=#{activityId},			
+			activity_name=#{activityName},			
+			activity_content=#{activityContent},			
+			start_time=#{startTime},			
+			end_time=#{endTime},			
+			status=#{status},			
+			join_people_num=#{joinPeopleNum},			
+			accumulation_people_num=#{accumulationPeopleNum},			
+			back_people_num=#{backPeopleNum},			
+			system_id=#{systemId},			
+			system_name=#{systemName},			
+			creater=#{creater},			
+			create_time=#{createTime},			
+			modifier=#{modifier},			
+			modify_time=#{modifyTime},			
+			version=#{version},			
+			remarks=#{remarks}
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_system_activity_statistics where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_system_activity_statistics where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_system_activity_statistics set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_system_activity_statistics set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

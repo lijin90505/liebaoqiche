@@ -1,0 +1,146 @@
+package com.ibest.experience.dto.output;
+
+import com.ibest.framework.common.persistence.BaseOutputDTO;
+
+import java.util.Date;
+
+public class ExpOutPutDTO extends BaseOutputDTO{
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
+
+
+	// 会员总经验值
+	private Integer exp;
+
+	//等级编号
+	private String levelId;
+
+	//等级
+	private String level;
+
+	// 系统ID
+	private String systemId;
+
+	// 接入系统用户标识
+	private String outUserId;
+
+	// 接入系统用户名称
+	private String outUserName;
+
+	// 记录时间
+	private Date createTime;
+
+	// 修改时间
+	private Date modifyTime;
+
+	// 创建人ID
+	private String createUserId;
+
+	// 创建人名称
+	private String createUserName;
+
+	// 修改人ID
+	private String modifyUserId;
+
+	// 修改人名称
+	private String modifyUserName;
+
+	public Integer getExp(){
+		return exp;
+	}
+
+	public void setExp(Integer exp){
+		this.exp = exp;
+	}
+
+	public String getLevelId() {
+		return levelId;
+	}
+
+	public void setLevelId(String levelId) {
+		this.levelId = levelId;
+	}
+
+	public String getLevel() {
+		return level;
+	}
+
+	public void setLevel(String level) {
+		this.level = level;
+	}
+
+	public String getSystemId() {
+		return systemId;
+	}
+
+	public void setSystemId(String systemId) {
+		this.systemId = systemId;
+	}
+
+	public String getOutUserId(){
+		return outUserId;
+	}
+
+	public void setOutUserId(String outUserId){
+		this.outUserId = outUserId;
+	}
+
+	public String getOutUserName(){
+		return outUserName;
+	}
+
+	public void setOutUserName(String outUserName){
+		this.outUserName = outUserName;
+	}
+
+	public Date getCreateTime(){
+		return createTime;
+	}
+
+	public void setCreateTime(Date createTime){
+		this.createTime = createTime;
+	}
+
+	public Date getModifyTime(){
+		return modifyTime;
+	}
+
+	public void setModifyTime(Date modifyTime){
+		this.modifyTime = modifyTime;
+	}
+
+	public String getCreateUserId(){
+		return createUserId;
+	}
+
+	public void setCreateUserId(String createUserId){
+		this.createUserId = createUserId;
+	}
+
+	public String getCreateUserName(){
+		return createUserName;
+	}
+
+	public void setCreateUserName(String createUserName){
+		this.createUserName = createUserName;
+	}
+
+	public String getModifyUserId(){
+		return modifyUserId;
+	}
+
+	public void setModifyUserId(String modifyUserId){
+		this.modifyUserId = modifyUserId;
+	}
+
+	public String getModifyUserName(){
+		return modifyUserName;
+	}
+
+	public void setModifyUserName(String modifyUserName){
+		this.modifyUserName = modifyUserName;
+	}
+
+}

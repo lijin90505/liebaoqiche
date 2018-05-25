@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.activity.dao.ActivityPointDao">
+
+    <sql id="allColumns">
+    	lap.id as id,    	
+    	lap.point_type_id as pointTypeId,    	
+    	lap.point_type_name as pointTypeName,    	
+    	lap.point_rule_id as pointRuleId,    	
+    	lap.point_rule_name as pointRuleName,    	
+    	lap.activity_id as activityId,    	
+    	lap.activity_name as activityName,    	
+    	lap.status as status,    	
+    	lap.is_delete as isDelete,    	
+    	lap.creater as creater,    	
+    	lap.create_time as createTime,    	
+    	lap.modifier as modifier,    	
+    	lap.modify_time as modifyTime,    	
+    	lap.version as version,    	
+    	lap.remarks as remarks    	
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and lap.id = #{id}
+		</if>-->
+		<if test="pointTypeId != null and pointTypeId != ''">
+			and lap.point_type_id = #{pointTypeId}
+		</if>
+	    <if test="pointRuleId != null and pointRuleId != ''">
+		    and lap.point_rule_id = #{pointRuleId}
+	    </if>
+	    <if test="activityName != null and activityName != ''">
+		    and CONCAT(
+		    IFNULL(lap.activity_name,'')
+		    ) LIKE CONCAT('%%', #{activityName},'%%')
+	    </if>
+	    <if test="status != null">
+		    and lap.status = #{status}
+	    </if>
+		<!--<if test="pointTypeName != null and pointTypeName != ''">
+			and lap.point_type_name = #{pointTypeName}
+		</if>
+		<if test="pointRuleName != null and pointRuleName != ''">
+			and lap.point_rule_name = #{pointRuleName}
+		</if>
+		<if test="activityId != null and activityId != ''">
+			and lap.activity_id = #{activityId}
+		</if>
+		<if test="creater != null and creater != ''">
+			and lap.creater = #{creater}
+		</if>
+		<if test="createTime != null">
+			and lap.create_time = #{createTime}
+		</if>
+		<if test="modifier != null and modifier != ''">
+			and lap.modifier = #{modifier}
+		</if>
+		<if test="modifyTime != null">
+			and lap.modify_time = #{modifyTime}
+		</if>
+		<if test="version != null and version != ''">
+			and lap.version = #{version}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lap.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lap.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lap.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lap.UPDATE_DATE = #{updateDate}
+		</if>
+		-->
+		<if test="isDelete != null">
+			and lap.IS_DELETE = #{isDelete}
+		</if>
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lap.${order} ${desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_activity_point(
+			id,
+	    	point_type_id,	    	
+	    	point_type_name,	    	
+	    	point_rule_id,	    	
+	    	point_rule_name,	    	
+	    	activity_id,	    	
+	    	activity_name,	    	
+	    	status,	    	
+	    	is_delete,	    	
+	    	creater,	    	
+	    	create_time,	    	
+	    	modifier,	    	
+	    	modify_time,	    	
+	    	version,	    	
+	    	remarks	    	
+		) values(
+			#{id},
+			#{pointTypeId},
+			#{pointTypeName},
+			#{pointRuleId},			 
+			#{pointRuleName},			 
+			#{activityId},			 
+			#{activityName},			 
+			#{status},			 
+			#{isDelete},			 
+			#{creater},			 
+			#{createTime},			 
+			#{modifier},			 
+			#{modifyTime},			 
+			#{version},			 
+			#{remarks}			 
+		)
+	</insert>
+	
+	<select id="findById" resultType="ActivityPoint">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_activity_point lap
+			<include refid="joinOthers"/>
+		where
+			lap.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="ActivityPoint">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_activity_point lap
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(lap.id)
+		from
+			liebao_activity_point lap
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="ActivityPoint">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_activity_point lap
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		<include refid="searchOrder"/>
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_activity_point set
+			point_type_id=#{pointTypeId},			
+			point_type_name=#{pointTypeName},			
+			point_rule_id=#{pointRuleId},			
+			point_rule_name=#{pointRuleName},			
+			activity_id=#{activityId},			
+			activity_name=#{activityName},			
+			status=#{status},			
+			is_delete=#{isDelete},			
+			creater=#{creater},			
+			create_time=#{createTime},			
+			modifier=#{modifier},			
+			modify_time=#{modifyTime},			
+			version=#{version},			
+			remarks=#{remarks}			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_activity_point where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_activity_point where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_activity_point set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_activity_point set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

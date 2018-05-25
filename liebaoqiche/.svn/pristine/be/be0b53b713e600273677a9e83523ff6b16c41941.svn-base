@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.pay.dao.OutSystemOrderDao">
+
+    <sql id="allColumns">
+    	loso.id as id,    	
+    	loso.order_id as orderId,    	
+    	loso.pay_type as payType,    	
+    	loso.out_system_id as outSystemId,    	
+    	loso.device_id as deviceId,    	
+    	loso.order_status as orderStatus,    	
+    	loso.amount as amount,    	
+    	loso.order_pay_time as orderPayTime,    	
+    	loso.userId as userid,    	
+    	loso.CREATE_BY as createBy,    	
+    	loso.CREATE_DATE as createDate,    	
+    	loso.UPDATE_BY as updateBy,    	
+    	loso.UPDATE_DATE as updateDate,    	
+    	loso.REMARKS as remarks    	
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and loso.id = #{id}
+		</if>
+		
+		<if test="payType != null and payType != ''">
+			and loso.pay_type = #{payType}
+		</if>
+		<if test="outSystemId != null and outSystemId != ''">
+			and loso.out_system_id = #{outSystemId}
+		</if>
+		<if test="deviceId != null and deviceId != ''">
+			and loso.device_id = #{deviceId}
+		</if>
+		<if test="amount != null and amount != ''">
+			and loso.amount = #{amount}
+		</if>
+		
+		<if test="userid != null and userid != ''">
+			and loso.userId = #{userid}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and loso.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and loso.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and loso.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and loso.UPDATE_DATE = #{updateDate}
+		</if>
+		<if test="isDelete != null">
+			and loso.IS_DELETE = #{isDelete}
+		</if>
+		-->
+		<if test="orderId != null and orderId != ''">
+			and loso.order_id = #{orderId}
+		</if>
+		<if test="orderPayTime != null and orderPayTime != ''">
+			and loso.order_pay_time = #{orderPayTime}
+		</if>
+		<if test="orderStatus != null and orderStatus != ''">
+			and loso.order_status = #{orderStatus}
+		</if>
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by loso.#{order} #{desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_out_system_order(
+	    	order_id,	    	
+	    	pay_type,	    	
+	    	out_system_id,	    	
+	    	device_id,	    	
+	    	order_status,	    	
+	    	amount,	    	
+	    	order_pay_time,	    	
+	    	userId,	    	
+	    	CREATE_BY,	    	
+	    	CREATE_DATE,	    	
+	    	REMARKS	    	
+		) values(
+			#{orderId},			 
+			#{payType},			 
+			#{outSystemId},			 
+			#{deviceId},			 
+			#{orderStatus},			 
+			#{amount},			 
+			#{orderPayTime},			 
+			#{userid},			 
+			#{createBy},			 
+			#{createDate},			 
+			#{remarks}			 
+		)
+	</insert>
+	
+	<select id="findById" resultType="OutSystemOrder">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_out_system_order loso
+			<include refid="joinOthers"/>
+		where
+			loso.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="OutSystemOrder">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_out_system_order loso
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(loso.id)
+		from
+			liebao_out_system_order loso
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="OutSystemOrder">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_out_system_order loso
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		<include refid="searchOrder"/>
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_out_system_order set
+			order_id=#{orderId},			
+			pay_type=#{payType},			
+			out_system_id=#{outSystemId},			
+			device_id=#{deviceId},			
+			order_status=#{orderStatus},			
+			amount=#{amount},			
+			order_pay_time=#{orderPayTime},			
+			userId=#{userid},			
+			UPDATE_BY=#{updateBy},			
+			UPDATE_DATE=#{updateDate},			
+			REMARKS=#{remarks}			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_out_system_order where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_out_system_order where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_out_system_order set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_out_system_order set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+	
+	<!-- 根据类型时间查询所有订单 -->
+	<select id="findByOrderPayTime" resultType="OutSystemOrder">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_out_system_order loso
+		<where>
+			DATE_FORMAT(loso.order_pay_time, '%Y-%m-%d')=#{orderPayTime}
+		</where>
+	</select>
+	
+	<select id="findByAll" resultType="OutSystemOrder">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_out_system_order loso
+	</select>
+	
+	<select id="findByList" resultType="OutSystemOrder">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_out_system_order loso
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		order by loso.order_pay_time desc
+	</select>
+</mapper>

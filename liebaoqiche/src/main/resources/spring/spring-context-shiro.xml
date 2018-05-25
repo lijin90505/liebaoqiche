@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">	
+	
+	<beans:description>Shiro Configuration</beans:description>
+	
+	<!-- 自定义的密码匹配器 -->
+	<beans:bean id="credentialsMatcher" class="com.ibest.framework.common.security.SystemCredentilsMatcher"/>
+	<!-- 自动注入依赖的Service -->
+	<beans:bean id="systemService" class="com.ibest.framework.system.service.SystemService"></beans:bean>
+	
+	<!-- 自定义的授权认证方式 -->
+	<beans:bean id="systemAuthenticationRealm" class="com.ibest.framework.common.security.SystemAuthenticationRealm">
+		<beans:property name="credentialsMatcher" ref="credentialsMatcher"/>
+		<beans:property name="systemService" ref="systemService"></beans:property>
+	</beans:bean>
+	
+	<!-- Shiro 安全管理器 --> 
+	<beans:bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<beans:property name="cacheManager" ref="shiroCacheManager"></beans:property>
+		<beans:property name="sessionManager" ref="sessionManager"></beans:property>
+		<beans:property name="realm" ref="systemAuthenticationRealm"></beans:property>
+	</beans:bean>
+	
+ 	<!--   
+       Shiro主过滤器本身功能十分强大，其强大之处就在于它支持任何基于URL路径表达式的、自定义的过滤器的执行  
+       Web应用中，Shiro可控制的Web请求必须经过Shiro主过滤器的拦截，Shiro对基于Spring的Web应用提供了完美的支持   
+    --> 
+	<beans:bean id="shiroFilter" class="com.ibest.framework.common.security.SystemShiroFilterFactoryBean">
+		<!-- Shiro的核心安全接口，这个属性是必须的 -->  
+        <beans:property name="securityManager" ref="securityManager"/>  
+        <!-- 要求登录时的链接(登录页面地址)，非必须的属性，默认会自动寻找Web工程根目录下的"/login.jsp"页面 -->  
+        <beans:property name="loginUrl" value="/login"/>  
+       	<beans:property name="filters">
+       		<beans:map>
+       			<beans:entry key="authc">
+       				<beans:bean class="com.ibest.framework.common.security.SystemFormAuthenticationFilter"/>
+       			</beans:entry>
+       		</beans:map>
+       	</beans:property>
+        <beans:property name="filterChainDefinitions">  
+            <beans:value> 
+            	/=anon
+            	/login=anon 
+            	/logout=anon
+            	/userLogin=anon
+            	/clientLogin=anon
+                /resources/*=anon
+                /wechart/**=anon
+                /main=authc
+                /druid/**=authc
+                ${adminPath}/**=authc
+                ${servicePath}/**=anon
+            </beans:value>  
+        </beans:property>  
+	</beans:bean>
+	
+	<!-- 自定义会话管理配置 -->
+    <beans:bean id="sessionManager" class="com.ibest.framework.common.security.SystemSessionManager"> 
+        <beans:property name="sessionDAO" ref="sessionDAO"/>
+        <!-- 会话超时时间，单位：毫秒  -->
+        <beans:property name="globalSessionTimeout" value="${session.sessionTimeout}"/>
+        <!-- 定时清理失效会话, 清理用户直接关闭浏览器造成的孤立会话   -->
+        <beans:property name="sessionValidationInterval" value="${session.sessionTimeoutClean}"/>
+       	<beans:property name="sessionValidationSchedulerEnabled" value="true"/>
+        <beans:property name="sessionIdCookie" ref="sessionIdCookie"/>
+        <beans:property name="sessionIdCookieEnabled" value="true"/>
+    </beans:bean>
+    
+    <!-- 指定本系统SESSIONID, 默认为: JSESSIONID 问题: 与SERVLET容器名冲突, 如JETTY, TOMCAT 等默认JSESSIONID,
+        当跳出SHIRO SERVLET时如ERROR-PAGE容器会为JSESSIONID重新分配值导致登录会话丢失! -->
+    <beans:bean id="sessionIdCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+        <beans:constructor-arg name="name" value="${session.sessionIdCookie}"/>
+    </beans:bean>
+    
+    <beans:bean id="sessionIdGenerator" class="org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator"/>
+    
+	<!-- 定义授权缓存管理器 -->
+	<beans:bean id="shiroCacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
+		<beans:property name="cacheManager" ref="cacheManager"/>
+	</beans:bean>
+
+    <!-- 自定义Session存储容器 -->
+    <beans:bean id="sessionDAO" class="org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO">
+<!--     <beans:bean id="sessionDAO" class="com.ibest.framework.common.security.SystemSessionRedisDao"> -->
+        <beans:property name="sessionIdGenerator" ref="sessionIdGenerator" />
+        <beans:property name="activeSessionsCacheName" value="activeSessionsCache" />
+        <beans:property name="cacheManager" ref="shiroCacheManager" />
+    </beans:bean>
+	
+	<!-- 保证实现了Shiro内部lifecycle函数的bean执行 -->
+	<beans:bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+	
+	<!--   
+	       开启Shiro的注解(如@RequiresRoles，@RequiresPermissions)，需借助SpringAOP扫描使用Shiro注解的类，  
+	       并在必要时进行安全逻辑验证  
+    -->  
+    <beans:bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"></beans:bean>  
+    <beans:bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">  
+        <beans:property name="securityManager" ref="securityManager"></beans:property>  
+    </beans:bean>  
+</beans:beans>

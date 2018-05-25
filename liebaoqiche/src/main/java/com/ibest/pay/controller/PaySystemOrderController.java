@@ -1,0 +1,312 @@
+package com.ibest.pay.controller;
+
+import java.io.File;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.ibest.framework.common.enums.EnumsRtnMapResult;
+import com.ibest.framework.common.persistence.BaseController;
+import com.ibest.framework.common.utils.ExcelUtils;
+import com.ibest.framework.common.utils.PageList;
+import com.ibest.pay.dto.input.PaySystemOrderInputDTO;
+import com.ibest.pay.entity.PaySystemOrder;
+import com.ibest.pay.enums.EnumsOrderStatus;
+import com.ibest.pay.service.PaySystemOrderService;
+
+@Controller
+@RequestMapping(value="${adminPath}/pay/paySystemOrder")
+public class PaySystemOrderController extends BaseController {
+	
+	private static final Logger logger = LoggerFactory.getLogger(PaySystemOrderController.class);
+	
+	@Autowired
+	private PaySystemOrderService paySystemOrderService;
+	
+	private static final String TEMPLATE_EXPORT = "paySystemOrderExportTemplate.xlsx";
+	
+	/**
+	* 进入到列表页
+	*/
+	@RequestMapping(value="/")
+	public String index(){
+		return "module/pay/paySystemOrder/paySystemOrderList";
+	}
+	
+	/**
+	* 进入到表单页-创建
+	*/
+	@RequestMapping(value="/add")
+	public String add(){
+		
+		return "module/pay/paySystemOrder/paySystemOrderForm";
+	}
+	
+	/**
+	* 进入到表单页，编辑
+	*/
+	@RequestMapping(value="/edit")
+	public String edit(@RequestParam String id, Model model){
+		try {
+			if(StringUtils.isNotEmpty(id)){
+				PaySystemOrder paySystemOrder = paySystemOrderService.findById(id);
+				if(paySystemOrder != null){
+					model.addAttribute("paySystemOrder", paySystemOrder);
+				}else{
+					setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "您查看的信息不存在！", model);
+				}
+			}else{
+				setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "请选择需要编辑的信息！", model);
+			}
+		} catch (Exception e) {
+			setRtnCodeAndMsg(EnumsRtnMapResult.EXCEPTION.getCode(), EnumsRtnMapResult.EXCEPTION.getMsg(), model);
+		}
+		return "module/pay/paySystemOrder/paySystemOrderForm";
+	}
+	
+	/**
+	* 进入到详情页
+	*/
+	@RequestMapping(value="/view")
+	public String view(@RequestParam String id, Model model){
+		try {
+			if(StringUtils.isNotEmpty(id)){
+				PaySystemOrder paySystemOrder = paySystemOrderService.findById(id);
+				if(paySystemOrder != null){
+					model.addAttribute("paySystemOrder", paySystemOrder);
+				}else{
+					setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "您查看的信息不存在！", model);
+				}
+			}else{
+				setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "请选择需要查看的信息！", model);
+			}
+		} catch (Exception e) {
+			setRtnCodeAndMsg(EnumsRtnMapResult.EXCEPTION.getCode(), EnumsRtnMapResult.EXCEPTION.getMsg(), model);
+		}
+		return "module/pay/paySystemOrder/paySystemOrderDetail";
+	}
+
+	/**
+	* 异步分页查询
+	*/
+	@ResponseBody
+	@RequiresPermissions("paySystemOrder:query")
+	@RequestMapping(value="/list")
+	public PageList<PaySystemOrder> list(PaySystemOrderInputDTO paySystemOrder, HttpServletRequest request){
+		
+		PageList<PaySystemOrder> pageList = new PageList<PaySystemOrder>();
+		
+		try {
+			//设置分页参数
+			super.setPage(request, pageList);
+		
+			pageList = paySystemOrderService.findByPage(pageList, paySystemOrder);
+			
+			List<PaySystemOrder> psList = pageList.getRows();
+			List<PaySystemOrder> list = new ArrayList<PaySystemOrder>();
+			if(psList!=null && psList.size()>0) {
+				for (PaySystemOrder info : psList) {
+					if(info.getTradeState()!=null) {
+						info.setTradeState(EnumsOrderStatus.getDesc(info.getTradeState()));
+						/*if(info.getTradeState().equals("00")) {
+							info.setTradeState("支付成功");
+						}else if(info.getTradeState().equals("01")) {
+							info.setTradeState("失败");
+						}else if(info.getTradeState().equals("02")) {
+							info.setTradeState("未知错误请查询交易状态");
+						}else if(info.getTradeState().equals("03")) {
+							info.setTradeState("申请退款中");
+						}else if(info.getTradeState().equals("04")) {
+							info.setTradeState("未支付");
+						}else if(info.getTradeState().equals("09")) {
+							info.setTradeState("已退款");
+						}else if(info.getTradeState().equals("08")) {
+							info.setTradeState("全额退款，交易关闭");
+						}*/
+					}
+					info.setTradeAmount(info.getTradeAmount()+"元");
+					list.add(info);
+				}
+			}
+			pageList.setRows(list);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return pageList;
+	}
+	
+	/**
+	* 异步表单提交
+	*/
+	@ResponseBody
+	@RequiresPermissions("paySystemOrder:create")
+	@RequestMapping(value="create")
+	public Map<String, Object> insert(PaySystemOrder paySystemOrder){
+
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		setRtnCodeAndMsgBySuccess(rtnMap, "保存成功");
+		
+		try {
+			int result = paySystemOrderService.insert(paySystemOrder);
+			if(result == 0){
+				setRtnCodeAndMsgByFailure(rtnMap, "保存失败");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+		return rtnMap;
+	}
+	
+	@ResponseBody
+	@RequiresPermissions("paySystemOrder:update")
+	@RequestMapping(value="update")
+	public Map<String, Object> update(PaySystemOrder paySystemOrder){
+
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		setRtnCodeAndMsgBySuccess(rtnMap, "保存成功");
+		
+		try {
+			int result = paySystemOrderService.update(paySystemOrder);
+			if(result == 0){
+				setRtnCodeAndMsgByFailure(rtnMap, "保存失败");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+		return rtnMap;
+	}
+	
+	@ResponseBody
+	@RequiresPermissions("paySystemOrder:delete")
+	@RequestMapping(value="delete")
+	public Map<String, Object> delete(@RequestParam(required=true) String ids){
+		
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		setRtnCodeAndMsgBySuccess(rtnMap, "删除成功");
+		
+		try {
+			int result = paySystemOrderService.deleteByIds(ids);
+			if(result == 0){
+				setRtnCodeAndMsgByFailure(rtnMap, "删除失败");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+		return rtnMap;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "exportoPaySystemOrder")
+	@RequiresPermissions("paySystemOrder:exportoPaySystemOrder")
+	public String exportoPaySystemOrder(HttpServletResponse response,HttpSession session,PaySystemOrderInputDTO paySystemOrder) {
+		try {
+			List<PaySystemOrder> details = paySystemOrderService.findByList(paySystemOrder);
+			String rootPath = session.getServletContext().getRealPath("/");
+			File file = new File(rootPath+"resources"+File.separator + "template" + File.separator + TEMPLATE_EXPORT);
+			InputStream is = FileUtils.openInputStream(file);
+			//创建workbook对象
+			Workbook wb = ExcelUtils.creteWorkbook(TEMPLATE_EXPORT, is);
+			Sheet sheet=wb.getSheetAt(0);
+			Row rootRow = sheet.getRow(1);
+			if(details != null){
+				for (int j = 0; j < details.size(); j++) {
+					Row row = getRow(rootRow,j+2,sheet,25);
+					createCell(row, rootRow, 6);
+					PaySystemOrder info = details.get(j);
+					row.getCell(0).setCellValue(info.getTradeTime());//支付时间
+					row.getCell(1).setCellValue(info.getTradeAmount()+"元");//订单金额
+					row.getCell(2).setCellValue(info.getMerchantNo());//商户号
+					row.getCell(3).setCellValue(info.getTransactionId());//流水号
+					row.getCell(4).setCellValue(info.getOrderId());//订单号
+					//订单状态
+					if(info.getTradeState()!=null) {
+						row.getCell(5).setCellValue(EnumsOrderStatus.getDesc(info.getTradeState()));
+					}
+				}	
+			}
+
+			if (wb != null) {
+				// 得到文件的扩展名
+				String type = "TEMPLATE_EXPORT.xlsx".substring("TEMPLATE_EXPORT.xlsx".lastIndexOf("."));
+				String fileName = new String(("支付系统订单流水信息").getBytes("utf-8"),"iso-8859-1")
+						+ (StringUtils.isNotEmpty(type) ? type : ".xls");
+				response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+				response.setContentType("application/vnd.ms-excel");
+				// 获取文件输出流
+				ServletOutputStream out = response.getOutputStream();
+				// 将文件内容写入
+				wb.write(out);
+				out.flush();
+				out.close();
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public Row getRow(Row rootRow,int rowIndex,Sheet sheet,int height){
+		Row row = sheet.getRow(rowIndex);
+		if(row == null){
+			row = sheet.createRow(rowIndex);
+		}
+		row.setRowStyle(rootRow.getRowStyle());
+		row.setHeightInPoints(height);
+		return row;
+	}
+
+	public void createCell(Row row,Row rootRow,int column){
+		for (int i = 0; i < column; i++) {
+			Cell cell = row.getCell(i);
+			if(cell == null){
+				cell = row.createCell(i);
+			}
+			if(i == column-1){
+				cell.setCellStyle(rootRow.getCell(3).getCellStyle());
+			}else{
+				cell.setCellStyle(rootRow.getCell(0).getCellStyle());
+			}
+		}
+	}
+	
+	/**
+	 * 分转元
+	 * @Title: changeF2Y  
+	 * @param: @param amount
+	 * @param: @throws Exception
+	 * @return:String
+	 * @author: WeiJia
+	 * @date:2018年4月27日 上午9:30:16
+	 */
+	public static String changeF2Y(String amount) throws Exception{    
+        return BigDecimal.valueOf(Long.valueOf(amount)).divide(new BigDecimal(100)).toString();    
+    }   
+}

@@ -1,0 +1,118 @@
+<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<!DOCTYPE>
+<html>
+<head>
+	<title>SysExpRule</title>
+	<%@ include file="/WEB-INF/views/include/head.jsp"%>
+</head>
+<body>
+	<%@ include file="/WEB-INF/views/include/loading.jsp"%>
+	<div class="easyui-layout" data-options="fit:true">
+		<div data-options="region:'center'">
+	    	<form id="DataForm" method="post">
+	    		<table style="width: 100%;">
+	    			<tbody>
+	    				<tr>
+	    					<td colspan="2" class="chapter">
+	    						SysExpRule基本信息
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="id" name="id" value="${sysExpRule.id}" labelWidth="100" label="主键UUID" required="true" data-options="prompt:'主键UUID'" style="width: 90%;">
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="expRuleId" name="expRuleId" value="${sysExpRule.expRuleId}" labelWidth="100" label="经验值累积规则ID" required="true" data-options="prompt:'经验值累积规则ID'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="outSystemId" name="outSystemId" value="${sysExpRule.outSystemId}" labelWidth="100" label="接入系统标识" required="true" data-options="prompt:'接入系统标识'" style="width: 90%;">
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="outSystemName" name="outSystemName" value="${sysExpRule.outSystemName}" labelWidth="100" label="接入系统名称" required="true" data-options="prompt:'接入系统名称'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-datebox" id="createTime" name="createTime" value="${sysExpRule.createTime}" labelWidth="100" label="记录时间" required="true" data-options="prompt:'记录时间'" style="width: 90%;">
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-datebox" id="modifyTime" name="modifyTime" value="${sysExpRule.modifyTime}" labelWidth="100" label="修改时间"  data-options="prompt:'修改时间'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="createUserId" name="createUserId" value="${sysExpRule.createUserId}" labelWidth="100" label="创建人ID" required="true" data-options="prompt:'创建人ID'" style="width: 90%;">
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="createUserName" name="createUserName" value="${sysExpRule.createUserName}" labelWidth="100" label="创建人名称"  data-options="prompt:'创建人名称'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="modifyUserId" name="modifyUserId" value="${sysExpRule.modifyUserId}" labelWidth="100" label="修改人ID" required="true" data-options="prompt:'修改人ID'" style="width: 90%;">
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="modifyUserName" name="modifyUserName" value="${sysExpRule.modifyUserName}" labelWidth="100" label="修改人名称"  data-options="prompt:'修改人名称'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;" colspan="2">
+	    													<textarea class="easyui-textbox" name="remarks"
+									style="width: 95%; height: 80px;" labelWidth="70" label="备注"
+									data-options="validType:'length[1,300]',prompt:'备注'">${sysExpRule.remarks}</textarea>
+	    					</td>
+	    				</tr>
+	    			</tbody>
+	    		</table>
+			</form>
+		</div>
+		<div data-options="region:'south',border:false" style="text-align:left; padding:5px;">
+            <a id="btnSave" href="javascript:void(0)" class="easyui-linkbutton button-success" style="width: 80px;"><i class="fa fa-check fa-lg"></i>&nbsp;&nbsp;保存</a>
+            <a id="btnCancel" href="javascript:void(0)" class="easyui-linkbutton button-warning" style="width: 80px;"><i class="fa fa-remove fa-lg"></i>&nbsp;&nbsp;取消</a>
+        </div>
+   	</div>
+    
+    <!-- js脚本，必须写在body中，tab的url加载模式只会异步加载body中的内容到tab中 -->
+	<script type="text/javascript">
+		require(['jquery','common'], function($){
+			// 给保存按钮添加点击事件
+			$("#btnSave").on('click', function(){
+				
+				$("#btnSave").linkbutton('disable');
+			
+				$("#DataForm").form('submit',{
+					url:$("#id").val() == ''?'${ctx}/accesssystem/sysExpRule/create':'${ctx}/accesssystem/sysExpRule/update',
+					onSubmit:function(){
+						return $(this).form('enableValidation').form('validate');
+					},
+					success: function(data){
+						var json = $.parseJSON(data);
+						if(json && json.rtnCode == '00000000'){
+							$.messager.alert('提示', "保存成功", "success");
+							$("#btnSave").linkbutton('enable');
+						}else{
+							$.messager.alert('提示', json.rtnMsg, "error");
+							$("#btnSave").linkbutton('enable');
+						}
+					},
+					error: function(){
+						$("#btnSave").linkbutton('enable');
+					}
+				});
+			});
+			
+			// 给保存按钮添加点击事件
+			$("#btnSave").on('click', function() {
+				history.go(-1);
+			});
+
+			$("#btnCancel").on('click', function(){
+				history.go(-1);
+			});
+		});
+	</script>
+</body>
+</html>

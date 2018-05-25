@@ -1,0 +1,177 @@
+<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<!DOCTYPE>
+<html>
+<head>
+	<title>PayRefundInfo</title>
+	<%@ include file="/WEB-INF/views/include/head.jsp"%>
+</head>
+<body>
+	<%@ include file="/WEB-INF/views/include/loading.jsp"%>
+	<div class="easyui-layout" data-options="fit:true">
+		<div data-options="region:'center'">
+	    	<form id="DataForm" method="post">
+	    		<table style="width: 100%;">
+	    			<tbody>
+	    				<tr>
+	    					<td colspan="2" class="chapter">
+	    						PayRefundInfo基本信息
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="id" name="id" value="${payRefundInfo.id}" labelWidth="100" label="主键" required="true" data-options="prompt:'主键'" style="width: 90%;">
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="payInfoId" name="payInfoId" value="${payRefundInfo.payInfoId}" labelWidth="100" label="支付信息主表"  data-options="prompt:'支付信息主表'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="wechatPayInfoId" name="wechatPayInfoId" value="${payRefundInfo.wechatPayInfoId}" labelWidth="100" label="微信支付信息主表"  data-options="prompt:'微信支付信息主表'" style="width: 90%;">
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="outSystemId" name="outSystemId" value="${payRefundInfo.outSystemId}" labelWidth="100" label="接入系统标识,01：经销商管理系统；02：APP；03：UBI保险"  data-options="prompt:'接入系统标识,01：经销商管理系统；02：APP；03：UBI保险'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="refundChannel" name="refundChannel" value="${payRefundInfo.refundChannel}" labelWidth="100" label="退款渠道；01银联;02微信;03支付宝"  data-options="prompt:'退款渠道；01银联;02微信;03支付宝'" style="width: 90%;">
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="userId" name="userId" value="${payRefundInfo.userId}" labelWidth="100" label="用户唯一ID"  data-options="prompt:'用户唯一ID'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="refundNo" name="refundNo" value="${payRefundInfo.refundNo}" labelWidth="100" label="退款流水号（成功才有）"  data-options="prompt:'退款流水号（成功才有）'" style="width: 90%;">
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="outTradeNo" name="outTradeNo" value="${payRefundInfo.outTradeNo}" labelWidth="100" label="商户订单号"  data-options="prompt:'商户订单号'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="outRefundNo" name="outRefundNo" value="${payRefundInfo.outRefundNo}" labelWidth="100" label="商户退款单号"  data-options="prompt:'商户退款单号'" style="width: 90%;">
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="totalFee" name="totalFee" value="${payRefundInfo.totalFee}" labelWidth="100" label="订单金额"  data-options="prompt:'订单金额'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="refundFee" name="refundFee" value="${payRefundInfo.refundFee}" labelWidth="100" label="退款金额"  data-options="prompt:'退款金额'" style="width: 90%;">
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="refundDesc" name="refundDesc" value="${payRefundInfo.refundDesc}" labelWidth="100" label="退款原因"  data-options="prompt:'退款原因'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="notifyUrl" name="notifyUrl" value="${payRefundInfo.notifyUrl}" labelWidth="100" label="回调URL"  data-options="prompt:'回调URL'" style="width: 90%;">
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="refundStatus" name="refundStatus" value="${payRefundInfo.refundStatus}" labelWidth="100" label="退款状态；00成功，01失败;02退款关闭;03未知错误;04处理中"  data-options="prompt:'退款状态；00成功，01失败;02退款关闭;03未知错误;04处理中'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-datebox" id="refundStartTime" name="refundStartTime" value="${payRefundInfo.refundStartTime}" labelWidth="100" label="退款开始时间"  data-options="prompt:'退款开始时间'" style="width: 90%;">
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-datebox" id="refundEndTime" name="refundEndTime" value="${payRefundInfo.refundEndTime}" labelWidth="100" label="退款结束时间"  data-options="prompt:'退款结束时间'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-datebox" id="refundSuccessTime" name="refundSuccessTime" value="${payRefundInfo.refundSuccessTime}" labelWidth="100" label="退款成功时间"  data-options="prompt:'退款成功时间'" style="width: 90%;">
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="refundRecvAccout" name="refundRecvAccout" value="${payRefundInfo.refundRecvAccout}" labelWidth="100" label="退款入账账户；1退回银行卡({银行名称}{卡类型}{卡尾号});2退回支付用户零钱(支付用户零钱);3退还商户(商户基本账户,商户结算银行账户);4退回支付用户零钱通(支付用户零钱通)针对微信"  data-options="prompt:'退款入账账户；1退回银行卡({银行名称}{卡类型}{卡尾号});2退回支付用户零钱(支付用户零钱);3退还商户(商户基本账户,商户结算银行账户);4退回支付用户零钱通(支付用户零钱通)针对微信'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="refundAccount" name="refundAccount" value="${payRefundInfo.refundAccount}" labelWidth="100" label="退款资金来源;REFUND_SOURCE_RECHARGE_FUNDS可用余额退款/基本账户;REFUND_SOURCE_UNSETTLED_FUNDS 未结算资金退款(针对微信)"  data-options="prompt:'退款资金来源;REFUND_SOURCE_RECHARGE_FUNDS可用余额退款/基本账户;REFUND_SOURCE_UNSETTLED_FUNDS 未结算资金退款(针对微信)'" style="width: 90%;">
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="refundRequestSource" name="refundRequestSource" value="${payRefundInfo.refundRequestSource}" labelWidth="100" label="API接口;VENDOR_PLATFORM商户平台(针对微信)"  data-options="prompt:'API接口;VENDOR_PLATFORM商户平台(针对微信)'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="remarks" name="remarks" value="${payRefundInfo.remarks}" labelWidth="100" label="备注"  data-options="prompt:'备注'" style="width: 90%;">
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="createBy" name="createBy" value="${payRefundInfo.createBy}" labelWidth="100" label="创建人"  data-options="prompt:'创建人'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-datebox" id="createDate" name="createDate" value="${payRefundInfo.createDate}" labelWidth="100" label="创建时间"  data-options="prompt:'创建时间'" style="width: 90%;">
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="updateBy" name="updateBy" value="${payRefundInfo.updateBy}" labelWidth="100" label="修改人"  data-options="prompt:'修改人'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-datebox" id="updateDate" name="updateDate" value="${payRefundInfo.updateDate}" labelWidth="100" label="修改时间"  data-options="prompt:'修改时间'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px;" colspan="2">
+	    						<label class="label-top">备注:</label>
+	    						<input class="easyui-textbox" name="remarks" style="width:99.5%; height:80px;" data-options="multiline:true">
+	    					</td>
+	    				</tr>
+	    			</tbody>
+	    		</table>
+			</form>
+		</div>
+		<div data-options="region:'south',border:false" style="text-align:right; padding:10px;">
+            <a id="btnSave" href="javascript:void(0)" class="easyui-linkbutton button-success" style="width: 80px;"><i class="fa fa-check fa-lg"></i>&nbsp;&nbsp;保存</a>
+            <a id="btnCancel" href="javascript:void(0)" class="easyui-linkbutton button-warning" style="width: 80px;"><i class="fa fa-remove fa-lg"></i>&nbsp;&nbsp;取消</a>
+        </div>
+   	</div>
+    
+    <!-- js脚本，必须写在body中，tab的url加载模式只会异步加载body中的内容到tab中 -->
+	<script type="text/javascript">
+		require(['jquery','common'], function($){
+			// 给保存按钮添加点击事件
+			$("#btnSave").on('click', function(){
+				
+				$("#btnSave").linkbutton('disable');
+			
+				$("#DataForm").form('submit',{
+					url:$("#id").val() == ''?'${ctx}/pay/payRefundInfo/create':'${ctx}/pay/payRefundInfo/update',
+					onSubmit:function(){
+						return $(this).form('enableValidation').form('validate');
+					},
+					success: function(data){
+						var json = $.parseJSON(data);
+						if(json && json.rtnCode == '00000000'){
+							$.messager.alert('提示', "保存成功", "success",function(){
+								$("#btnSave").linkbutton('enable');
+								hideDialog();
+							});
+						}else{
+							$.messager.alert('提示', json.rtnMsg, "error",function(){
+								$("#btnSave").linkbutton('enable');
+							});
+						}
+					},
+					error: function(){
+						$("#btnSave").linkbutton('enable');
+					}
+				});
+			});
+			
+			// 给保存按钮添加点击事件
+			$("#btnCancel").on('click', function(){
+				history.go(-1);
+			});
+		});
+	</script>
+</body>
+</html>

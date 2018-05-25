@@ -1,0 +1,11 @@
+package com.ibest.activity.dto.input;
+
+import com.ibest.framework.common.persistence.BaseInputDTO;
+
+public class UserActivityInputDTO extends BaseInputDTO {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+}

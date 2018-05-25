@@ -1,0 +1,197 @@
+<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<!DOCTYPE>
+<html>
+<head>
+	<title>SystemActivity</title>
+	<%@ include file="/WEB-INF/views/include/head.jsp"%>
+</head>
+<body>
+<%@ include file="/WEB-INF/views/include/loading.jsp"%>
+<div class="easyui-layout" data-options="fit:true">
+	<div data-options="region:'center'">
+		<div class="datagrid-body" style=" overflow-x: hidden;">
+			<table style="width: 100%;font-size:12px;" class="datagrid-btable detail-table">
+				<tr>
+					<td><div>活动名称</div></td>
+					<td><div>${activityDetails.activityName == ''|| activityDetails.activityName ==null?'':activityDetails.activityName}</div></td>
+					<td colspan="2" rowspan="3" style="background: #fff;">
+						<div class="personPic">
+							<c:set var="userHeader" value="${ctxResources}/images/user_act.png"/>
+							<c:if test="${activityDetails.imageUrl != null && activityDetails.imageUrl != ''}">
+								<c:set var="userHeader" value="${activityDetails.imageUrl}"/>
+							</c:if>
+							<img id="photoPicker" src="${userHeader}" style="width: 150px; height: 90px; ">
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td><div>生效时间</div></td>
+					<td><div>${activityDetails.startTime == '' || activityDetails.startTime ==null?0:activityDetails.startTime}</div></td>
+				</tr>
+				<tr>
+				<td><div>截止时间</div></td>
+					<td><div>${activityDetails.endTime == '' || activityDetails.endTime ==null?0:activityDetails.endTime}</div></td>
+				</tr>
+				<tr>
+					<td><div>状态</div></td>
+					<td><div>${activityDetails.stateDesc == '' || activityDetails.stateDesc ==null?0:activityDetails.stateDesc}</div></td>
+				</tr>
+				<tr>
+					<td><div>创建人</div></td>
+					<td><div>${activityDetails.creater == '' || activityDetails.creater ==null?0:activityDetails.creater}</div></td>
+					<td><div>创建时间</div></td>
+					<td><div><fmt:formatDate value="${activityDetails.createTime == '' || activityDetails.createTime ==null?0:activityDetails.createTime}" pattern="yyyy-MM-dd HH:mm:ss" /></div></td>
+				</tr>
+				<tr>
+					<td><div>修改人</div></td>
+					<td><div>${activityDetails.modifier == '' || activityDetails.modifier ==null?0:activityDetails.modifier}</div></td>
+					<td><div>修改时间</div></td>
+					<td><div><fmt:formatDate value="${activityDetails.modifyTime == '' || activityDetails.modifyTime ==null?0:activityDetails.modifyTime}" pattern="yyyy-MM-dd HH:mm:ss" /></div></td>
+				</tr>
+				<tr>
+					<td><div>活动内容</div></td>
+					<td><div>${activityDetails.activityContent ==''|| activityDetails.activityContent ==null?'':activityDetails.activityContent}</div></td>
+				</tr>
+				<tr>
+					<td><div>备注</div></td>
+					<td colspan="3" class="remarks"><div>${activityDetails.remarks ==''||activityDetails.remarks ==null?'':activityDetails.remarks}</div></td>
+				</tr>
+			</table>
+			
+			<table id="IntegralGrid" class="easyui-datagrid" title="积分详情" ctrlSelect="true" striped="true"
+				rownumbers="true" pagination="true" toolbar="#Grid_Toolbar" style="height:200px;"
+				loadMsg="正在加载数据，请稍等..." emptyMsg="没有找到符合条件的数据"
+				data-options="checkOnSelect:true, selectOnCheck:true, border: false">
+			    <thead>
+			        <tr>
+			            <th data-options="field:'id',hidden:true">id</th>
+			            <th data-options="field:'name',width:120">积分名称</th>
+			            <th data-options="field:'integral',width:120">积分名称</th>
+						<th data-options="field:'id',hidden:true,width:150">活动代码</th>
+			            <th data-options="field:'creater'">创建人</th>
+			            <th data-options="field:'createTime'">创建时间</th>
+			            <th data-options="field:'modifier'">修改人</th>
+			            <th data-options="field:'modifyTime'">修改时间</th>
+			        </tr>
+			    </thead>
+			</table>
+			
+		<table id="CardGrid" class="easyui-datagrid" title="卡券详情" ctrlSelect="true" striped="true" style="height:200px;"
+				rownumbers="true" pagination="true" toolbar="#Grid_Toolbar"
+				loadMsg="正在加载数据，请稍等..." emptyMsg="没有找到符合条件的数据"
+				data-options="checkOnSelect:true, selectOnCheck:true, border: false">
+			    <thead>
+			        <tr>
+			            <th data-options="field:'id',hidden:true">id</th>
+			            <th data-options="field:'name',width:120">卡券名称</th>
+						<th data-options="field:'id',hidden:true,width:150">卡券代码</th>
+			            <th data-options="field:'creater'">创建人</th>
+			            <th data-options="field:'createTime'">创建时间</th>
+			            <th data-options="field:'modifier'">修改人</th>
+			            <th data-options="field:'modifyTime'">修改时间</th>
+			        </tr>
+			    </thead>
+			</table>
+			
+			<table id="ExperienceGrid" class="easyui-datagrid" title="经验值详情" ctrlSelect="true" striped="true" style="height:200px;"
+				rownumbers="true" pagination="true" toolbar="#Grid_Toolbar"
+				loadMsg="正在加载数据，请稍等..." emptyMsg="没有找到符合条件的数据"
+				data-options="checkOnSelect:true, selectOnCheck:true, border: false">
+			    <thead>
+			        <tr>
+			            <th data-options="field:'id',hidden:true">id</th>
+			            <th data-options="field:'name',width:120">经验值名称</th>
+			            <th data-options="field:'exp',width:120">经验值</th>
+						<th data-options="field:'id',hidden:true,width:150">经验值代码</th>
+			            <th data-options="field:'creater'">创建人</th>
+			            <th data-options="field:'createTime'">创建时间</th>
+			            <th data-options="field:'modifier'">修改人</th>
+			            <th data-options="field:'modifyTime'">修改时间</th>
+			        </tr>
+			    </thead>
+			</table>
+		</div>
+	</div>
+	<div data-options="region:'south',border:false" style="text-align:right; padding:10px;">
+		<a id="btnClose" href="javascript:void(0)" class="easyui-linkbutton button-warning" style="width: 80px;"><i class="fa fa-remove fa-lg"></i>&nbsp;&nbsp;关闭</a>
+	</div>
+</div>
+
+<!-- js脚本，必须写在body中，tab的url加载模式只会异步加载body中的内容到tab中 -->
+<script type="text/javascript">
+	require(['jquery','common'], function($){
+		// 给关闭按钮添加点击事件
+		$("#btnClose").on('click', function(){
+			hideDialog();
+		});
+		
+		var id = "${id}"
+			// 加载积分授权信息
+		$(function(){
+			
+			$.ajax({
+				url: '${ctx}/activity/activityDetails/activityIntegral',
+				data: {
+					activityId: id
+				},
+				type: 'POST',
+				dataType: 'JSON',
+				success: function (json) {
+
+					$("#IntegralGrid").datagrid();
+
+					// 显示已经选中的积分
+					if(json && json.activityDetailsChooseIntegralList){
+						$("#IntegralGrid").datagrid('loadData', json.activityDetailsChooseIntegralList);
+					}
+
+				}
+			});
+		});
+		
+		// 加载卡券授权信息
+		$(function(){
+			$.ajax({
+				url: '${ctx}/activity/activityDetails/activityCard',
+				data: {
+					activityId: id
+				},
+				type: 'POST',
+				dataType: 'JSON',
+				success: function (json) {
+
+					$("#CardGrid").datagrid();
+					// 显示已经授权的卡券
+					if(json && json.activityDetailsChooseCardList){
+						$("#CardGrid").datagrid('loadData', json.activityDetailsChooseCardList);
+					}
+
+				}
+			});
+		});
+		
+		// 加载经验值授权信息
+		$(function(){
+			$.ajax({
+				url: '${ctx}/activity/activityDetails/activityExperience',
+				data: {
+					activityId: id
+				},
+				type: 'POST',
+				dataType: 'JSON',
+				success: function (json) {
+
+					$("#ExperienceGrid").datagrid();
+					// 显示已经授权的经验值
+					if(json && json.activityDetailsChooseExperienceList){
+						$("#ExperienceGrid").datagrid('loadData', json.activityDetailsChooseExperienceList);
+					}
+
+				}
+			});
+		});
+	});
+</script>
+</body>
+</html>

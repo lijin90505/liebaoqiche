@@ -1,0 +1,363 @@
+package com.ibest.activity.service;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ibest.activity.dao.ActivityCardDao;
+import com.ibest.activity.dao.ActivityDao;
+import com.ibest.activity.dao.ActivityDetailsDao;
+import com.ibest.activity.dao.ActivityIntegralDao;
+import com.ibest.activity.dto.input.ActivityCardInputDTO;
+import com.ibest.activity.dto.input.ActivityDetailsInputDTO;
+import com.ibest.activity.dto.input.ActivityInputDTO;
+import com.ibest.activity.dto.input.ActivityIntegralInputDTO;
+import com.ibest.activity.entity.Activity;
+import com.ibest.activity.entity.ActivityCard;
+import com.ibest.activity.entity.ActivityDetails;
+import com.ibest.activity.entity.ActivityIntegral;
+import com.ibest.framework.common.utils.PageList;
+import com.ibest.framework.common.utils.StringUtils;
+import com.ibest.framework.common.utils.UserUtils;
+import com.ibest.utils.ConstantUtils;
+import com.ibest.utils.RandomUtils;
+
+@Service
+@Transactional(readOnly = true)
+public class ActivityDetailsService {
+
+	@Autowired
+	protected ActivityDetailsDao activityDetailsDao;
+
+	@Autowired
+	protected ActivityDao activityDao;
+
+	@Autowired
+	protected ActivityCardDao activityCardDao;
+
+	@Autowired
+	protected ActivityIntegralDao activityIntegralDao;
+
+	public ActivityDetails findById(String id)
+			throws Exception {
+		return activityDetailsDao.findById(id);
+	}
+
+	@Transactional(readOnly = false)
+	public int insert(ActivityDetails activityDetails)
+			throws Exception {
+		activityDetails.preInsert();
+		int result = activityDetailsDao.insert(activityDetails);
+		return result;
+	}
+
+	@Transactional(readOnly = false)
+	public int deleteById(String id)
+			throws Exception {
+		int result = activityDetailsDao.deleteById(id);
+		return result;
+	}
+
+	@Transactional(readOnly = false)
+	public int deleteByIds(String ids)
+			throws Exception {
+		int result = activityDetailsDao.deleteByIds(StringUtils.tokenizeToList(ids));
+		return result;
+	}
+
+	@Transactional(readOnly = false)
+	public int update(ActivityDetails activityDetails)
+			throws Exception {
+		activityDetails.preUpdate();
+		int result = activityDetailsDao.update(activityDetails);
+		return result;
+	}
+
+	/**
+	 * 分页查询
+	 *
+	 * @param page
+	 * @param inputDto
+	 * @return
+	 * @throws Exception
+	 */
+	public PageList<ActivityDetails> findByPage(PageList<ActivityDetails> page, ActivityDetailsInputDTO inputDto)
+			throws Exception {
+
+		if (page == null) {
+			page = new PageList<ActivityDetails>();
+		}
+
+		long totalCount = activityDetailsDao.countByObject(inputDto);
+		if (totalCount > 0) {
+			// 设置记录总条数
+			page.setTotal(totalCount);
+
+			// 设置分页参数，查询数据
+			inputDto.setLimitStart((page.getPage() - 1) * page.getPageSize());
+			inputDto.setLimitSize(page.getPageSize());
+			List<ActivityDetails> activityDetailList = activityDetailsDao.findByObject(inputDto);
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			if (null!=activityDetailList && activityDetailList.size()>0) {
+				ActivityInputDTO activityInputDTO = new ActivityInputDTO();
+				String activityDetailsId = "";
+				String activityDetailsIdFK = "";
+				String state = "";
+				List<Activity> activities = activityDao.findByObject(activityInputDTO);
+				
+				
+				for (ActivityDetails details : activityDetailList) {
+					details.setStartDate(details.getStartTime().substring(0, 10));
+					details.setEndDate(details.getEndTime().substring(0, 10));
+					activityDetailsId = details.getId();
+					state = details.getState();
+					
+					if(null !=activities && activities.size()>0) {
+						for (Activity activity : activities) {
+							activityDetailsIdFK = activity.getActivityDetailsId();
+							if (activityDetailsId.equals(activityDetailsIdFK)) {
+								if ("2".equals(state)) {
+									details.setState("已发布");
+								}else {
+									details.setState("已关联");
+								}
+								break;
+							} else {
+								details.setState("未关联");
+								continue;
+							}
+						}
+					}else {
+						details.setState("未关联");
+					}
+				}
+			}
+			
+			page.setRows(activityDetailList);
+		}
+
+		return page;
+	}
+
+	/**
+	 * 查询列表
+	 */
+	public ActivityDetails findOneByObject(ActivityDetailsInputDTO inputDto)
+			throws Exception {
+		return activityDetailsDao.findOneByObject(inputDto);
+	}
+
+	/**
+	 * 查询列表
+	 */
+	public List<ActivityDetails> findByObject(ActivityDetailsInputDTO inputDto)
+			throws Exception {
+		return activityDetailsDao.findByObject(inputDto);
+	}
+
+
+	/**
+	 * 获取活动拥有的卡券
+	 *
+	 * @param activityId
+	 * @return
+	 * @throws Exception
+	 */
+	public ActivityDetails getActivityCard(String activityId)
+			throws Exception {
+		ActivityDetails activityDetails = activityDetailsDao.findById(activityId);
+		if (null != activityDetails) {
+			ActivityCardInputDTO inputDTO = new ActivityCardInputDTO();
+			ActivityCardInputDTO inputDTO1 = new ActivityCardInputDTO();
+			Activity activity = activityDao.findByDetailsId(activityId);
+			inputDTO1.setActivityId(activityId);
+			if (null == activity) {
+				inputDTO.setActivityId(activityId);
+			} else {
+				inputDTO.setActivityId(activity.getId());
+			}
+			activityDetails.setActivityDetailsChooseCardList(activityCardDao.getChoosedCard(inputDTO1));
+			activityDetails.setActivityDetailsUnChooseCardList(activityCardDao.getUnChoosedCard(inputDTO));
+		}
+		return activityDetails;
+	}
+
+	/**
+	 * 授权
+	 *
+	 * @param activityDetailsId 活动id
+	 * @param allCardsId        卡券id
+	 */
+	@Transactional(readOnly = false)
+	public void accreditCard(String activityDetailsId, String allCardsId) {
+
+		//活动表插记录
+		if (StringUtils.isNotEmpty(allCardsId)) {
+			Activity act = buildActivity(activityDetailsId);
+			// 删除已经授权的积分
+			activityCardDao.deleteByActivityId(act.getId());
+
+			// 重新授权
+			String[] cids = allCardsId.split(",");
+			ActivityCard activityCard = new ActivityCard();
+			for (String cid : cids) {
+				activityCard.setActivityId(act.getId());
+				activityCard.setCardId(cid);
+				activityCard.setIsDelete(ConstantUtils.UPDATE_SET_ZERO);
+				activityCard.setId(RandomUtils.RandomUUID());
+				activityCard.setCreater(UserUtils.getCurrentUser().getRealname());
+				activityCard.setCreateTime(new Date());
+				activityCard.setModifier(UserUtils.getCurrentUser().getRealname());
+				activityCard.setModifyTime(new Date());
+				activityCard.preInsert();
+				activityCardDao.insert(activityCard);
+			}
+			//删除已经授权的卡券
+		} else {
+			activityCardDao.deleteAll();
+		}
+	}
+
+	//构建活动对象，在关联时插入表
+	private Activity buildActivity(String activityDetailsId) {
+		Activity activity = activityDao.findByDetailsId(activityDetailsId);
+
+		Activity act = new Activity();
+		if (null == activity) {
+			act.setId(RandomUtils.RandomUUID());
+			act.setActivityDetailsId(activityDetailsId);
+			act.setExperienceId("");
+			act.setState("2");
+			act.setIsDelete(ConstantUtils.UPDATE_SET_ZERO);
+			act.setCreater(UserUtils.getCurrentUser().getRealname());
+			act.setCreateTime(new Date());
+			act.setModifier(UserUtils.getCurrentUser().getRealname());
+			act.setModifyTime(new Date());
+			act.preInsert();
+			activityDao.insert(act);
+			return act;
+		}
+		return activity;
+	}
+
+
+	//``````````````````````积分`````````````````````````````````
+
+	/**
+	 * 获取活动拥有的积分
+	 *
+	 * @param activityId
+	 * @return
+	 * @throws Exception
+	 */
+	public ActivityDetails getActivityIntegral(String activityId)
+			throws Exception {
+		ActivityDetails activityDetails = activityDetailsDao.findById(activityId);
+		if (activityDetails != null) {
+			ActivityIntegralInputDTO inputDTO = new ActivityIntegralInputDTO();
+			ActivityIntegralInputDTO inputDTO1 = new ActivityIntegralInputDTO();
+			Activity activity = activityDao.findByDetailsId(activityId);
+				inputDTO1.setActivityId(activityId);
+				if (null == activity) {
+					inputDTO.setActivityId(activityId);
+				} else {
+					inputDTO.setActivityId(activity.getId());
+				}
+			activityDetails.setActivityDetailsChooseIntegralList(activityIntegralDao.getChoosedIntegral(inputDTO1));
+			activityDetails.setActivityDetailsUnChooseIntegralList(activityIntegralDao.getUnChoosedIntegral(inputDTO));
+		}
+		return activityDetails;
+	}
+
+	/**
+	 * 授权
+	 *
+	 * @param activityDetailsId     活动id
+	 * @param allIntegralsId 积分id
+	 */
+	@Transactional(readOnly = false)
+	public void accreditIntegral(String activityDetailsId, String allIntegralsId) {
+
+		// 重新授权积分
+		if (StringUtils.isNotEmpty(allIntegralsId)) {
+			Activity act = buildActivity(activityDetailsId);
+
+			// 删除已经授权的积分
+			activityIntegralDao.deleteByActivityId(act.getId());
+
+			String[] ids = allIntegralsId.split(",");
+			ActivityIntegral activityIntegral = new ActivityIntegral();
+			for (String id : ids) {
+				activityIntegral.setActivityId(act.getId());
+				activityIntegral.setIntegralId(id);
+				activityIntegral.setIsDelete(ConstantUtils.UPDATE_SET_ZERO);
+				activityIntegral.setId(RandomUtils.RandomUUID());
+				activityIntegral.setCreater(UserUtils.getCurrentUser().getRealname());
+				activityIntegral.setCreateTime(new Date());
+				activityIntegral.setModifier(UserUtils.getCurrentUser().getRealname());
+				activityIntegral.setModifyTime(new Date());
+				activityIntegral.preInsert();
+				activityIntegralDao.insert(activityIntegral);
+			}
+		} else {
+			activityIntegralDao.deleteAll();
+		}
+	}
+
+	//``````````````````````经验值`````````````````````````````````
+
+	/**
+	 * 获取活动拥有的经验值
+	 *
+	 * @param activityId
+	 * @return
+	 * @throws Exception
+	 */
+	public ActivityDetails getActivityExperience(String activityId)
+			throws Exception {
+		ActivityDetails activityDetails = activityDetailsDao.findById(activityId);
+		if (activityDetails != null) {
+			ActivityInputDTO inputDTO = new ActivityInputDTO();
+			inputDTO.setActivityId(activityId);
+			activityDetails.setActivityDetailsChooseExperienceList(activityDao.getChoosedExperience(inputDTO));
+			activityDetails.setActivityDetailsUnChooseExperienceList(activityDao.getUnChoosedExperience(inputDTO));
+		}
+		return activityDetails;
+	}
+
+	/**
+	 * 授权
+	 *
+	 * @param activityDetailsId       活动id
+	 * @param allExperiencesId 经验值id
+	 */
+	@Transactional(readOnly = false)
+	public void accreditExperience(String activityDetailsId, String allExperiencesId) {
+
+		// 删除已经授权的经验值
+		activityDao.deleteByActivityId(activityDetailsId);
+		// 重新授权经验值
+		if (StringUtils.isNotEmpty(allExperiencesId)) {
+
+			String[] ids = allExperiencesId.split(",");
+			for (String id : ids) {
+				Activity activity = new Activity();
+				activity.setActivityDetailsId(activityDetailsId);
+				activity.setExperienceId(id);
+				activity.setState("2");
+				activity.setIsDelete(ConstantUtils.UPDATE_SET_ZERO);
+				activity.setId(RandomUtils.RandomUUID());
+				activity.setCreater(UserUtils.getCurrentUser().getRealname());
+				activity.setCreateTime(new Date());
+				activity.setModifier(UserUtils.getCurrentUser().getRealname());
+				activity.setModifyTime(new Date());
+				activity.preInsert();
+				activityDao.insert(activity);
+			}
+		}
+	}
+}

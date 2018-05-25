@@ -1,0 +1,122 @@
+package com.ibest.integral.service;
+
+import java.util.List;
+
+import com.ibest.framework.common.utils.StringUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ibest.framework.common.utils.PageList;
+
+import com.ibest.integral.dao.UserIntegralCountDao;
+import com.ibest.integral.entity.UserIntegralCount;
+import com.ibest.integral.dto.input.UserIntegralCountInputDTO;
+
+@Service
+@Transactional(readOnly=true)
+public class UserIntegralCountService {
+
+	@Autowired
+	protected UserIntegralCountDao userIntegralCountDao;
+	
+	public UserIntegralCount findById(String id) throws Exception{
+		return userIntegralCountDao.findById(id);
+	}
+	
+	public UserIntegralCount findByUserId(String userId) throws Exception{
+		return userIntegralCountDao.findByUserId(userId);
+	}
+
+	public UserIntegralCount findEntityByObject(UserIntegralCount userIntegralCount)throws Exception{
+		return userIntegralCountDao.findEntityByObject(userIntegralCount);
+	}
+	
+	@Transactional(readOnly=false)
+	public int integralUpdate(UserIntegralCount userIntegralCount) throws Exception{
+		int result = userIntegralCountDao.update(userIntegralCount);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int insert(UserIntegralCount userIntegralCount) throws Exception{
+		userIntegralCount.preInsert();
+		int result = userIntegralCountDao.insert(userIntegralCount);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteById(String id) throws Exception{
+		int result = userIntegralCountDao.deleteById(id);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteByIds(String ids) throws Exception{
+		int result = userIntegralCountDao.deleteByIds(StringUtils.tokenizeToList(ids));
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int update(UserIntegralCount userIntegralCount) throws Exception{
+		userIntegralCount.preUpdate();
+		int result = userIntegralCountDao.update(userIntegralCount);
+		return result;
+	}
+	/**
+	 * 修改应用程序标识
+	 * @param findByObject
+	 */
+	public void showAppId(List<UserIntegralCount> findByObject){
+		for (UserIntegralCount userIntegralCount : findByObject) {
+			if(userIntegralCount.getAppId().equals("00")){
+				userIntegralCount.setAppId("APP");
+			}
+			if(userIntegralCount.getAppId().equals("01")){
+				userIntegralCount.setAppId("PC");
+			}
+			if(userIntegralCount.getAppId().equals("02")){
+				userIntegralCount.setAppId("Android");
+			}
+		}
+	}
+	/**
+	 * 分页查询
+	 * @param page
+	 * @param inputDto
+	 * @return
+	 * @throws Exception
+	 */
+	public PageList<UserIntegralCount> findByPage(PageList<UserIntegralCount> page, UserIntegralCountInputDTO inputDto) throws Exception{
+		
+		if(page == null){
+			page = new PageList<UserIntegralCount>();
+		}
+		
+		/*List<UserIntegralCount> findByObject = userIntegralCountDao.findByObject(inputDto);
+		this.showAppId(findByObject);*/
+		long totalCount = userIntegralCountDao.countByObject(inputDto);
+		if(totalCount > 0){
+			// 设置记录总条数
+			page.setTotal(totalCount);
+			
+			// 设置分页参数，查询数据
+			inputDto.setLimitStart((page.getPage() - 1) * page.getPageSize());
+			inputDto.setLimitSize(page.getPageSize());
+			page.setRows(userIntegralCountDao.findByObject(inputDto));
+		}
+		
+		return page;
+	}
+	
+	/**
+	* 查询列表
+	*/
+	public List<UserIntegralCount> findByObject(UserIntegralCountInputDTO inputDto) throws Exception{
+		return userIntegralCountDao.findByObject(inputDto);
+	}
+
+	public UserIntegralCount findOneByObject(UserIntegralCountInputDTO inputDto) throws Exception{
+		return userIntegralCountDao.findOneByObject(inputDto);
+	}
+}

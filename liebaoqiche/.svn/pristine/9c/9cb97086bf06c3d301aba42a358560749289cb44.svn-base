@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.user.dao.UserLevelDao">
+
+    <sql id="allColumns">
+    	lul.id as id,    	
+    	lul.level as level,    	
+    	lul.level_name as levelName,    	
+    	lul.create_time as createTime,
+    	lul.modify_time as modifyTime,    	
+    	lul.create_user_id as createUserId,    	
+    	lul.create_user_name as createUserName,    	
+    	lul.modify_user_id as modifyUserId,    	
+    	lul.modify_user_name as modifyUserName,    	
+    	lul.is_delete as isDelete,
+    	lul.remarks as remarks
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and lul.id = #{id}
+		</if>-->
+		<if test="level != null">
+			and lul.level = #{level}
+		</if>
+		<if test="levelName != null and levelName != ''">
+			and CONCAT(
+			IFNULL(lul.level_name,'')
+			) LIKE CONCAT('%%', #{levelName},'%%')
+		</if>
+		<!--
+		<if test="createTime != null">
+			and lul.create_time = #{createTime}
+		</if>
+		<if test="modifyTime != null">
+			and lul.modify_time = #{modifyTime}
+		</if>
+		<if test="createUserId != null and createUserId != ''">
+			and lul.create_user_id = #{createUserId}
+		</if>
+		<if test="createUserName != null and createUserName != ''">
+			and lul.create_user_name = #{createUserName}
+		</if>
+		<if test="modifyUserId != null and modifyUserId != ''">
+			and lul.modify_user_id = #{modifyUserId}
+		</if>
+		<if test="modifyUserName != null and modifyUserName != ''">
+			and lul.modify_user_name = #{modifyUserName}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lul.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lul.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lul.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lul.UPDATE_DATE = #{updateDate}
+		</if>
+		-->
+		<if test="isDelete != null">
+			and lul.IS_DELETE = #{isDelete}
+		</if>
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lul.${order} ${desc}
+		</if>
+    </sql>
+	
+	<sql id="searchLevelParam">
+		<if test="level != null and level != ''">
+			and binary lul.level = #{level}
+		</if>
+	</sql>
+	
+	<sql id="searchLevelNameParam">
+		<if test="levelName != null and levelName != ''">
+			and binary lul.level_name = #{levelName}
+		</if>
+	</sql>
+	
+	<select id="countLevelObject" resultType="Integer">
+		select
+		count(lul.id)
+		from
+		liebao_user_level lul
+		<where>
+			<include refid="searchLevelParam"/>
+		</where>
+	</select>
+	
+	<select id="countLevelNameObject" resultType="Integer">
+		select
+		count(lul.id)
+		from
+		liebao_user_level lul
+		<where>
+			<include refid="searchLevelNameParam"/>
+		</where>
+	</select>
+	
+	<select id="findAllLevels" resultType="UserLevel">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_user_level lul
+	</select>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_user_level(
+			id,
+	    	level,	    	
+	    	level_name,	    	
+	    	create_time,
+	    	modify_time,	    	
+	    	create_user_id,	    	
+	    	create_user_name,	    	
+	    	modify_user_id,	    	
+	    	modify_user_name,	    	
+	    	is_delete,
+	    	remarks
+		) values(
+			#{id},
+			#{level},			 
+			#{levelName},			 
+			#{createTime},
+			#{modifyTime},			 
+			#{createUserId},			 
+			#{createUserName},			 
+			#{modifyUserId},			 
+			#{modifyUserName},			 
+			#{isDelete},
+			#{remarks}
+		)
+	</insert>
+	
+	<select id="findById" resultType="UserLevel">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_user_level lul
+			<include refid="joinOthers"/>
+		where
+			lul.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="UserLevel">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_user_level lul
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(lul.id)
+		from
+			liebao_user_level lul
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="UserLevel">
+		select
+		lul.id as id,
+		lul.level as level,
+		lul.level_name as levelName,
+		lul.create_time as createTime,
+		lul.modify_time as modifyTime,
+		lul.create_user_id as createUserId,
+		lul.create_user_name as createUserName,
+		lul.modify_user_id as modifyUserId,
+		lul.modify_user_name as modifyUserName,
+		lul.is_delete as isDelete,
+		lul.remarks as remarks
+		from
+			liebao_user_level lul
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		order by modify_time desc
+		<include refid="searchOrder"/>
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_user_level set
+			level=#{level},			
+			level_name=#{levelName},			
+			create_time=#{createTime},
+			modify_time=#{modifyTime},			
+			create_user_id=#{createUserId},
+			create_user_name=#{createUserName},
+			modify_user_id=#{modifyUserId},
+			modify_user_name=#{modifyUserName},			
+			is_delete=#{isDelete},
+			remarks=#{remarks}
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_user_level where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_user_level where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_user_level set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_user_level set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

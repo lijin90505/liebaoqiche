@@ -1,0 +1,199 @@
+<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<!DOCTYPE>
+<html>
+<head>
+	<title>SystemPointStatistics</title>
+	<%@ include file="/WEB-INF/views/include/head.jsp"%>
+</head>
+<body>
+	<%@ include file="/WEB-INF/views/include/loading.jsp"%>
+	<div class="easyui-layout" data-options="fit:true">
+		<div data-options="region:'center'">
+    		<table style="width: 100%;">
+    			<tbody>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						id
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemPointStatistics.id}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						is_delete
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemPointStatistics.isDelete}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						user_point_id
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemPointStatistics.userPointId}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						point_type_id
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemPointStatistics.pointTypeId}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						point_rule_id
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemPointStatistics.pointRuleId}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						start_time
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemPointStatistics.startTime}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						end_time
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemPointStatistics.endTime}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						status
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemPointStatistics.status}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						point_num
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemPointStatistics.pointNum}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						accumulation_num
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemPointStatistics.accumulationNum}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						used_num
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemPointStatistics.usedNum}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						surplus_num
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemPointStatistics.surplusNum}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						system_id
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemPointStatistics.systemId}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						system_name
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemPointStatistics.systemName}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						creater
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemPointStatistics.creater}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						create_time
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemPointStatistics.createTime}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						modifier
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemPointStatistics.modifier}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						modify_time
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemPointStatistics.modifyTime}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						version
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemPointStatistics.version}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						remark
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemPointStatistics.remark}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						<label class="label-top">备注:</label>
+    						<input class="easyui-textbox" name="remarks" style="width:99.5%; height:80px;" data-options="multiline:true">
+    					</td>
+    				</tr>
+    			</tbody>
+    		</table>
+		</div>
+		<div data-options="region:'south',border:false" style="text-align:left; padding:5px;">
+            <a id="btnCancel_SystemPointStatistics" href="javascript:void(0)" class="easyui-linkbutton button-warning" style="width: 80px;"><i class="fa fa-remove fa-lg"></i>&nbsp;&nbsp;取消</a>
+        </div>
+   	</div>
+    
+    <!-- js脚本，必须写在body中，tab的url加载模式只会异步加载body中的内容到tab中 -->
+	<script type="text/javascript">
+		require(['jquery','common'], function($){
+			// 给保存按钮添加点击事件
+			$("#btnCancel_SystemPointStatistics").on('click', function(){
+				history.go(-1);
+			});
+		});
+	</script>
+</body>
+</html>

@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.activity.dao.SystemActivityManageDao">
+
+    <sql id="allColumns">
+    	lsam.id as id,    	
+    	lsam.system_activity_id as systemActivityId,    	
+    	lsam.system_id as systemId,    	
+    	lsam.activity_id as activityId,    	
+    	lsam.overdue_time as overdueTime,    	
+    	lsam.join_people_num as joinPeopleNum,    	
+    	lsam.creater as creater,    	
+    	lsam.create_time as createTime,    	
+    	lsam.modifier as modifier,    	
+    	lsam.modify_time as modifyTime,    	
+    	lsam.version as version,    	
+    	lsam.remarks as remarks    	
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and lsam.id = #{id}
+		</if>
+		<if test="systemActivityId != null and systemActivityId != ''">
+			and lsam.system_activity_id = #{systemActivityId}
+		</if>
+		<if test="systemId != null and systemId != ''">
+			and lsam.system_id = #{systemId}
+		</if>
+		<if test="activityId != null and activityId != ''">
+			and lsam.activity_id = #{activityId}
+		</if>
+		<if test="overdueTime != null">
+			and lsam.overdue_time = #{overdueTime}
+		</if>
+		<if test="joinPeopleNum != null">
+			and lsam.join_people_num = #{joinPeopleNum}
+		</if>
+		<if test="creater != null and creater != ''">
+			and lsam.creater = #{creater}
+		</if>
+		<if test="createTime != null">
+			and lsam.create_time = #{createTime}
+		</if>
+		<if test="modifier != null and modifier != ''">
+			and lsam.modifier = #{modifier}
+		</if>
+		<if test="modifyTime != null">
+			and lsam.modify_time = #{modifyTime}
+		</if>
+		<if test="version != null and version != ''">
+			and lsam.version = #{version}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lsam.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lsam.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lsam.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lsam.UPDATE_DATE = #{updateDate}
+		</if>
+		<if test="isDelete != null">
+			and lsam.IS_DELETE = #{isDelete}
+		</if>
+		-->
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lsam.${order} ${desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_system_activity_manage(
+			id,
+	    	system_activity_id,	    	
+	    	system_id,	    	
+	    	activity_id,	    	
+	    	overdue_time,	    	
+	    	join_people_num,	    	
+	    	creater,	    	
+	    	create_time,	    	
+	    	modifier,	    	
+	    	modify_time,	    	
+	    	version,	    	
+	    	remarks	    	
+		) values(
+			#{id},			 
+			#{systemActivityId},			 
+			#{systemId},			 
+			#{activityId},			 
+			#{overdueTime},			 
+			#{joinPeopleNum},			 
+			#{creater},			 
+			#{createTime},			 
+			#{modifier},			 
+			#{modifyTime},			 
+			#{version},			 
+			#{remarks}			 
+		)
+	</insert>
+	
+	<select id="findById" resultType="SystemActivityManage">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_system_activity_manage lsam
+			<include refid="joinOthers"/>
+		where
+			lsam.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="SystemActivityManage">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_system_activity_manage lsam
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(lsam.id)
+		from
+			liebao_system_activity_manage lsam
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="SystemActivityManage">
+		select
+			lsam.id as id,    	
+	    	lsam.system_activity_id as systemActivityId,    	
+	    	lsam.system_id as systemId,    	
+	    	lsam.activity_id as activityId,    	
+	    	lad.activity_name as activityDetailsName,
+	    	lsam.overdue_time as overdueTime,    	
+	    	lsam.join_people_num as joinPeopleNum,    	
+	    	lsam.creater as creater,    	
+	    	lsam.create_time as createTime,    	
+	    	lsam.modifier as modifier,    	
+	    	lsam.modify_time as modifyTime,    	
+	    	lsam.version as version,    	
+	    	lsam.remarks as remarks 
+		from
+			liebao_system_activity_manage lsam
+			left join 
+				liebao_activity la ON lsam.activity_id = la.id
+			left join 
+				liebao_activity_details lad ON la.activity_details_id = lad.id
+		<where>
+			<if test="systemId != null and systemId != ''">
+					and lsam.system_id LIKE CONCAT(CONCAT('%',#{systemId},'%'))
+				</if>
+			<if test="activityDetailsName != null and activityDetailsName != ''">
+					and lad.activity_name LIKE CONCAT(CONCAT('%',#{activityDetailsName},'%'))
+				</if>
+		</where>
+		<include refid="searchOrder"/>
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_system_activity_manage set
+			system_activity_id=#{systemActivityId},			
+			system_id=#{systemId},			
+			activity_id=#{activityId},			
+			overdue_time=#{overdueTime},			
+			join_people_num=#{joinPeopleNum},			
+			creater=#{creater},			
+			create_time=#{createTime},			
+			modifier=#{modifier},			
+			modify_time=#{modifyTime},			
+			version=#{version},			
+			remarks=#{remarks}			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_system_activity_manage where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_system_activity_manage where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_system_activity_manage set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_system_activity_manage set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

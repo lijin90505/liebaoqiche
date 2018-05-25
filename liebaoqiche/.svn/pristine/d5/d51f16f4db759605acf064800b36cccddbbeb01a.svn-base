@@ -1,0 +1,104 @@
+package com.ibest.integral.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.ibest.framework.common.utils.StringUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ibest.framework.common.utils.PageList;
+
+import com.ibest.integral.dao.IntegralCategoryDao;
+import com.ibest.integral.entity.IntegralCategory;
+import com.ibest.integral.dto.input.IntegralCategoryInputDTO;
+
+@Service
+@Transactional(readOnly=true)
+public class IntegralCategoryService {
+
+	@Autowired
+	protected IntegralCategoryDao integralCategoryDao;
+	
+	public IntegralCategory findById(String id) throws Exception{
+		return integralCategoryDao.findById(id);
+	}
+	
+	@Transactional(readOnly=false)
+	public int insert(IntegralCategory integralCategory) throws Exception{
+		integralCategory.preInsert();
+		int result = integralCategoryDao.insert(integralCategory);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteById(String id) throws Exception{
+		int result = integralCategoryDao.deleteById(id);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteByIds(String ids) throws Exception{
+		int result = integralCategoryDao.deleteByIds(StringUtils.tokenizeToList(ids));
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int update(IntegralCategory integralCategory) throws Exception{
+		integralCategory.preUpdate();
+		int result = integralCategoryDao.update(integralCategory);
+		return result;
+	}
+	
+	/**
+	 * 分页查询
+	 * @param page
+	 * @param inputDto
+	 * @return
+	 * @throws Exception
+	 */
+	public PageList<IntegralCategory> findByPage(PageList<IntegralCategory> page, IntegralCategoryInputDTO inputDto) throws Exception{
+		
+		if(page == null){
+			page = new PageList<IntegralCategory>();
+		}
+		
+		long totalCount = integralCategoryDao.countByObject(inputDto);
+		if(totalCount > 0){
+			// 设置记录总条数
+			page.setTotal(totalCount);
+			
+			// 设置分页参数，查询数据
+			inputDto.setLimitStart((page.getPage() - 1) * page.getPageSize());
+			inputDto.setLimitSize(page.getPageSize());
+			page.setRows(integralCategoryDao.findByObject(inputDto));
+		}
+		
+		return page;
+	}
+
+	/**
+	 * 根据条件对象查询积分类别个数
+	 * @param inputDto
+	 * @return
+	 */
+	public int countIntegralCategoryByObject(IntegralCategoryInputDTO inputDto) {
+		return integralCategoryDao.countIntegralCategoryByObject(inputDto);
+	}
+
+	
+	/**
+	* 查询列表
+	*/
+	public IntegralCategory findOneByObject(IntegralCategoryInputDTO inputDto) throws Exception{
+		return integralCategoryDao.findOneByObject(inputDto);
+	}
+
+	/**
+	* 查询列表
+	*/
+	public List<IntegralCategory> findByObject(IntegralCategoryInputDTO inputDto) throws Exception{
+		return integralCategoryDao.findByObject(inputDto);
+	}
+}

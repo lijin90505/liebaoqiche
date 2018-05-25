@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.integral.dao.SystemPointStatisticsDao">
+
+    <sql id="allColumns">
+    	lsps.id as id,    	
+    	lsps.is_delete as isDelete,    	
+    	lsps.user_point_id as userPointId,    	
+    	lsps.point_type_id as pointTypeId,    	
+    	lsps.point_type_name as pointTypeName,
+    	lsps.point_rule_id as pointRuleId,
+    	lsps.point_rule_name as pointRuleName,
+    	lsps.start_time as startTime,
+    	lsps.end_time as endTime,    	
+    	lsps.status as status,    	
+    	lsps.point_num as pointNum,    	
+    	lsps.accumulation_num as accumulationNum,    	
+    	lsps.used_num as usedNum,    	
+    	lsps.surplus_num as surplusNum,    	
+    	lsps.system_id as systemId,    	
+    	lsps.system_name as systemName,    	
+    	lsps.creater as creater,    	
+    	lsps.create_time as createTime,    	
+    	lsps.modifier as modifier,    	
+    	lsps.modify_time as modifyTime,    	
+    	lsps.version as version,    	
+    	lsps.remarks as remarks
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and lsps.id = #{id}
+		</if>
+		<if test="userPointId != null and userPointId != ''">
+			and lsps.user_point_id = #{userPointId}
+		</if>-->
+		<if test="pointTypeId != null and pointTypeId != ''">
+			and lsps.point_type_id = #{pointTypeId}
+		</if>
+		<if test="pointRuleId != null and pointRuleId != ''">
+			and lsps.point_rule_id = #{pointRuleId}
+		</if>
+		<if test="startTime != null">
+			and lsps.start_time &gt; #{startTime}
+		</if>
+		<if test="endTime != null">
+			and lsps.end_time &lt; #{endTime}
+		</if>
+	    <if test="systemId != null and systemId != ''">
+		    and lsps.system_id = #{systemId}
+	    </if>
+		<!--<if test="status != null and status != ''">
+			and lsps.status = #{status}
+		</if>
+		<if test="pointNum != null">
+			and lsps.point_num = #{pointNum}
+		</if>
+		<if test="accumulationNum != null">
+			and lsps.accumulation_num = #{accumulationNum}
+		</if>
+		<if test="usedNum != null">
+			and lsps.used_num = #{usedNum}
+		</if>
+		<if test="surplusNum != null and surplusNum != ''">
+			and lsps.surplus_num = #{surplusNum}
+		</if>
+		<if test="systemName != null and systemName != ''">
+			and lsps.system_name = #{systemName}
+		</if>
+		<if test="creater != null and creater != ''">
+			and lsps.creater = #{creater}
+		</if>
+		<if test="createTime != null">
+			and lsps.create_time = #{createTime}
+		</if>
+		<if test="modifier != null and modifier != ''">
+			and lsps.modifier = #{modifier}
+		</if>
+		<if test="modifyTime != null">
+			and lsps.modify_time = #{modifyTime}
+		</if>
+		<if test="version != null and version != ''">
+			and lsps.version = #{version}
+		</if>
+		<if test="remarks != null and remarks != ''">
+			and lsps.remarks = #{remarks}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lsps.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lsps.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lsps.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lsps.UPDATE_DATE = #{updateDate}
+		</if>
+		-->
+		<if test="isDelete != null">
+			and lsps.IS_DELETE = #{isDelete}
+		</if>
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lsps.${order} ${desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_system_point_statistics(
+	    	is_delete,	    	
+	    	user_point_id,	    	
+	    	point_type_id,	    	
+	    	point_type_name,
+	    	point_rule_id,
+	    	point_rule_name,
+	    	start_time,
+	    	end_time,	    	
+	    	status,	    	
+	    	point_num,	    	
+	    	accumulation_num,	    	
+	    	used_num,	    	
+	    	surplus_num,	    	
+	    	system_id,	    	
+	    	system_name,	    	
+	    	creater,	    	
+	    	create_time,	    	
+	    	modifier,	    	
+	    	modify_time,	    	
+	    	version,	    	
+	    	remarks
+		) values(
+			#{isDelete},			 
+			#{userPointId},			 
+			#{pointTypeId},			 
+			#{pointTypeName},
+			#{pointRuleId},
+			#{pointRuleName},
+			#{startTime},
+			#{endTime},			 
+			#{status},			 
+			#{pointNum},			 
+			#{accumulationNum},			 
+			#{usedNum},			 
+			#{surplusNum},			 
+			#{systemId},			 
+			#{systemName},			 
+			#{creater},			 
+			#{createTime},			 
+			#{modifier},			 
+			#{modifyTime},			 
+			#{version},			 
+			#{remarks}
+		)
+	</insert>
+	
+	<select id="findById" resultType="SystemPointStatistics">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_system_point_statistics lsps
+			<include refid="joinOthers"/>
+		where
+			lsps.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="SystemPointStatistics">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_system_point_statistics lsps
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(lsps.id)
+		from
+			liebao_system_point_statistics lsps
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="SystemPointStatistics">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_system_point_statistics lsps
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		<include refid="searchOrder"/>
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_system_point_statistics set
+			is_delete=#{isDelete},			
+			user_point_id=#{userPointId},			
+			point_type_id=#{pointTypeId},			
+			point_type_name=#{pointTypeName},
+			point_rule_id=#{pointRuleId},
+			point_rule_name=#{pointRuleNmae},
+			start_time=#{startTime},
+			end_time=#{endTime},			
+			status=#{status},			
+			point_num=#{pointNum},			
+			accumulation_num=#{accumulationNum},			
+			used_num=#{usedNum},			
+			surplus_num=#{surplusNum},			
+			system_id=#{systemId},			
+			system_name=#{systemName},			
+			creater=#{creater},			
+			create_time=#{createTime},			
+			modifier=#{modifier},			
+			modify_time=#{modifyTime},			
+			version=#{version},			
+			remarks=#{remarks}
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_system_point_statistics where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_system_point_statistics where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_system_point_statistics set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_system_point_statistics set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

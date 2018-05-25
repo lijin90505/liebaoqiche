@@ -1,0 +1,88 @@
+package com.ibest.activity.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.ibest.framework.common.utils.StringUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ibest.framework.common.utils.PageList;
+
+import com.ibest.activity.dao.ActivityExpDao;
+import com.ibest.activity.entity.ActivityExp;
+import com.ibest.activity.dto.input.ActivityExpInputDTO;
+
+@Service
+@Transactional(readOnly=true)
+public class ActivityExpService {
+
+	@Autowired
+	protected ActivityExpDao activityExpDao;
+	
+	public ActivityExp findById(String id) throws Exception{
+		return activityExpDao.findById(id);
+	}
+	
+	@Transactional(readOnly=false)
+	public int insert(ActivityExp activityExp) throws Exception{
+		activityExp.preInsert();
+		int result = activityExpDao.insert(activityExp);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteById(String id) throws Exception{
+		int result = activityExpDao.deleteById(id);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteByIds(String ids) throws Exception{
+		int result = activityExpDao.deleteByIds(StringUtils.tokenizeToList(ids));
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int update(ActivityExp activityExp) throws Exception{
+		activityExp.preUpdate();
+		int result = activityExpDao.update(activityExp);
+		return result;
+	}
+	
+	/**
+	 * 分页查询
+	 * @param page
+	 * @param inputDto
+	 * @return
+	 * @throws Exception
+	 */
+	public PageList<ActivityExp> findByPage(PageList<ActivityExp> page, ActivityExpInputDTO inputDto) throws Exception{
+		
+		if(page == null){
+			page = new PageList<ActivityExp>();
+		}
+		
+		long totalCount = activityExpDao.countByObject(inputDto);
+		if(totalCount > 0){
+			// 设置记录总条数
+			page.setTotal(totalCount);
+			
+			// 设置分页参数，查询数据
+			inputDto.setLimitStart((page.getPage() - 1) * page.getPageSize());
+			inputDto.setLimitSize(page.getPageSize());
+			page.setRows(activityExpDao.findByObject(inputDto));
+		}
+		
+		return page;
+	}
+	
+	/**
+	* 查询列表
+	*/
+	public ActivityExp findByObject(ActivityExpInputDTO inputDto) throws Exception{
+		return activityExpDao.findOneByObject(inputDto);
+	}
+
+}

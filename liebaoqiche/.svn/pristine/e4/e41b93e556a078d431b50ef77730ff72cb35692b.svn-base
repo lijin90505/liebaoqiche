@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.experience.dao.ExpDao">
+
+    <sql id="allColumns">
+    	le.id as id,    	
+    	le.exp as exp,
+    	le.is_delete as isDelete,
+    	le.level_id as levelId,
+    	le.level as level,
+    	le.system_id as systemId,
+    	le.system_Name as systemName,
+    	le.out_user_id as outUserId,
+    	le.out_user_name as outUserName,  
+    	le.create_time as createTime,    	
+    	le.modify_time as modifyTime,    	
+    	le.create_user_id as createUserId,    	
+    	le.create_user_name as createUserName,    	
+    	le.modify_user_id as modifyUserId,    	
+    	le.modify_user_name as modifyUserName    	
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="exp != null">
+			and le.exp = #{exp}
+		</if>
+		<if test="level != null">
+			and le.level = #{level}
+		</if>
+		<if test="levelId != null and levelId != ''">
+			and le.level_id = #{levelId}
+		</if>-->
+	    <if test="id != null and id != ''">
+		    and le.id = #{id}
+	    </if>
+	    <if test="outUserName != null and outUserName != ''">
+		    and CONCAT(
+		    IFNULL(le.out_user_name,'')
+		    ) LIKE CONCAT('%%', #{outUserName},'%%')
+	    </if>
+		<if test="systemId != null and systemId != ''">
+			and le.system_id = #{systemId}
+		</if>
+	    <!-- <if test="systemName != null and systemName != ''">
+			and le.system_Name = #{systemName}
+		</if>
+		<if test="outUserId != null and outUserId != ''">
+			and le.out_user_id = #{outUserId}
+		</if>
+		<if test="createTime != null">
+			and le.create_time = #{createTime}
+		</if>
+		<if test="modifyTime != null">
+			and le.modify_time = #{modifyTime}
+		</if>
+		<if test="createUserId != null and createUserId != ''">
+			and le.create_user_id = #{createUserId}
+		</if>
+		<if test="createUserName != null and createUserName != ''">
+			and le.create_user_name = #{createUserName}
+		</if>
+		<if test="modifyUserId != null and modifyUserId != ''">
+			and le.modify_user_id = #{modifyUserId}
+		</if>
+		<if test="modifyUserName != null and modifyUserName != ''">
+			and le.modify_user_name = #{modifyUserName}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and le.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and le.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and le.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and le.UPDATE_DATE = #{updateDate}
+		</if>
+		-->
+		<if test="isDelete != null">
+			and le.IS_DELETE = #{isDelete}
+		</if>
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by le.${order} ${desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_exp(
+			id,
+	    	exp,	    	
+	    	level_id,
+	    	level,
+	    	system_id,
+	    	system_name,
+	    	out_user_id,
+	    	out_user_name,	
+	    	create_time,	    	
+	    	modify_time,	    	
+	    	create_user_id,	    	
+	    	create_user_name,	    	
+	    	modify_user_id,	    	
+	    	modify_user_name,
+	    	is_delete
+		) values(
+			#{id},			 
+			#{exp},			 
+			#{levelId},
+			#{level},
+			#{systemId},
+			#{systemName},
+			#{outUserId},
+			#{outUserName},	
+			#{createTime},			 
+			#{modifyTime},			 
+			#{createUserId},			 
+			#{createUserName},			 
+			#{modifyUserId},			 
+			#{modifyUserName},
+			#{isDelete}
+		)
+	</insert>
+	
+	<select id="findById" resultType="Exp">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_exp le
+			<include refid="joinOthers"/>
+		where
+			le.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="Exp">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_exp le
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(le.id)
+		from
+			liebao_exp le
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="Exp">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_exp le
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		<include refid="searchOrder"/>
+  		<if test="limitStart != null and limitSize != null">
+         	 LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_exp set
+			exp=#{exp},			
+			level_id=#{levelId},
+			level=#{level},
+			system_id=#{systemId},
+			system_name=#{systemName},
+			out_user_id=#{outUserId},
+			out_user_name=#{outUserName},
+			create_time=#{createTime},			
+			modify_time=#{modifyTime},			
+			create_user_id=#{createUserId},			
+			create_user_name=#{createUserName},			
+			modify_user_id=#{modifyUserId},			
+			modify_user_name=#{modifyUserName},
+			is_delete=#{isDelete}
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_exp where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_exp where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_exp set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_exp set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

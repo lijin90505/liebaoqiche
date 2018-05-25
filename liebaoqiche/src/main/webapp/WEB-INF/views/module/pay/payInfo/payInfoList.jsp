@@ -1,0 +1,125 @@
+<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<!DOCTYPE>
+<html>
+<head>
+	<title>PayInfo</title>
+	<%@ include file="/WEB-INF/views/include/head.jsp"%>
+</head>
+<body>
+	<%@ include file="/WEB-INF/views/include/loading.jsp"%>
+	<!-- 数据列表  -->
+	<div class="easyui-layout" data-options="fit:true,border:false">
+		<div data-options="region:'center'">
+			<table id="Grid" class="easyui-datagrid" title="" ctrlSelect="true" striped="true"
+				rownumbers="true" pagination="true" fitColumns="true" toolbar="#Grid_Toolbar"
+				loadMsg="正在加载数据，请稍等..." emptyMsg="没有找到符合条件的数据"
+				data-options="url:'${ctx}/pay/payInfo/list',fit:true, fitColumns:true, checkOnSelect:true, selectOnCheck:true, border: false">
+			    <thead>
+			        <tr>
+			            <th data-options="field:'ck',checkbox:true"></th>
+			            <th data-options="field:'serialNo'">流水号</th>
+			            <th data-options="field:'orderId'">订单号</th>
+			            <th data-options="field:'amount'">交易金额</th>
+			            <th data-options="field:'payType'">支付类型</th>
+			            <th data-options="field:'userId'">用户名称</th>
+			            <th data-options="field:'outSystemId'">接入系统标识</th>
+			            <th data-options="field:'deviceId'">接入系统终端应用</th>
+			            <th data-options="field:'orderStatus'">订单状态</th>
+			            <th data-options="field:'orderSendTime'">订单支付时间</th>
+			            <th data-options="field:'doneTime'">订单成交时间</th>
+			            <!-- <th data-options="field:'createBy'">创建人</th>
+			            <th data-options="field:'createDate'">创建时间</th>
+			            <th data-options="field:'updateBy'">修改人</th>
+			            <th data-options="field:'updateDate'">修改时间</th>
+			            <th data-options="field:'remarks'">备注</th> -->
+			        </tr>
+			    </thead>
+			</table>
+			<div id="Grid_Toolbar">
+				<div class="pull-left">
+					<shiro:hasPermission name="payInfo:query">
+						<form id="searchForm">
+							<input class="easyui-textbox" id="serialNo" name="keyword" data-options="prompt:'流水号'" size="35">
+							<input class="easyui-textbox" id="orderId" name="keyword" data-options="prompt:'订单号'" size="32">
+				        	<input class="easyui-datebox" id="orderSendTime" editable="false" name="keyword" data-options="prompt:'支付时间'" size="17">
+				        	<select class="easyui-combobox" id="orderStatus" name="orderStatus"
+						        data-options="width:120,panelHeight:'auto',editable:false,value:null,prompt:'支付状态'">
+						        <option value="04">未支付</option>
+						        <option value="00">支付成功</option>
+								<!--<option value="01">支付失败</option> -->
+						        <option value="02">未知错误</option>
+						        <option value="03">转入退款</option>
+						        <option value="09">已退款</option>
+							</select>
+				        	<a id="btnSearch" href="javascript:void(0)" class="easyui-linkbutton button-primary"><i class="fa fa-search fa-lg"></i>&nbsp;&nbsp;查询</a>
+<!-- 				    		<a href="javascript:void(0)" id="reset_btn" class="easyui-linkbutton reset l-btn l-btn-small" plain="true" ><i class="fa fa-repeat fa-lg"></i>&nbsp;&nbsp;重置</a> -->
+				    		<a href="javascript:void(0)" class="easyui-linkbutton reset l-btn l-btn-small" plain="true" onclick="resetForm()"><i class="fa fa-repeat fa-lg"></i>&nbsp;&nbsp;重置</a>
+			    		</form>
+			    	</shiro:hasPermission>
+			    </div>
+			    <div class="pull-right">
+			    	<shiro:hasPermission name="payInfo:create">
+				        <a id="btnCreate" href="javascript:void(0)" class="easyui-linkbutton button-success"><i class="fa fa-plus-circle fa-lg"></i>&nbsp;&nbsp;新增</a>
+					</shiro:hasPermission>
+					<shiro:hasPermission name="payInfo:exportPayInfo">
+				        <a id="btnExport" href="javascript:void(0)" class="easyui-linkbutton button-default"><i class="fa fa-share-square-o fa-lg"></i>&nbsp;&nbsp;导出</a>
+					</shiro:hasPermission>
+			    </div>
+		    </div>
+		</div>
+	</div>
+	
+    <!-- js脚本，必须写在body中，tab的url加载模式只会异步加载body中的内容到tab中 -->
+	<script type="text/javascript">
+		require(['jquery','common'], function($){
+			// 给新增按钮添加点击事件
+			$("#btnCreate").on('click', function () {
+				showDialog('新增订单', '${ctx}/pay/payInfo/add', 900, 600, function () {
+					$('#Grid').datagrid('reload');
+				});
+			});
+			
+			// 给查询按钮添加点击事件
+			$("#btnSearch").on('click', function(){
+				if($('#searchForm').form('enableValidation').form('validate')){
+					reload();
+				}
+			});
+			
+			// 清空查询表单，重载表格数据
+			$('#reset_btn').click(function () {
+				$('#searchForm').form('reset').submit();
+				//reload();
+			});
+			
+			// 给导出按钮添加点击事件
+			$("#btnExport").on('click', function(){
+				$.messager.confirm('警告', '确认导出支付信息?', function (r) {
+					if(r){
+						var serialNo = $('#serialNo').val();
+						var orderId = $('#orderId').val();
+						var orderSendTime = $('#orderSendTime').val();
+						var orderStatus = $('#orderStatus').combobox("getValue");
+						var url = '${ctx}/pay/payInfo/exportPayInfo?serialNo='+serialNo+'&orderId='+orderId+'&orderSendTime='+orderSendTime+'&orderStatus='+orderStatus;
+						window.location.href = url;
+					}
+				});
+			});
+		});
+		function resetForm(){
+			$('#searchForm').form('reset');
+			reload();
+		};
+		function reload(){
+			var params = $('#Grid').datagrid('options').queryParams;
+			params.serialNo= $('#serialNo').val();
+			params.orderId = $('#orderId').val();
+			params.orderSendTime = $('#orderSendTime').val();
+			params.orderStatus = $('#orderStatus').combobox("getValue");
+			$('#Grid').datagrid('options').queryParams = params;
+			$('#Grid').datagrid('reload');
+		}
+	</script>
+</body>
+</html>

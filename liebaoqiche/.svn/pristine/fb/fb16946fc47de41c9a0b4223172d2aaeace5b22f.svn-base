@@ -1,0 +1,96 @@
+package com.ibest.activity.dao;
+
+import java.util.List;
+
+import com.ibest.activity.dto.input.ActivityIntegralInputDTO;
+import com.ibest.card.entity.Card;
+import com.ibest.experience.entity.Experience;
+import com.ibest.integral.entity.Integral;
+import org.apache.ibatis.annotations.Param;
+
+import com.ibest.framework.common.persistence.MyBatisDao;
+import com.ibest.activity.entity.Activity;
+
+import com.ibest.activity.dto.input.ActivityInputDTO;
+
+@MyBatisDao
+public interface ActivityDao {
+
+	/**
+	 * 新增
+	 * @param entity
+	 * @return
+	 */
+	public int insert(Activity activity);
+	
+	/**
+	 * 根据主键ID删除
+	 * @param id
+	 * @return
+	 */
+	public int deleteById(String id);
+	
+	/**
+	 * 批量删除
+	 * @param ids
+	 * @return
+	 */
+	public int deleteByIds(@Param("ids") List<String> ids); 
+	
+	/**
+	 * 修改
+	 * @param entity
+	 * @return
+	 */
+	public int update(Activity activity);
+	
+	/**
+	 * 根据Id获取唯一记录
+	 * @param id
+	 * @return
+	 */
+	public Activity findById(String id);
+	
+	/**
+	 * 根据指定对象查询唯一结果
+	 * @param entity
+	 * @return
+	 */
+	public Activity findOneByObject(ActivityInputDTO activityInputDto);
+	
+	/**
+	 * 根据对象查询符合条件结果列表
+	 * @param entity
+	 * @return
+	 */
+	public List<Activity> findByObject(ActivityInputDTO activityInputDto);
+	
+	
+	/**
+	 * 根据对象查询符合条件记录总条数
+	 * @param entity
+	 * @return
+	 */
+	public long countByObject(ActivityInputDTO activityInputDto);
+
+	/**
+	 * 根据系统标识删除
+	 * @param activityId
+	 * @return
+	 */
+	public int deleteByActivityId(String activityId);
+
+	/**
+	 * 根据活动编号查询已经选择经验值
+	 * @param inputDTO
+	 * @returngetChoosedRole
+	 */
+	public List<Experience> getChoosedExperience(ActivityInputDTO inputDTO);
+
+	/**
+	 * 根据活动编号查询未选择的经验值
+	 * @param inputDTO
+	 * @return
+	 */
+	public List<Experience> getUnChoosedExperience(ActivityInputDTO inputDTO);
+}

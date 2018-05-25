@@ -1,0 +1,119 @@
+package com.ibest.experience.entity;
+
+import java.util.Date;
+
+import com.ibest.experience.enums.EnumsPlatformType;
+import com.ibest.framework.common.persistence.BaseEntity;
+
+public class ExpLog extends BaseEntity {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+					
+	// 会员ID
+	private String userId;
+				
+	// 会员名
+	private String username;
+				
+	// 最终经验值
+	private Integer totalExp;
+				
+	// 经验值变更值（过期、手动增减等）
+	private Integer changeExp;
+				
+	// 终端平台
+	private Integer platform;
+
+	// 终端平台
+	private String platformDesc;
+				
+	// 经验值变更明细
+	private String detail;
+				
+	// 记录时间
+	private Date createTime;
+	
+	// 创建人ID
+	private String createUserId;
+				
+	// 创建人名称
+	private String createUserName;
+							
+	public String getUserId(){
+		return userId;
+	}
+	
+	public void setUserId(String userId){
+		this.userId = userId;
+	}
+				
+	public String getUsername(){
+		return username;
+	}
+	
+	public void setUsername(String username){
+		this.username = username;
+	}
+				
+	public Integer getTotalExp(){
+		return totalExp;
+	}
+	
+	public void setTotalExp(Integer totalExp){
+		this.totalExp = totalExp;
+	}
+				
+	public Integer getChangeExp(){
+		return changeExp;
+	}
+	
+	public void setChangeExp(Integer changeExp){
+		this.changeExp = changeExp;
+	}
+
+	public Integer getPlatform() {
+		return platform;
+	}
+
+	public void setPlatform(Integer platform) {
+		this.platform = platform;
+	}
+
+	public String getDetail(){
+		return detail;
+	}
+	
+	public void setDetail(String detail){
+		this.detail = detail;
+	}
+				
+	public Date getCreateTime(){
+		return createTime;
+	}
+	
+	public void setCreateTime(Date createTime){
+		this.createTime = createTime;
+	}
+				
+	public String getCreateUserId(){
+		return createUserId;
+	}
+	
+	public void setCreateUserId(String createUserId){
+		this.createUserId = createUserId;
+	}
+				
+	public String getCreateUserName(){
+		return createUserName;
+	}
+	
+	public void setCreateUserName(String createUserName){
+		this.createUserName = createUserName;
+	}
+
+	public String getPlatformDesc() {return platformDesc = EnumsPlatformType.getLabel(this.platform);}
+}

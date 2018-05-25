@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.activity.dao.ActivityCouponDao">
+
+    <sql id="allColumns">
+    	lac.id as id,    	
+    	lac.is_delete as isDelete,    	
+    	lac.coupon_id as couponId,    	
+    	lac.coupon_name as couponName,    	
+    	lac.activity_id as activityId,    	
+    	lac.activity_name as activityName,    	
+    	lac.status as status,    	
+    	lac.creater as creater,    	
+    	lac.create_time as createTime,    	
+    	lac.modifier as modifier,    	
+    	lac.modify_time as modifyTime,    	
+    	lac.version as version,    	
+    	lac.remark as remark    	
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and lac.id = #{id}
+		</if>
+		<if test="couponId != null and couponId != ''">
+			and lac.coupon_id = #{couponId}
+		</if>-->
+	    <if test="activityName != null and activityName != ''">
+		    and CONCAT(
+		    IFNULL(lac.activity_name,'')
+		    ) LIKE CONCAT('%%', #{activityName},'%%')
+	    </if>
+	    <if test="status != null">
+		    and lac.status = #{status}
+	    </if>
+		<if test="couponName != null and couponName != ''">
+			and CONCAT(
+			IFNULL(lac.coupon_name,'')
+			) LIKE CONCAT('%%', #{couponName},'%%')
+		</if>
+	    <!--<if test="activityId != null and activityId != ''">
+			and lac.activity_id = #{activityId}
+		</if>
+		<if test="creater != null and creater != ''">
+			and lac.creater = #{creater}
+		</if>
+		<if test="createTime != null">
+			and lac.create_time = #{createTime}
+		</if>
+		<if test="modifier != null and modifier != ''">
+			and lac.modifier = #{modifier}
+		</if>
+		<if test="modifyTime != null">
+			and lac.modify_time = #{modifyTime}
+		</if>
+		<if test="version != null and version != ''">
+			and lac.version = #{version}
+		</if>
+		<if test="remark != null and remark != ''">
+			and lac.remark = #{remark}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lac.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lac.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lac.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lac.UPDATE_DATE = #{updateDate}
+		</if>
+		-->
+		<if test="isDelete != null">
+			and lac.IS_DELETE = #{isDelete}
+		</if>
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lac.${order} ${desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_activity_coupon(
+			id,
+	    	is_delete,	    	
+	    	coupon_id,	    	
+	    	coupon_name,	    	
+	    	activity_id,	    	
+	    	activity_name,	    	
+	    	status,	    	
+	    	creater,	    	
+	    	create_time,	    	
+	    	modifier,	    	
+	    	modify_time,	    	
+	    	version,	    	
+	    	remark	    	
+		) values(
+			#{id},
+			#{isDelete},
+			#{couponId},
+			#{couponName},
+			#{activityId},			 
+			#{activityName},			 
+			#{status},			 
+			#{creater},			 
+			#{createTime},			 
+			#{modifier},			 
+			#{modifyTime},			 
+			#{version},			 
+			#{remark}			 
+		)
+	</insert>
+	
+	<select id="findById" resultType="ActivityCoupon">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_activity_coupon lac
+			<include refid="joinOthers"/>
+		where
+			lac.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="ActivityCoupon">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_activity_coupon lac
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(lac.id)
+		from
+			liebao_activity_coupon lac
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="ActivityCoupon">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_activity_coupon lac
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		<include refid="searchOrder"/>
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_activity_coupon set
+			is_delete=#{isDelete},			
+			coupon_id=#{couponId},			
+			coupon_name=#{couponName},			
+			activity_id=#{activityId},			
+			activity_name=#{activityName},			
+			status=#{status},			
+			creater=#{creater},			
+			create_time=#{createTime},			
+			modifier=#{modifier},			
+			modify_time=#{modifyTime},			
+			version=#{version},			
+			remark=#{remark}			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_activity_coupon where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_activity_coupon where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_activity_coupon set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_activity_coupon set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

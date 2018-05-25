@@ -1,0 +1,91 @@
+package com.ibest.accesssystem.service;
+
+import com.ibest.framework.common.utils.StringUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ibest.framework.common.utils.PageList;
+
+import com.ibest.accesssystem.dao.AccessSystemDao;
+import com.ibest.accesssystem.entity.AccessSystem;
+import com.ibest.accesssystem.dto.input.AccessSystemInputDTO;
+
+import java.util.List;
+
+@Service
+@Transactional(readOnly=true)
+public class AccessSystemService {
+
+	@Autowired
+	protected AccessSystemDao accessSystemDao;
+	
+	public AccessSystem findById(String id) throws Exception{
+		return accessSystemDao.findById(id);
+	}
+	
+	@Transactional(readOnly=false)
+	public int insert(AccessSystem accessSystem) throws Exception{
+		accessSystem.preInsert();
+		int result = accessSystemDao.insert(accessSystem);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteById(String id) throws Exception{
+		int result = accessSystemDao.deleteById(id);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteByIds(String ids) throws Exception{
+		int result = accessSystemDao.deleteByIds(StringUtils.tokenizeToList(ids));
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int update(AccessSystem accessSystem) throws Exception{
+		accessSystem.preUpdate();
+		int result = accessSystemDao.update(accessSystem);
+		return result;
+	}
+	
+	/**
+	 * 分页查询
+	 * @param page
+	 * @param inputDto
+	 * @return
+	 * @throws Exception
+	 */
+	public PageList<AccessSystem> findByPage(PageList<AccessSystem> page, AccessSystemInputDTO inputDto) throws Exception{
+		
+		if(page == null){
+			page = new PageList<AccessSystem>();
+		}
+		
+		long totalCount = accessSystemDao.countByObject(inputDto);
+		if(totalCount > 0){
+			// 设置记录总条数
+			page.setTotal(totalCount);
+			
+			// 设置分页参数，查询数据
+			inputDto.setLimitStart((page.getPage() - 1) * page.getPageSize());
+			inputDto.setLimitSize(page.getPageSize());
+			page.setRows(accessSystemDao.findByObject(inputDto));
+		}
+		
+		return page;
+	}
+	
+	/**
+	 * 查询列表
+	 */
+	public List<AccessSystem> findByObject(AccessSystemInputDTO inputDto) throws Exception{
+		return accessSystemDao.findByObject(inputDto);
+	}
+
+	public AccessSystem findOneByObject(AccessSystemInputDTO inputDto) throws Exception{
+		return accessSystemDao.findOneByObject(inputDto);
+	}
+
+}

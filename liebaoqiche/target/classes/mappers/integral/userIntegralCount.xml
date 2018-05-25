@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.integral.dao.UserIntegralCountDao">
+
+    <sql id="allColumns">
+    	luic.id as id,    	
+    	luic.user_id as userId,    	
+    	luic.vin_no as vinNo,    	
+    	luic.number as number,    	
+    	luic.creater as creater,    	
+    	luic.create_time as createTime,    	
+    	luic.modifier as modifier,    	
+    	luic.modify_time as modifyTime,    	
+    	luic.version as version,    	
+    	luic.remarks as remarks    	
+    </sql>
+     
+     <sql id="findOneByObjectColumns">
+    	luic.id as id,    	
+    	luic.access_system_id as accessSystemId,    	
+    	luic.app_id as appId,    	
+    	luic.user_id as userId,    	
+    	luic.vin_no as vinNo,    	
+    	luic.type as type,    	
+    	luic.integral_id as integralId,    	
+    	luic.number as number,    	
+    	luic.creater as creater,    	
+    	luic.create_time as createTime,    	
+    	luic.modifier as modifier,    	
+    	luic.modify_time as modifyTime,    	
+    	luic.version as version,    	
+    	luic.remarks as remarks    	
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">	
+		<if test="userName != null and userName != ''">
+			AND CONCAT(
+			IFNULL(realname, '')
+			) LIKE CONCAT('%%', #{userName}, '%%')
+		</if>
+		<if test="accessSystemId != null and accessSystemId != ''">
+			and luic.access_system_id = #{accessSystemId}
+		</if>
+		<if test="appId != null and appId != ''">
+			and luic.app_id = #{appId}
+		</if>
+		<if test="userId != null and userId != ''">
+			and luic.user_id = #{userId}
+		</if>
+		<if test="vinNo != null and vinNo != ''">
+			and luic.vin_no = #{vinNo}
+		</if>
+		<if test="type != null and type != ''">
+			and luic.type = #{type}
+		</if>
+		<if test="integralId != null and integralId != ''">
+			and luic.integral_id = #{integralId}
+		</if>	
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by luic.${order} ${desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_user_integral_count(
+			id,
+			access_system_id,
+			app_id,
+	    	user_id,	    	
+	    	vin_no,
+	    	type,	    	
+	    	number,	    	
+	    	creater,	    	
+	    	create_time,	    	
+	    	modifier,	    	
+	    	modify_time,	    	
+	    	version,	    	
+	    	remarks	    	
+		) values(
+			#{id},
+			#{accessSystemId},
+			#{appId},
+			#{userId},			 
+			#{vinNo},
+			#{type},			 
+			#{number},			 
+			#{creater},			 
+			#{createTime},			 
+			#{modifier},			 
+			#{modifyTime},			 
+			#{version},			 
+			#{remarks}			 
+		)
+	</insert>
+	
+	<select id="findByUserId" resultType="UserIntegralCount">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_user_integral_count luic
+		where
+			luic.user_id = #{userId}
+	</select>
+	
+	<select id="queryIntegralByUserId" resultType="Integer">
+		select sum(number) from liebao_user_integral_count 
+			group by user_id
+			having
+		 	user_id =#{userId}
+	</select>
+	
+	<select id="findById" resultType="UserIntegralCount">
+		select
+			luic.id as id,
+			luic.access_system_id as accessSystemId,
+			luic.name as systemName,
+			luic.app_id as appId,
+			luic.user_id as userId,
+			luic.realname as userName,
+			luic.vin_no as vinNo,
+			sum(luic.number) as number,
+			luic.category_name as categoryName,
+			luic.modify_time as modifyTime,
+			luic.remarks as remarks
+			from liebao_user_integral_count_view luic
+			<include refid="joinOthers"/>
+		where
+			luic.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="UserIntegralCount">
+		select
+			<include refid="findOneByObjectColumns"/>
+		from
+			liebao_user_integral_count luic
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(luic.id)
+		from
+			liebao_user_integral_count_view luic
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByList" resultType="UserIntegralCount">
+		select
+			count(luic.id)
+		from
+			liebao_user_integral_count_view luic
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		GROUP BY luic.user_id
+		order by
+			luic.modify_time desc
+	</select>
+	
+	<select id="findByObject" resultType="UserIntegralCount">
+		select
+			luic.id as id,
+			luic.access_system_id as accessSystemId,
+			luic.name as systemName,
+			luic.app_id as appId,
+			luic.user_id as userId,
+			luic.realname as userName,
+			luic.vin_no as vinNo,
+			sum(luic.number) as number,
+			luic.category_name as categoryName,
+			luic.modify_time as modifyTime,
+			luic.remarks as remarks
+			from liebao_user_integral_count_view luic
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		GROUP BY luic.user_id
+		order by
+			luic.modify_time desc
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_user_integral_count set
+			user_id=#{userId},			
+			vin_no=#{vinNo},			
+			number=#{number},			
+			creater=#{creater},			
+			modifier=#{modifier},
+			modify_time=#{modifyTime},			
+			version=#{version},			
+			remarks=#{remarks}			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_user_integral_count where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_user_integral_count where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_user_integral_count set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_user_integral_count set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

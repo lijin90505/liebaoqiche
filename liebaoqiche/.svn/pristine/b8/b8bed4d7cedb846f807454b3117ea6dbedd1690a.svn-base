@@ -1,0 +1,216 @@
+package com.ibest.integral.controller;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import com.ibest.accesssystem.entity.AccessSystem;
+import com.ibest.accesssystem.service.AccessSystemService;
+import com.ibest.integral.entity.PointRule;
+import com.ibest.integral.entity.PointType;
+import com.ibest.integral.service.PointRuleService;
+import com.ibest.integral.service.PointTypeService;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.ibest.framework.common.enums.EnumsRtnMapResult;
+import com.ibest.framework.common.persistence.BaseController;
+import com.ibest.framework.common.utils.PageList;
+import com.ibest.integral.dto.input.UserPointInputDTO;
+import com.ibest.integral.entity.UserPoint;
+import com.ibest.integral.service.UserPointService;
+import com.ibest.utils.ConstantUtils;
+import com.ibest.utils.RandomUtils;
+
+@Controller
+@RequestMapping(value="${adminPath}/integral/userPoint")
+public class UserPointController extends BaseController {
+	
+	private static final Logger logger = LoggerFactory.getLogger(UserPointController.class);
+	
+	@Autowired
+	private UserPointService userPointService;
+
+	@Autowired
+	private PointTypeService pointTypeService;
+
+	@Autowired
+	private PointRuleService pointRuleService;
+
+	@Autowired
+	private AccessSystemService accessSystemService;
+	
+	/**
+	* 进入到列表页
+	*/
+	@RequestMapping(value="/")
+	public String index(){
+		return "module/integral/userPoint/userPointList";
+	}
+	
+	/**
+	* 进入到表单页-创建
+	*/
+	@RequestMapping(value="/add")
+	public String add(){
+		
+		return "module/integral/userPoint/userPointForm";
+	}
+	
+	/**
+	* 进入到表单页，编辑
+	*/
+	@RequestMapping(value="/edit")
+	public String edit(@RequestParam String id, Model model){
+		try {
+			if(StringUtils.isNotEmpty(id)){
+				UserPoint userPoint = userPointService.findById(id);
+				if(userPoint != null){
+					model.addAttribute("userPoint", userPoint);
+				}else{
+					setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "您查看的信息不存在！", model);
+				}
+			}else{
+				setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "请选择需要编辑的信息！", model);
+			}
+		} catch (Exception e) {
+			setRtnCodeAndMsg(EnumsRtnMapResult.EXCEPTION.getCode(), EnumsRtnMapResult.EXCEPTION.getMsg(), model);
+		}
+		return "module/integral/userPoint/userPointForm";
+	}
+	
+	/**
+	* 进入到详情页
+	*/
+	@RequestMapping(value="/view")
+	public String view(@RequestParam String id, Model model){
+		try {
+			if(StringUtils.isNotEmpty(id)){
+				UserPoint userPoint = userPointService.findById(id);
+				if(userPoint != null){
+					model.addAttribute("userPoint", userPoint);
+				}else{
+					setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "您查看的信息不存在！", model);
+				}
+			}else{
+				setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "请选择需要查看的信息！", model);
+			}
+		} catch (Exception e) {
+			setRtnCodeAndMsg(EnumsRtnMapResult.EXCEPTION.getCode(), EnumsRtnMapResult.EXCEPTION.getMsg(), model);
+		}
+		return "module/integral/userPoint/userPointDetail";
+	}
+
+	/**
+	* 异步分页查询
+	*/
+	@ResponseBody
+	@RequiresPermissions("userPoint:query")
+	@RequestMapping(value="/list")
+	public PageList<UserPoint> list(UserPointInputDTO userPoint, HttpServletRequest request){
+		
+		PageList<UserPoint> pageList = new PageList<UserPoint>();
+		
+		try {
+			//设置分页参数
+			super.setPage(request, pageList);
+		
+			pageList = userPointService.findByPage(pageList, userPoint);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return pageList;
+	}
+	
+	/**
+	* 异步表单提交
+	*/
+	@ResponseBody
+	@RequiresPermissions("userPoint:create")
+	@RequestMapping(value="create")
+	public Map<String, Object> insert(UserPoint userPoint){
+
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		setRtnCodeAndMsgBySuccess(rtnMap, "保存成功");
+		
+		try {
+			getTypeAndRuleAndSystem(userPoint);
+			userPoint.setIsDelete(ConstantUtils.UPDATE_SET_ZERO);
+			userPoint.setId(RandomUtils.RandomUUID());
+
+			int result = userPointService.insert(userPoint);
+			if(result == 0){
+				setRtnCodeAndMsgByFailure(rtnMap, "保存失败");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+		return rtnMap;
+	}
+
+	/**
+	 * 获取积分类别、积分规则、系统名称
+	 * @param userPoint
+	 * @throws Exception
+	 */
+	private void getTypeAndRuleAndSystem(UserPoint userPoint)
+			throws Exception {
+		PointType pointType = pointTypeService.findById(userPoint.getPointTypeId());
+		userPoint.setPointTypeName(pointType.getPointTypeName());
+		PointRule pointRule = pointRuleService.findById(userPoint.getPointRuleId());
+		userPoint.setPointRuleName(pointRule.getPointName());
+		AccessSystem accessSystem = accessSystemService.findById(userPoint.getSystemSign());
+		userPoint.setSystemName(accessSystem.getAccessSystemName());
+	}
+
+	@ResponseBody
+	@RequiresPermissions("userPoint:update")
+	@RequestMapping(value="update")
+	public Map<String, Object> update(UserPoint userPoint){
+
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		setRtnCodeAndMsgBySuccess(rtnMap, "保存成功");
+		
+		try {
+			getTypeAndRuleAndSystem(userPoint);
+			int result = userPointService.update(userPoint);
+			if(result == 0){
+				setRtnCodeAndMsgByFailure(rtnMap, "保存失败");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+		return rtnMap;
+	}
+	
+	@ResponseBody
+	@RequiresPermissions("userPoint:delete")
+	@RequestMapping(value="delete")
+	public Map<String, Object> delete(@RequestParam(required=true) String ids){
+		
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		setRtnCodeAndMsgBySuccess(rtnMap, "删除成功");
+		
+		try {
+			int result = userPointService.deleteByIds(ids);
+			if(result == 0){
+				setRtnCodeAndMsgByFailure(rtnMap, "删除失败");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+		return rtnMap;
+	}
+}

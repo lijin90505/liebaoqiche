@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.card.dao.CouponRecallDao">
+
+    <sql id="allColumns">
+    	lcr.id as id,    	
+    	lcr.coupon_name as couponName,    	
+    	lcr.recall_num as recallNum,    	
+    	lcr.recall_user_id as recallUserId,    	
+    	lcr.recall_username as recallUsername,    	
+    	lcr.status as status,
+    	lcr.sign_id as signId,
+    	lcr.sign_name as signName,    	
+    	lcr.creater as creater,    	
+    	lcr.create_time as createTime,    	
+    	lcr.modifier as modifier,    	
+    	lcr.modify_time as modifyTime,    	
+    	lcr.version as version,    	
+    	lcr.remarks as remarks
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and lcr.id = #{id}
+		</if>-->
+		<if test="couponName != null and couponName != ''">
+			and CONCAT(
+			IFNULL(lcr.coupon_name,'')
+			) LIKE CONCAT('%%', #{couponName},'%%')
+		</if>
+		<!--<if test="recallNum != null and recallNum != ''">
+			and lcr.recall_num = #{recallNum}
+		</if>-->
+		<if test="recallUserId != null and recallUserId != ''">
+			and lcr.recall_user_id = #{recallUserId}
+		</if>
+		<!--<if test="recallUsername != null and recallUsername != ''">-->
+			<!--and CONCAT(-->
+			<!--IFNULL(lcr.recall_username,'')-->
+			<!--) LIKE CONCAT('%%', #{recallUsername},'%%')-->
+		<!--</if>-->
+	    <if test="status != null and status != ''">
+		    and lcr.status = #{status}
+	    </if>
+		<if test="signId != null and signId != ''">
+			and lcr.sign_id = #{signId}
+		</if>
+		<!--<if test="signName != null and signName != ''">
+			and lcr.sign_name = #{signName}
+		</if>
+		<if test="creater != null and creater != ''">
+			and lcr.creater = #{creater}
+		</if>
+		<if test="createTime != null">
+			and lcr.create_time = #{createTime}
+		</if>
+		<if test="modifier != null and modifier != ''">
+			and lcr.modifier = #{modifier}
+		</if>
+		<if test="modifyTime != null">
+			and lcr.modify_time = #{modifyTime}
+		</if>
+		<if test="version != null and version != ''">
+			and lcr.version = #{version}
+		</if>
+		<if test="remarks != null and remarks != ''">
+			and lcr.remarks = #{remarks}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lcr.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lcr.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lcr.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lcr.UPDATE_DATE = #{updateDate}
+		</if>
+		-->
+		<if test="isDelete != null">
+			and lcr.IS_DELETE = #{isDelete}
+		</if>
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lcr.${order} ${desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_coupon_recall(
+			id,
+	    	coupon_name,	    	
+	    	recall_num,	    	
+	    	recall_user_id,	    	
+	    	recall_username,
+	    	status,
+	    	sign_id,
+	    	sign_name,
+	    	is_delete,
+	    	creater,
+	    	create_time,
+	    	modifier,	    	
+	    	modify_time,	    	
+	    	version,	    	
+	    	remarks
+		) values(
+			#{id},
+			#{couponName},
+			#{recallNum},
+			#{recallUserId},			 
+			#{recallUsername},			 
+			#{status},
+			#{signId},
+			#{signName},			 
+			#{isDelete},
+			#{creater},
+			#{createTime},
+			#{modifier},
+			#{modifyTime},			 
+			#{version},			 
+			#{remarks}
+		)
+	</insert>
+	
+	<select id="findById" resultType="CouponRecall">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_coupon_recall lcr
+			<include refid="joinOthers"/>
+		where
+			lcr.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="CouponRecall">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_coupon_recall lcr
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(lcr.id)
+		from
+			liebao_coupon_recall lcr
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="CouponRecall">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_coupon_recall lcr
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		<include refid="searchOrder"/>
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_coupon_recall set
+			coupon_name=#{couponName},			
+			recall_num=#{recallNum},			
+			recall_user_id=#{recallUserId},			
+			recall_username=#{recallUsername},			
+			status=#{status},
+			sign_id=#{signId},
+			sign_name=#{signName},
+			is_delete=#{isDelete},
+			creater=#{creater},			
+			create_time=#{createTime},			
+			modifier=#{modifier},			
+			modify_time=#{modifyTime},			
+			version=#{version},			
+			remarks=#{remarks}
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_coupon_recall where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_coupon_recall where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_coupon_recall set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_coupon_recall set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

@@ -1,0 +1,88 @@
+package com.ibest.pay.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ibest.framework.common.utils.PageList;
+import com.ibest.framework.common.utils.StringUtils;
+import com.ibest.pay.dao.PayAliPayInfoDao;
+import com.ibest.pay.dto.input.PayAliPayInfoInputDTO;
+import com.ibest.pay.entity.PayAliPayInfo;
+
+@Service
+@Transactional(readOnly=true)
+public class PayAliPayInfoService {
+
+	@Autowired
+	protected PayAliPayInfoDao payAliPayInfoDao;
+	
+	public PayAliPayInfo findById(String id) throws Exception{
+		return payAliPayInfoDao.findById(id);
+	}
+	
+	@Transactional(readOnly=false)
+	public int insert(PayAliPayInfo payAliPayInfo) throws Exception{
+		payAliPayInfo.preInsert();
+		int result = payAliPayInfoDao.insert(payAliPayInfo);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteById(String id) throws Exception{
+		int result = payAliPayInfoDao.deleteById(id);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteByIds(String ids) throws Exception{
+		int result = payAliPayInfoDao.deleteByIds(StringUtils.tokenizeToList(ids));
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int update(PayAliPayInfo payAliPayInfo) throws Exception{
+		payAliPayInfo.preUpdate();
+		int result = payAliPayInfoDao.update(payAliPayInfo);
+		return result;
+	}
+	
+	/**
+	 * 分页查询
+	 * @param page
+	 * @param inputDto
+	 * @return
+	 * @throws Exception
+	 */
+	public PageList<PayAliPayInfo> findByPage(PageList<PayAliPayInfo> page, PayAliPayInfoInputDTO inputDto) throws Exception{
+		
+		if(page == null){
+			page = new PageList<PayAliPayInfo>();
+		}
+		
+		long totalCount = payAliPayInfoDao.countByObject(inputDto);
+		if(totalCount > 0){
+			// 设置记录总条数
+			page.setTotal(totalCount);
+			
+			// 设置分页参数，查询数据
+			inputDto.setLimitStart((page.getPage() - 1) * page.getPageSize());
+			inputDto.setLimitSize(page.getPageSize());
+			page.setRows(payAliPayInfoDao.findByObject(inputDto));
+		}
+		
+		return page;
+	}
+	
+	/**
+	* 查询列表
+	*/
+	public PayAliPayInfo findByObject(PayAliPayInfoInputDTO inputDto) throws Exception{
+		return payAliPayInfoDao.findOneByObject(inputDto);
+	}
+
+	public PayAliPayInfo findByOrderId(String orderId)  throws Exception{
+		return payAliPayInfoDao.findByOrderId(orderId);
+	}
+
+}

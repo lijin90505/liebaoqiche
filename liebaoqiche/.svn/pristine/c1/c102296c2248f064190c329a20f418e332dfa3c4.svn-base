@@ -1,0 +1,158 @@
+package com.ibest.pay.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.ibest.framework.common.utils.StringUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ibest.framework.common.utils.PageList;
+
+import com.ibest.pay.dao.PayTypeDao;
+import com.ibest.pay.entity.PayType;
+import com.ibest.pay.dto.input.PayTypeInputDTO;
+
+@Service
+@Transactional(readOnly=true)
+public class PayTypeService {
+
+	@Autowired
+	protected PayTypeDao payTypeDao;
+	
+	public PayType findById(String id) throws Exception{
+		return payTypeDao.findById(id);
+	}
+	
+	@Transactional(readOnly=false)
+	public int insert(PayType payType) throws Exception{
+		payType.preInsert();
+		int result = payTypeDao.insert(payType);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteById(String id) throws Exception{
+		int result = payTypeDao.deleteById(id);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteByIds(String ids) throws Exception{
+		int result = payTypeDao.deleteByIds(StringUtils.tokenizeToList(ids));
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int update(PayType payType) throws Exception{
+		payType.preUpdate();
+		int result = payTypeDao.update(payType);
+		return result;
+	}
+	
+	/**
+	 * 分页查询
+	 * @param page
+	 * @param inputDto
+	 * @return
+	 * @throws Exception
+	 */
+	public PageList<PayType> findByPage(PageList<PayType> page, PayTypeInputDTO inputDto) throws Exception{
+		
+		if(page == null){
+			page = new PageList<PayType>();
+		}
+		
+		long totalCount = payTypeDao.countByObject(inputDto);
+		if(totalCount > 0){
+			// 设置记录总条数
+			page.setTotal(totalCount);
+			
+			// 设置分页参数，查询数据
+			inputDto.setLimitStart((page.getPage() - 1) * page.getPageSize());
+			inputDto.setLimitSize(page.getPageSize());
+			page.setRows(payTypeDao.findByObject(inputDto));
+		}
+		
+		return page;
+	}
+	
+	/**
+	* 查询列表
+	*/
+	public PayType findByObject(PayTypeInputDTO inputDto) throws Exception{
+		return payTypeDao.findOneByObject(inputDto);
+	}
+	
+	/**
+	 * 查询列表
+	 */
+	public List<PayType> findByObjects(PayTypeInputDTO inputDto) throws Exception{
+		return payTypeDao.findByObject(inputDto);
+	}
+
+	/**
+	 * 查询所有的支付类型
+	 * @Title: findByAll  
+	 * @return:List<PayType>
+	 * @author: WeiJia
+	 * @date:2018年4月19日 上午8:57:59
+	 */
+	public List<PayType> findByAll(){
+		return payTypeDao.findByAll();
+	}
+	
+	/**
+	 * 根据渠道ID查询所有的支付类型
+	 * @Title: findByPayChannelId  
+	 * @param: @param payChannelId
+	 * @return:List<PayType>
+	 * @author: WeiJia
+	 * @date:2018年4月19日 上午8:57:41
+	 */
+	public List<PayType> findByPayChannelId(String payChannelId) throws Exception{
+		return payTypeDao.findByPayChannelId(payChannelId);
+	}
+	
+	/**
+	 * 根据支付类型编码查询
+	 * @Title: findByPayType  
+	 * @param: @param payType
+	 * @return:PayType
+	 * @author: WeiJia
+	 * @date:2018年4月19日 下午9:40:23
+	 */
+	public PayType findByPayType(String payType) throws Exception{
+		return payTypeDao.findByPayType(payType);
+	}
+	
+	/**
+	 * 根据支付名称查询
+	 * @Title: findByPayName  
+	 * @param: @param payName
+	 * @return:PayType
+	 * @author: WeiJia
+	 * @date:2018年4月19日 下午9:40:57
+	 */
+	public PayType findByPayName(String payName) throws Exception{
+		return payTypeDao.findByPayName(payName);
+	}
+	
+	/**
+	 * 根据类型渠道查询支付方式
+	 * @Title: findByPayTypes  
+	 * @param: @param payChannelId
+	 * @param: @throws Exception
+	 * @return:List<PayType>
+	 * @author: WeiJia
+	 * @date:2018年4月20日 上午11:32:59
+	 */
+	public List<PayType> findByPayTypes(String payChannelId) throws Exception{
+		return payTypeDao.queryByPayTypes(payChannelId);
+	}
+
+	public List<PayType> findByNames(PayTypeInputDTO inputDto) throws Exception{
+		return payTypeDao.findByNames(inputDto);
+	}
+}

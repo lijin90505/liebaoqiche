@@ -1,0 +1,13 @@
+package com.ibest.utils;
+
+import java.util.UUID;
+
+public class RandomUtils {
+
+	/**
+	 * 生成32位随机数
+	 */
+	public static String RandomUUID() {
+		return UUID.randomUUID().toString().replaceAll("-", "");
+	}
+}

@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.pay.dao.PayInfoConfigDao">
+
+    <sql id="allColumns">
+    	lpic.id as id,    	
+    	lpic.appid as appid,    	
+    	lpic.merchant_id as merchantId, 
+    	lpic.merchant_name as merchantName,    	
+    	lpic.merchant_code as merchantCode,    	
+    	lpic.merchant_key as merchantKey,    	
+    	lpic.key_store_file as keyStoreFile,    	
+    	lpic.key_store_password as keyStorePassword,    	
+    	lpic.request_url as requestUrl,    	
+    	lpic.trade_type as tradeType,    	
+    	lpic.notify_url as notifyUrl,    	
+    	lpic.back_url as backUrl,    	
+    	lpic.front_url as frontUrl,    	
+    	lpic.is_delete as isDelete,    	
+    	lpic.CREATE_BY as createBy,    	
+    	lpic.CREATE_DATE as createDate,    	
+    	lpic.UPDATE_BY as updateBy,    	
+    	lpic.UPDATE_DATE as updateDate,    	
+    	lpic.REMARKS as remarks,    	
+    	lpic.public_key as publicKey,    	
+    	lpic.private_key as privateKey      	
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and lpic.id = #{id}
+		</if>
+		<if test="appid != null and appid != ''">
+			and lpic.appid = #{appid}
+		</if>
+		<if test="merchantId != null and merchantId != ''">
+			and lpic.merchant_id = #{merchantId}
+		</if>
+		<if test="merchantCode != null and merchantCode != ''">
+			and lpic.merchant_code = #{merchantCode}
+		</if>
+		<if test="merchantKey != null and merchantKey != ''">
+			and lpic.merchant_key = #{merchantKey}
+		</if>
+		<if test="keyStoreFile != null and keyStoreFile != ''">
+			and lpic.key_store_file = #{keyStoreFile}
+		</if>
+		<if test="keyStorePassword != null and keyStorePassword != ''">
+			and lpic.key_store_password = #{keyStorePassword}
+		</if>
+		<if test="requestUrl != null and requestUrl != ''">
+			and lpic.request_url = #{requestUrl}
+		</if>
+		<if test="tradeType != null and tradeType != ''">
+			and lpic.trade_type = #{tradeType}
+		</if>
+		<if test="notifyUrl != null and notifyUrl != ''">
+			and lpic.notify_url = #{notifyUrl}
+		</if>
+		<if test="backUrl != null and backUrl != ''">
+			and lpic.back_url = #{backUrl}
+		</if>
+		<if test="frontUrl != null and frontUrl != ''">
+			and lpic.front_url = #{frontUrl}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lpic.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lpic.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lpic.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lpic.UPDATE_DATE = #{updateDate}
+		</if>
+		<if test="isDelete != null">
+			and lpic.IS_DELETE = #{isDelete}
+		</if>
+		-->
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lpic.#{order} #{desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		<selectKey  keyProperty="id" resultType="java.lang.String" order="BEFORE">
+             select uuid()
+		</selectKey>
+		insert into liebao_pay_info_config(
+			id,
+	    	appid,	    	
+	    	merchant_id,	    	
+	    	merchant_code,	    	
+	    	merchant_name,	    	
+	    	merchant_key,	    	
+	    	key_store_file,	    	
+	    	key_store_password,	    	
+	    	request_url,	    	
+	    	trade_type,	    	
+	    	notify_url,	    	
+	    	back_url,	    	
+	    	front_url,	    	
+	    	is_delete,	    	
+	    	CREATE_BY,	    	
+	    	CREATE_DATE,	    	
+	    	REMARKS,	    	
+	    	public_key,	    	
+	    	private_key		    	
+		) values(
+			#{id},			 
+			#{appid},			 
+			#{merchantId},			 
+			#{merchantCode},			 
+			#{merchantName},			 
+			#{merchantKey},			 
+			#{keyStoreFile},			 
+			#{keyStorePassword},			 
+			#{requestUrl},			 
+			#{tradeType},			 
+			#{notifyUrl},			 
+			#{backUrl},			 
+			#{frontUrl},			 
+			#{isDelete},			 
+			#{createBy},			 
+			#{createDate},			 
+			#{remarks},			 
+			#{publicKey},			 
+			#{privateKey}			 
+		)
+	</insert>
+	
+	<select id="findById" resultType="PayInfoConfig">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_pay_info_config lpic
+			<include refid="joinOthers"/>
+		where
+			lpic.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="PayInfoConfig">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_pay_info_config lpic
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(lpic.id)
+		from
+			liebao_pay_info_config lpic
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="PayInfoConfig">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_pay_info_config lpic
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		<include refid="searchOrder"/>
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_pay_info_config set
+			appid=#{appid},			
+			merchant_id=#{merchantId},			
+			merchant_code=#{merchantCode},			
+			merchant_name=#{merchantName},			
+			merchant_key=#{merchantKey},			
+			key_store_file=#{keyStoreFile},			
+			key_store_password=#{keyStorePassword},			
+			request_url=#{requestUrl},			
+			trade_type=#{tradeType},			
+			notify_url=#{notifyUrl},			
+			back_url=#{backUrl},			
+			front_url=#{frontUrl},			
+			is_delete=#{isDelete},			
+			UPDATE_BY=#{updateBy},			
+			UPDATE_DATE=#{updateDate},			
+			REMARKS=#{remarks},			 
+			#{publicKey},			 
+			#{privateKey}			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_pay_info_config where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_pay_info_config where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_pay_info_config set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_pay_info_config set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

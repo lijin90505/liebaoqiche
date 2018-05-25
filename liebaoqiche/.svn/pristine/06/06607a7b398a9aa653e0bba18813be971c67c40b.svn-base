@@ -1,0 +1,92 @@
+package com.ibest.activity.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.ibest.framework.common.utils.StringUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ibest.framework.common.utils.PageList;
+
+import com.ibest.activity.dao.ActivityDao;
+import com.ibest.activity.entity.Activity;
+import com.ibest.activity.dto.input.ActivityInputDTO;
+
+@Service
+@Transactional(readOnly=true)
+public class ActivityService {
+
+	@Autowired
+	protected ActivityDao activityDao;
+	
+	public Activity findById(String id) throws Exception{
+		return activityDao.findById(id);
+	}
+
+	public Activity findByDetailsId(String detailsId) throws Exception{
+		return activityDao.findByDetailsId(detailsId);
+	}
+	
+	@Transactional(readOnly=false)
+	public int insert(Activity activity) throws Exception{
+		activity.preInsert();
+		int result = activityDao.insert(activity);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteById(String id) throws Exception{
+		int result = activityDao.deleteById(id);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteByIds(String ids) throws Exception{
+		int result = activityDao.deleteByIds(StringUtils.tokenizeToList(ids));
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int update(Activity activity) throws Exception{
+		activity.preUpdate();
+		int result = activityDao.update(activity);
+		return result;
+	}
+	
+	/**
+	 * 分页查询
+	 * @param page
+	 * @param inputDto
+	 * @return
+	 * @throws Exception
+	 */
+	public PageList<Activity> findByPage(PageList<Activity> page, ActivityInputDTO inputDto) throws Exception{
+		
+		if(page == null){
+			page = new PageList<Activity>();
+		}
+		
+		long totalCount = activityDao.countByObject(inputDto);
+		if(totalCount > 0){
+			// 设置记录总条数
+			page.setTotal(totalCount);
+			
+			// 设置分页参数，查询数据
+			inputDto.setLimitStart((page.getPage() - 1) * page.getPageSize());
+			inputDto.setLimitSize(page.getPageSize());
+			page.setRows(activityDao.findByObject(inputDto));
+		}
+		
+		return page;
+	}
+	
+	/**
+	* 查询列表
+	*/
+	public Activity findByObject(ActivityInputDTO inputDto) throws Exception{
+		return activityDao.findOneByObject(inputDto);
+	}
+
+}

@@ -1,0 +1,88 @@
+package com.ibest.experience.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.ibest.framework.common.utils.StringUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ibest.framework.common.utils.PageList;
+
+import com.ibest.experience.dao.UserExperienceDao;
+import com.ibest.experience.entity.UserExperience;
+import com.ibest.experience.dto.input.UserExperienceInputDTO;
+
+@Service
+@Transactional(readOnly=true)
+public class UserExperienceService {
+
+	@Autowired
+	protected UserExperienceDao userExperienceDao;
+	
+	public UserExperience findById(String id) throws Exception{
+		return userExperienceDao.findById(id);
+	}
+	
+	@Transactional(readOnly=false)
+	public int insert(UserExperience userExperience) throws Exception{
+		userExperience.preInsert();
+		int result = userExperienceDao.insert(userExperience);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteById(String id) throws Exception{
+		int result = userExperienceDao.deleteById(id);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteByIds(String ids) throws Exception{
+		int result = userExperienceDao.deleteByIds(StringUtils.tokenizeToList(ids));
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int update(UserExperience userExperience) throws Exception{
+		userExperience.preUpdate();
+		int result = userExperienceDao.update(userExperience);
+		return result;
+	}
+	
+	/**
+	 * 分页查询
+	 * @param page
+	 * @param inputDto
+	 * @return
+	 * @throws Exception
+	 */
+	public PageList<UserExperience> findByPage(PageList<UserExperience> page, UserExperienceInputDTO inputDto) throws Exception{
+		
+		if(page == null){
+			page = new PageList<UserExperience>();
+		}
+		
+		long totalCount = userExperienceDao.countByObject(inputDto);
+		if(totalCount > 0){
+			// 设置记录总条数
+			page.setTotal(totalCount);
+			
+			// 设置分页参数，查询数据
+			inputDto.setLimitStart((page.getPage() - 1) * page.getPageSize());
+			inputDto.setLimitSize(page.getPageSize());
+			page.setRows(userExperienceDao.findByObject(inputDto));
+		}
+		
+		return page;
+	}
+	
+	/**
+	* 查询列表
+	*/
+	public UserExperience findByObject(UserExperienceInputDTO inputDto) throws Exception{
+		return userExperienceDao.findOneByObject(inputDto);
+	}
+
+}

@@ -1,0 +1,240 @@
+package com.ibest.pay.controller;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.alibaba.fastjson.JSONObject;
+import com.ibest.framework.common.enums.EnumsRtnMapResult;
+import com.ibest.framework.common.persistence.BaseController;
+import com.ibest.framework.common.utils.PageList;
+import com.ibest.pay.ReconChannelEnum;
+import com.ibest.pay.dto.input.WechatPayReconInputDTO;
+import com.ibest.pay.entity.WechatPayRecon;
+import com.ibest.pay.service.WechatPayReconService;
+import com.ibest.utils.HttpRequestUtils;
+
+/**
+ * 支付对账
+ * @ClassName: WechatPayReconController 
+ * @author: WeiJia  
+ * @date: 2018年4月3日下午4:06:30
+ */
+@Controller
+@RequestMapping(value="${adminPath}/pay/wechatPayRecon")
+public class WechatPayReconController extends BaseController {
+	
+	private static final Logger logger = LoggerFactory.getLogger(WechatPayReconController.class);
+	
+	@Autowired
+	private WechatPayReconService wechatPayReconService;
+	
+	/**
+	* 进入到列表页
+	*/
+	@RequestMapping(value="/")
+	public String index(){
+		return "module/pay/wechatPayRecon/wechatPayReconList";
+	}
+	
+	/**
+	* 进入到表单页-创建
+	*/
+	@RequestMapping(value="/add")
+	public String add(){
+		
+		return "module/pay/wechatPayRecon/wechatPayReconForm";
+	}
+	
+	/**
+	* 进入到表单页，编辑
+	*/
+	@RequestMapping(value="/edit")
+	public String edit(@RequestParam String id, Model model){
+		try {
+			if(StringUtils.isNotEmpty(id)){
+				WechatPayRecon wechatPayRecon = wechatPayReconService.findById(id);
+				if(wechatPayRecon != null){
+					model.addAttribute("wechatPayRecon", wechatPayRecon);
+				}else{
+					setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "您查看的信息不存在！", model);
+				}
+			}else{
+				setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "请选择需要编辑的信息！", model);
+			}
+		} catch (Exception e) {
+			setRtnCodeAndMsg(EnumsRtnMapResult.EXCEPTION.getCode(), EnumsRtnMapResult.EXCEPTION.getMsg(), model);
+		}
+		return "module/pay/wechatPayRecon/wechatPayReconForm";
+	}
+	
+	/**
+	* 进入到详情页
+	*/
+	@RequestMapping(value="/view")
+	public String view(@RequestParam String id, Model model){
+		try {
+			if(StringUtils.isNotEmpty(id)){
+				WechatPayRecon wechatPayRecon = wechatPayReconService.findById(id);
+				if(wechatPayRecon != null){
+					model.addAttribute("wechatPayRecon", wechatPayRecon);
+				}else{
+					setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "您查看的信息不存在！", model);
+				}
+			}else{
+				setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "请选择需要查看的信息！", model);
+			}
+		} catch (Exception e) {
+			setRtnCodeAndMsg(EnumsRtnMapResult.EXCEPTION.getCode(), EnumsRtnMapResult.EXCEPTION.getMsg(), model);
+		}
+		return "module/pay/wechatPayRecon/wechatPayReconDetail";
+	}
+
+	/**
+	* 异步分页查询
+	*/
+	@ResponseBody
+	@RequiresPermissions("wechatPayRecon:query")
+	@RequestMapping(value="/list")
+	public PageList<WechatPayRecon> list(WechatPayReconInputDTO wechatPayRecon, HttpServletRequest request){
+		
+		PageList<WechatPayRecon> pageList = new PageList<WechatPayRecon>();
+		
+		try {
+			//设置分页参数
+			super.setPage(request, pageList);
+		
+			pageList = wechatPayReconService.findByPage(pageList, wechatPayRecon);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return pageList;
+	}
+	
+	/**
+	* 异步表单提交
+	*/
+	@ResponseBody
+	@RequiresPermissions("wechatPayRecon:create")
+	@RequestMapping(value="create")
+	public Map<String, Object> insert(WechatPayRecon wechatPayRecon){
+
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		setRtnCodeAndMsgBySuccess(rtnMap, "保存成功");
+		
+		try {
+			int result = wechatPayReconService.insert(wechatPayRecon);
+			if(result == 0){
+				setRtnCodeAndMsgByFailure(rtnMap, "保存失败");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+		return rtnMap;
+	}
+	
+	@ResponseBody
+	@RequiresPermissions("wechatPayRecon:update")
+	@RequestMapping(value="update")
+	public Map<String, Object> update(WechatPayRecon wechatPayRecon){
+
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		setRtnCodeAndMsgBySuccess(rtnMap, "保存成功");
+		
+		try {
+			int result = wechatPayReconService.update(wechatPayRecon);
+			if(result == 0){
+				setRtnCodeAndMsgByFailure(rtnMap, "保存失败");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+		return rtnMap;
+	}
+	
+	@ResponseBody
+	@RequiresPermissions("wechatPayRecon:delete")
+	@RequestMapping(value="delete")
+	public Map<String, Object> delete(@RequestParam(required=true) String ids){
+		
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		setRtnCodeAndMsgBySuccess(rtnMap, "删除成功");
+		
+		try {
+			int result = wechatPayReconService.deleteByIds(ids);
+			if(result == 0){
+				setRtnCodeAndMsgByFailure(rtnMap, "删除失败");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+		return rtnMap;
+	}
+	
+	/**
+	 * 下载对账
+	 * @Title: downloadRecon  
+	 * @param: @param reconChannel
+	 * @param: @param billType
+	 * @param: @param billDate
+	 * @return:Map<String,Object>
+	 * @author: WeiJia
+	 * @date:2018年4月3日 上午10:42:44
+	 */
+	@ResponseBody
+	@RequiresPermissions("wechatPayRecon:downloadRecon")
+	@RequestMapping(value="downloadRecon")
+	public Map<String, Object> downloadRecon(String reconChannel,String billType,String billDate){
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		// 获取支付方式
+		ReconChannelEnum rce = ReconChannelEnum.getReconChannel(new Integer(reconChannel));
+		switch (rce) {
+			case WECHATPAY:
+				logger.info("进入微信支付对账...");
+				billType="SUCCESS";
+				String jsonParam = "{\"reqMap\":{\"billDate\":\""+billDate.replaceAll("-", "")+"\",\"billType\":\""+billType+"\"}}";
+				
+				String url = "http://localhost:7707/liebaoqiche_interface";
+				String rs = HttpRequestUtils.doJsonRequest(url+"/api/liebao/pay/payRecon", jsonParam, "");
+				JSONObject json = JSONObject.parseObject(rs);
+				String returnCode = json.getString("rtnCode");
+			case AILPAY:
+				logger.info("进入支付宝对账...");
+				String payRecon1 = "01";
+				String aliJsonParam = "{\"reqMap\":{\"billDate\":\""+billDate.replaceAll("-", "")+"\",\"payRecon\":\""+payRecon1+"\",\"billType\":\""+billType+"\"}}";
+				String url1 = "http://localhost:8080/liebaoqiche_interface";
+				String rs1 = HttpRequestUtils.doJsonRequest(url1+"/api/liebao/pay/payRecon", aliJsonParam, "");
+				JSONObject json1 = JSONObject.parseObject(rs1);
+				String returnCode1 = json1.getString("result");
+				break;
+			case UNIONPAY:	
+				logger.info("进入银联对账...");
+				String payRecon2 = "01";
+				String unJsonParam = "{\"reqMap\":{\"billDate\":\""+billDate.replaceAll("-", "")+"\",\"payRecon\":\""+payRecon2+"\",\"billType\":\""+billType+"\"}}";
+				String url2 = "http://localhost:8080/liebaoqiche_interface";
+				String rs2 = HttpRequestUtils.doJsonRequest(url2+"/api/liebao/pay/payRecon", unJsonParam, "");
+				JSONObject json2 = JSONObject.parseObject(rs2);
+				String returnCode2 = json2.getString("result");
+				break;
+			default:
+				break;
+		}
+		return rtnMap;
+	}
+	
+}

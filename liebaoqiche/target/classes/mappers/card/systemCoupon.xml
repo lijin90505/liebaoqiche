@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.card.dao.SystemCouponDao">
+
+    <sql id="allColumns">
+    	lsc.id as id,    	
+    	lsc.is_delete as isDelete,    	
+    	lsc.coupon_id as couponId,    	
+    	lsc.access_system_id as accessSystemId,    	
+    	lsc.access_system_name as accessSystemName,    	
+    	lsc.coupon_used_record_id as couponUsedRecordId,    	
+    	lsc.coupon_name as couponName,    	
+    	lsc.coupon_content as couponContent,    	
+    	lsc.start_time as startTime,    	
+    	lsc.end_time as endTime,    	
+    	lsc.coupon_check_code as couponCheckCode,    	
+    	lsc.coupon_status as couponStatus,    	
+    	lsc.edit_status as editStatus,    	
+    	lsc.conpon_num as conponNum,    	
+    	lsc.get_coupon_num as getCouponNum,    	
+    	lsc.coupon_used_num as couponUsedNum,    	
+    	lsc.max_get_conpou_num as maxGetConpouNum,    	
+    	lsc.conpou_surplus_num as conpouSurplusNum,    	
+    	lsc.is_appointments as isAppointments,    	
+    	lsc.mininum_consumption as mininumConsumption,    	
+    	lsc.single_use_refund as singleUseRefund,    	
+    	lsc.coupon_url as couponUrl,    	
+    	lsc.picture_url as pictureUrl,
+    	lsc.creater as creater,    	
+    	lsc.create_time as createTime,    	
+    	lsc.modifier as modifier,    	
+    	lsc.modify_time as modifyTime,    	
+    	lsc.version as version,    	
+    	lsc.remarks as remarks    	
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and lsc.id = #{id}
+		</if>
+		<if test="couponId != null and couponId != ''">
+			and lsc.coupon_id = #{couponId}
+		</if>-->
+		<if test="accessSystemId != null and accessSystemId != ''">
+			and lsc.access_system_id = #{accessSystemId}
+		</if>
+	    <if test="couponStatus != null and couponStatus != ''">
+		    and lsc.coupon_status = #{couponStatus}
+	    </if>
+	    <if test="startTime != null">
+		    and lsc.start_time = #{startTime}
+	    </if>
+	    <if test="endTime != null">
+		    and lsc.end_time = #{endTime}
+	    </if>
+	    <if test="couponName != null and couponName != ''">
+		    and CONCAT(
+		    IFNULL(lsc.coupon_name,'')
+		    ) LIKE CONCAT('%%', #{couponName},'%%')
+	    </if>
+		<!-- <if test="accessSystemName != null and accessSystemName != ''">
+			and lsc.access_system_name = #{accessSystemName}
+		</if>
+		<if test="couponUsedRecordId != null and couponUsedRecordId != ''">
+			and lsc.coupon_used_record_id = #{couponUsedRecordId}
+		</if>
+		<if test="couponContent != null and couponContent != ''">
+			and lsc.coupon_content = #{couponContent}
+		</if>
+		<if test="couponCheckCode != null and couponCheckCode != ''">
+			and lsc.coupon_check_code = #{couponCheckCode}
+		</if>
+		<if test="editStatus != null and editStatus != ''">
+			and lsc.edit_status = #{editStatus}
+		</if>
+		<if test="conponNum != null">
+			and lsc.conpon_num = #{conponNum}
+		</if>
+		<if test="getCouponNum != null">
+			and lsc.get_coupon_num = #{getCouponNum}
+		</if>
+		<if test="couponUsedNum != null">
+			and lsc.coupon_used_num = #{couponUsedNum}
+		</if>
+		<if test="maxGetConpouNum != null">
+			and lsc.max_get_conpou_num = #{maxGetConpouNum}
+		</if>
+		<if test="conpouSurplusNum != null">
+			and lsc.conpou_surplus_num = #{conpouSurplusNum}
+		</if>
+		<if test="isAppointments != null and isAppointments != ''">
+			and lsc.is_appointments = #{isAppointments}
+		</if>
+		<if test="mininumConsumption != null">
+			and lsc.mininum_consumption = #{mininumConsumption}
+		</if>
+		<if test="singleUseRefund != null and singleUseRefund != ''">
+			and lsc.single_use_refund = #{singleUseRefund}
+		</if>
+		<if test="couponUrl != null and couponUrl != ''">
+			and lsc.coupon_url = #{couponUrl}
+		</if>
+		<if test="pictureUrl != null and pictureUrl != ''">
+			and lsc.picture_url = #{pictureUrl}
+		</if>
+		<if test="creater != null and creater != ''">
+			and lsc.creater = #{creater}
+		</if>
+		<if test="createTime != null">
+			and lsc.create_time = #{createTime}
+		</if>
+		<if test="modifier != null and modifier != ''">
+			and lsc.modifier = #{modifier}
+		</if>
+		<if test="modifyTime != null">
+			and lsc.modify_time = #{modifyTime}
+		</if>
+		<if test="version != null and version != ''">
+			and lsc.version = #{version}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lsc.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lsc.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lsc.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lsc.UPDATE_DATE = #{updateDate}
+		</if>
+		-->
+		<if test="isDelete != null">
+			and lsc.IS_DELETE = #{isDelete}
+		</if>
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lsc.${order} ${desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_system_coupon(
+			id,
+	    	is_delete,	    	
+	    	coupon_id,	    	
+	    	access_system_id,
+	    	access_system_name,
+	    	coupon_used_record_id,	    	
+	    	coupon_name,	    	
+	    	coupon_content,	    	
+	    	start_time,	    	
+	    	end_time,	    	
+	    	coupon_check_code,	    	
+	    	coupon_status,	    	
+	    	edit_status,	    	
+	    	conpon_num,	    	
+	    	get_coupon_num,	    	
+	    	coupon_used_num,	    	
+	    	max_get_conpou_num,	    	
+	    	conpou_surplus_num,	    	
+	    	is_appointments,	    	
+	    	mininum_consumption,	    	
+	    	single_use_refund,	    	
+	    	coupon_url,	    	
+	    	picture_url,
+	    	creater,	    	
+	    	create_time,	    	
+	    	modifier,	    	
+	    	modify_time,	    	
+	    	version,	    	
+	    	remarks	    	
+		) values(
+			#{id},
+			#{isDelete},
+			#{couponId},
+			#{accessSystemId},
+			#{accessSystemName},
+			#{couponUsedRecordId},			 
+			#{couponName},			 
+			#{couponContent},			 
+			#{startTime},			 
+			#{endTime},			 
+			#{couponCheckCode},			 
+			#{couponStatus},			 
+			#{editStatus},			 
+			#{conponNum},			 
+			#{getCouponNum},			 
+			#{couponUsedNum},			 
+			#{maxGetConpouNum},			 
+			#{conpouSurplusNum},			 
+			#{isAppointments},			 
+			#{mininumConsumption},			 
+			#{singleUseRefund},			 
+			#{couponUrl},			 
+			#{pictureUrl},
+			#{creater},			 
+			#{createTime},			 
+			#{modifier},			 
+			#{modifyTime},			 
+			#{version},			 
+			#{remarks}			 
+		)
+	</insert>
+	
+	<select id="findById" resultType="SystemCoupon">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_system_coupon lsc
+			<include refid="joinOthers"/>
+		where
+			lsc.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="SystemCoupon">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_system_coupon lsc
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(lsc.id)
+		from
+			liebao_system_coupon lsc
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="SystemCoupon">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_system_coupon lsc
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		<include refid="searchOrder"/>
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_system_coupon set
+			coupon_id=#{couponId},
+			access_system_id=#{accessSystemId},
+			access_system_name=#{accessSystemName},
+			coupon_used_record_id=#{couponUsedRecordId},			
+			coupon_name=#{couponName},			
+			coupon_content=#{couponContent},			
+			start_time=#{startTime},			
+			end_time=#{endTime},			
+			coupon_check_code=#{couponCheckCode},			
+			coupon_status=#{couponStatus},			
+			edit_status=#{editStatus},			
+			conpon_num=#{conponNum},			
+			get_coupon_num=#{getCouponNum},			
+			coupon_used_num=#{couponUsedNum},			
+			max_get_conpou_num=#{maxGetConpouNum},			
+			conpou_surplus_num=#{conpouSurplusNum},			
+			is_appointments=#{isAppointments},			
+			mininum_consumption=#{mininumConsumption},			
+			single_use_refund=#{singleUseRefund},			
+			coupon_url=#{couponUrl},			
+			picture_url=#{pictureUrl},
+			is_delete=#{isDelete},
+			creater=#{creater},			
+			create_time=#{createTime},			
+			modifier=#{modifier},			
+			modify_time=#{modifyTime},			
+			version=#{version},			
+			remarks=#{remarks}			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_system_coupon where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_system_coupon where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_system_coupon set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_system_coupon set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

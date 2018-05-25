@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.integral.dao.PointRuleDao">
+
+    <sql id="allColumns">
+    	lpr.id as id,    	
+    	lpr.point_name as pointName,    	
+    	lpr.point_type_id as pointTypeId,
+    	lpr.point_type_name as pointTypeName,
+    	lpr.point_rule_type_id as pointRuleTypeId,
+    	lpr.is_delete as isDelete,    	
+    	lpr.creater as creater,    	
+    	lpr.create_time as createTime,    	
+    	lpr.modifier as modifier,    	
+    	lpr.modify_time as modifyTime,    	
+    	lpr.version as version,    	
+    	lpr.remarks as remarks
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		-->
+		<if test="pointName != null and pointName != ''">
+			and CONCAT(
+		    IFNULL(lpr.point_name,'')
+		    ) LIKE CONCAT('%%', #{pointName},'%%')
+		</if>
+	    <!-- <if test="pointTypeId != null and pointTypeId != ''">
+			and lpr.point_type_id = #{pointTypeId}
+		</if>
+		<if test="pointTypeName != null and pointTypeName != ''">
+			and lpr.point_type_name = #{pointTypeName}
+		</if>
+		<if test="pointRuleTypeId != null and pointRuleTypeId != ''">
+			and lpr.point_rule_type_id = #{pointRuleTypeId}
+		</if>
+		 <if test="creater != null and creater != ''">
+			and lpr.creater = #{creater}
+		</if>
+		<if test="createTime != null">
+			and lpr.create_time = #{createTime}
+		</if>
+		<if test="modifier != null and modifier != ''">
+			and lpr.modifier = #{modifier}
+		</if>
+		<if test="modifyTime != null">
+			and lpr.modify_time = #{modifyTime}
+		</if>
+		<if test="version != null and version != ''">
+			and lpr.version = #{version}
+		</if>
+		<if test="remarks != null and remarks != ''">
+			and lpr.remarks = #{remarks}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lpr.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lpr.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lpr.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lpr.UPDATE_DATE = #{updateDate}
+		</if>-->
+	    <if test="isDelete != null">
+		    and lpr.IS_DELETE = #{isDelete}
+	    </if>
+
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lpr.${order} ${desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_point_rule(
+	    	id,	    	
+	    	point_name,	    	
+	    	point_type_id,
+	    	point_type_name,
+	    	point_rule_type_id,
+	    	is_delete,	    	
+	    	creater,	    	
+	    	create_time,	    	
+	    	modifier,	    	
+	    	modify_time,	    	
+	    	version,	    	
+	    	remarks
+		) values(
+			#{id},			 
+			#{pointName},			 
+			#{pointTypeId},
+			#{pointTypeName},
+			#{pointRuleTypeId},
+			#{isDelete},
+			#{creater},
+			#{createTime},			 
+			#{modifier},			 
+			#{modifyTime},			 
+			#{version},			 
+			#{remarks}
+		)
+	</insert>
+	
+	<select id="findById" resultType="PointRule">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_point_rule lpr
+			<include refid="joinOthers"/>
+		where
+			lpr.id = #{id} and lpr.is_delete = 0
+	</select>
+	
+	<select id="findOneByObject" resultType="PointRule">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_point_rule lpr
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(lpr.id)
+		from
+			liebao_point_rule lpr
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="PointRule">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_point_rule lpr
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		<include refid="searchOrder"/>
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_point_rule set
+			point_name=#{pointName},
+			point_type_id=#{pointTypeId},
+			point_type_name=#{pointTypeName},
+			point_rule_type_id=#{pointRuleTypeId},
+			is_delete=#{isDelete},			
+			creater=#{creater},			
+			create_time=#{createTime},			
+			modifier=#{modifier},			
+			modify_time=#{modifyTime},			
+			version=#{version},			
+			remarks=#{remarks}
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_point_rule where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_point_rule where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_point_rule set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_point_rule set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

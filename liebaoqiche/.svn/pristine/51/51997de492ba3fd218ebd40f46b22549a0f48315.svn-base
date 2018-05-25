@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.card.dao.UserCardCountDao">
+
+    <sql id="allColumns">
+    	lucc.id as id,    	
+    	lucc.user_id as userId,    	
+    	lucc.vin_no as vinNo,    	
+    	lucc.card_id as cardId,    	
+    	lucc.number as number,    	
+    	lucc.creater as creater,    	
+    	lucc.create_time as createTime,    	
+    	lucc.modifier as modifier,    	
+    	lucc.modify_time as modifyTime,    	
+    	lucc.version as version,    	
+    	lucc.remarks as remarks    	
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and lucc.id = #{id}
+		</if>-->
+		<if test="userName != null and userName != ''">
+			AND CONCAT(
+			IFNULL(userName, '')
+			) LIKE CONCAT('%%', #{userName}, '%%')
+		</if>
+		<if test="cardName != null and cardName != ''">
+			AND CONCAT(
+			IFNULL(cardName, '')
+			) LIKE CONCAT('%%', #{cardName}, '%%')
+		</if>
+		<!--<if test="vinNo != null and vinNo != ''">
+			and lucc.vin_no = #{vinNo}
+		</if>
+		<if test="number != null">
+			and lucc.number = #{number}
+		</if>
+		<if test="creater != null and creater != ''">
+			and lucc.creater = #{creater}
+		</if>
+		<if test="createTime != null">
+			and lucc.create_time = #{createTime}
+		</if>
+		<if test="modifier != null and modifier != ''">
+			and lucc.modifier = #{modifier}
+		</if>
+		<if test="modifyTime != null">
+			and lucc.modify_time = #{modifyTime}
+		</if>
+		<if test="version != null and version != ''">
+			and lucc.version = #{version}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lucc.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lucc.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lucc.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lucc.UPDATE_DATE = #{updateDate}
+		</if>
+		<if test="isDelete != null">
+			and lucc.IS_DELETE = #{isDelete}
+		</if>
+		-->
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lucc.${order} ${desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_user_card_count(
+			id,
+	    	user_id,	    	
+	    	vin_no,	    	
+	    	card_id,	    	
+	    	number,	    	
+	    	creater,	    	
+	    	create_time,	    	
+	    	modifier,	    	
+	    	modify_time,	    	
+	    	version,	    	
+	    	remarks	    	
+		) values(
+			#{id},			 
+			#{userId},			 
+			#{vinNo},			 
+			#{cardId},			 
+			#{number},			 
+			#{creater},			 
+			#{createTime},			 
+			#{modifier},			 
+			#{modifyTime},			 
+			#{version},			 
+			#{remarks}			 
+		)
+	</insert>
+	
+	<select id="findById" resultType="UserCardCount">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_user_card_count_view lucc
+			<include refid="joinOthers"/>
+		where
+			lucc.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="UserCardCount">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_user_card_count lucc
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(lucc.id)
+		from
+			liebao_user_card_count_view lucc
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="com.ibest.card.dto.input.UserCardCountInputDTO">
+		select
+			lucc.id,
+			lucc.accessSystemId,
+			lucc.appId,
+			lucc.userId,
+			lucc.userName,
+			lucc.vinNo,
+			lucc.cardId,
+			lucc.number,
+			lucc.cardName,
+			lucc.noUsed,
+			lucc.used,
+			lucc.past,
+			lucc.totalNum,
+			lucc.remarks
+		from
+			liebao_user_card_count_view lucc
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		<include refid="searchOrder"/>
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_user_card_count set
+			user_id=#{userId},			
+			vin_no=#{vinNo},			
+			card_id=#{cardId},			
+			number=#{number},			
+			creater=#{creater},			
+			modifier=#{modifier},
+			modify_time=#{modifyTime},			
+			version=#{version},			
+			remarks=#{remarks}			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_user_card_count where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_user_card_count where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_user_card_count set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_user_card_count set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

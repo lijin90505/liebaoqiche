@@ -1,0 +1,55 @@
+package com.ibest.experience.dto.input;
+
+import com.ibest.framework.common.persistence.BaseInputDTO;
+
+public class ExpLevelInputDTO extends BaseInputDTO {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	// 等级名称
+	private String levelName;
+
+	// 经验值左区间
+	private Integer preExp;
+
+	// 经验值右区间
+	private Integer nextExp;
+
+	// 接入系统标识
+	private String outSystemId;
+
+	public String getLevelName() {
+		return levelName;
+	}
+
+	public void setLevelName(String levelName) {
+		this.levelName = levelName;
+	}
+
+	public Integer getPreExp() {
+		return preExp;
+	}
+
+	public void setPreExp(Integer preExp) {
+		this.preExp = preExp;
+	}
+
+	public Integer getNextExp() {
+		return nextExp;
+	}
+
+	public void setNextExp(Integer nextExp) {
+		this.nextExp = nextExp;
+	}
+
+	public String getOutSystemId() {
+		return outSystemId;
+	}
+
+	public void setOutSystemId(String outSystemId) {
+		this.outSystemId = outSystemId;
+	}
+}

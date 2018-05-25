@@ -1,0 +1,210 @@
+<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<!DOCTYPE>
+<html>
+<head>
+	<title>PayInfo</title>
+	<%@ include file="/WEB-INF/views/include/head.jsp"%>
+</head>
+<body>
+	<%@ include file="/WEB-INF/views/include/loading.jsp"%>
+	<div class="easyui-layout" data-options="fit:true">
+		<div data-options="region:'center'">
+	    	<form id="DataForm" method="post">
+	    		<table style="width: 100%;">
+	    			<tbody>
+	    				<tr>
+	    					<td colspan="2" class="chapter">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<!-- <td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" disabled="disabled" id="id" name="id" value="${payInfo.id}" labelWidth="100" label="主键" required="true" data-options="prompt:'主键'" style="width: 90%;">
+	    					</td> -->
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="orderId" name="orderId" value="${payInfo.orderId}" labelWidth="100"   label="商户订单号"  data-options="prompt:'商户订单号',required:true,validType:['orderCheck','integer','length[26,50]']" style="width: 90%;">
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="serialNo" name="serialNo" value="${payInfo.serialNo}" labelWidth="100"  label="流水号"  data-options="prompt:'流水号',required:false,validType:['orderCheck','integer','length[26,50]']" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-numberbox" min="0" max="100000000" id="amount" name="amount" value="${payInfo.amount}" labelWidth="100" label="交易金额(单位:分)"   data-options="prompt:'交易金额，以分为单位',required:true,validType:'length[2,8]'" style="width: 90%;">
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-combobox" required="true" id="payType" name="payType" value="${payInfo.payType}" labelWidth="100" label="支付类型"   style="width: 90%;"
+	    						data-options="
+	    									url:'${ctx}/pay/payType/payTypes',
+									        textField:'payName',
+									        valueField:'payType',
+									        width:120,
+									        editable:false,
+	    									prompt:'支付类型'">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-combobox" required="true" id="outSystemId" name="outSystemId" value="${payInfo.outSystemId}" labelWidth="100" label="接入系统"  style="width: 90%;"
+	    						data-options="
+	    									url:'${ctx}/accesssystem/accessSystem/accessSystems',
+									        textField:'name',
+									        valueField:'name',
+									        width:120,
+									        editable:false,
+									        prompt:'接入系统'">
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-combobox" required="true" id="userId" name="userId" value="${payInfo.userId}" labelWidth="100" label="用户名" style="width: 90%;"
+	    						 data-options="
+	    						 			url:'${ctx}/user/user/users',
+									        textField:'username',
+									        valueField:'id',
+									        width:120,
+									        editable:false,
+									        prompt:'用户名'" >
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+<!-- 	    						<input class="easyui-combobox" required="true"  -->
+<%-- 	    						id="deviceId" name="deviceId" value="${payInfo.deviceId}"  --%>
+<!-- 	    						 label="系统终端"   -->
+<!-- 	    						data-options="prompt:'01：PC端；02：APP；03：H5；04：公众号；05：小程序'" -->
+<!-- 	    						 style="width: 90%;"> -->
+	    						<select labelWidth="100" style="width:90%;" label="系统终端" value="${payInfo.deviceId}" class="easyui-combobox" id="deviceId" name="deviceId"
+						        data-options="width:90,panelHeight:'auto',editable:false,value:null,prompt:'系统终端',required:true">
+							        <option value="01">PC端</option>
+							        <option value="02">APP</option>
+							        <option value="03">H5</option>
+							        <option value="04">公众号</option>
+							        <option value="05">小程序</option>
+								</select>
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="notifyUrl" name="notifyUrl" value="${payInfo.notifyUrl}" labelWidth="100" label="回调url"  data-options="prompt:'回调url'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+<%-- 	    						<input class="easyui-textbox" required="true" id="orderStatus" name="orderStatus" value="${payInfo.orderStatus}" labelWidth="100" label="订单状态"  data-options="prompt:'00:成功；01:失败；02:未知错误请查询交易状态;03:申请退款中;04:未支付;09:退款'" style="width: 90%;"> --%>
+	    						<select labelWidth="100" style="width:90%;" label="订单状态" value="${payInfo.orderStatus}" class="easyui-combobox" id="orderStatus" name="orderStatus"
+						        data-options="width:90,panelHeight:'auto',editable:false,value:null,prompt:'订单状态',required:true">
+							        <option value="00">成功</option>
+							        <option value="01">失败</option>
+							        <option value="02">未知错误请查询交易状态</option>
+							        <option value="03">申请退款中</option>
+							        <option value="04">未支付</option>
+							        <option value="09">退款</option>
+								</select>
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-datetimebox"  required="true" editable="false" id="orderSendTime" name="orderSendTime" value="${payInfo.orderSendTime}" labelWidth="100" label="订单发送时间"  data-options="prompt:'订单发送时间'" style="width: 90%;">
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-datetimebox" id="doneTime" name="doneTime" editable="false" value="${payInfo.doneTime}" labelWidth="100" label="订单成交时间"  data-options="prompt:'订单成交时间'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px;" colspan="2">
+	    						<label class="label-top">备注:</label>
+	    						<input class="easyui-textbox"  position='top' name="remarks"
+	    						 style="width:99.5%; height:80px;" value="${payInfo.remarks}" 
+	    						 data-options="multiline:true,validType:['remarks','length[0,300]'],tipPosition:'top'
+	    						 ">
+	    					</td>
+	    				</tr>
+	    			</tbody>
+	    		</table>
+			</form>
+		</div>
+		<div data-options="region:'south',border:false" style="text-align:right; padding:10px;">
+            <a id="btnSave" href="javascript:void(0)" class="easyui-linkbutton button-success"  style="width: 80px;" ><i class="fa fa-check fa-lg"></i>&nbsp;&nbsp;保存</a>
+            <a id="btnCancel" href="javascript:void(0)" class="easyui-linkbutton button-warning" style="width: 80px;"><i class="fa fa-remove fa-lg"></i>&nbsp;&nbsp;取消</a>
+        </div>
+   	</div>
+    
+    <!-- js脚本，必须写在body中，tab的url加载模式只会异步加载body中的内容到tab中 -->
+	<script type="text/javascript">
+		require(['jquery','common'], function($){
+			// 给保存按钮添加点击事件
+			$("#btnSave").on('click', function(){
+				var startTime = $("#orderSendTime").val().replace(/\-/g, "\/");
+				var endTime = $("#doneTime").val().replace(/\-/g, "\/");
+				if(endTime!=null && endTime!=""){
+					if(endTime <= startTime){
+						$.messager.alert('提示', "成交时间不可小于发送时间", "error");
+						return;
+					}
+				}
+				$("#DataForm").form('submit',{
+					url:$("#id").val() == null ?'${ctx}/pay/payInfo/create':'${ctx}/pay/payInfo/update',
+					onSubmit:function(){
+						return $(this).form('enableValidation').form('validate');
+					},
+					success: function(data){
+						var json = $.parseJSON(data);
+						if(json && json.rtnCode == '00000000'){
+							$.messager.alert('提示', "保存成功", "success",function(){
+								$("#btnSave").linkbutton('enable');
+								hideDialog();
+							});
+						}else{
+							$.messager.alert('提示', json.rtnMsg, "error",function(){
+								$("#btnSave").linkbutton('enable');
+								hideDialog();
+							});
+						}
+					},
+					error: function(){
+						$("#btnSave").linkbutton('enable');
+					}
+				});
+			});
+			
+			// 给保存按钮添加点击事件
+			$("#btnCancel").on('click', function(){
+				hideDialog();
+			});
+			
+			$.extend($.fn.validatebox.defaults.rules, {
+			    integer : {// 验证整数
+		            validator : function(value) {
+		                return /^[1-9]\d*$/i.test(value);
+		            },
+		            message : '无效的格式，请确认后输入！'
+		        },
+		        remarks : {// 验证备注
+		        	validator : function(value) {
+		        		 var canMatch=  /[@#\$%\^&\*]+/g.test(value);
+		                 return !canMatch;
+		            },
+		            message : '这个备注不太友好，请检查后再输入吧。'		           
+		        },
+		        orderCheck : {
+		            validator : function(value) {
+		                var haha = "";
+		                if(orderId)
+		                $.ajax({
+		                    type : 'post',
+		                    async : false,
+		                    url : '${ctx}/pay/payInfo/findAll',
+		                    data : {
+		                        "orderNo" : value
+		                    },
+		                    success : function(data) {
+		                        haha = data;
+		                    }
+		                });
+		               	haha = eval(haha);
+		                return haha;
+		            },
+		            message : '此单号已经被占用啦！'
+		        }
+			});
+		});
+	</script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+package com.ibest.activity.dao;
+
+import java.util.List;
+
+import com.ibest.card.entity.Card;
+import org.apache.ibatis.annotations.Param;
+
+import com.ibest.framework.common.persistence.MyBatisDao;
+import com.ibest.activity.entity.ActivityCard;
+
+import com.ibest.activity.dto.input.ActivityCardInputDTO;
+
+@MyBatisDao
+public interface ActivityCardDao {
+
+	/**
+	 * 新增
+	 * @param activityCard
+	 * @return
+	 */
+	public int insert(ActivityCard activityCard);
+	
+	/**
+	 * 根据主键ID删除
+	 * @param id
+	 * @return
+	 */
+	public int deleteById(String id);
+
+	/**
+	 * 删除所有
+	 * @return
+	 */
+	public int deleteAll();
+	
+	public int checkByActivityId(String activityId);
+	
+	/**
+	 * 批量删除
+	 * @param ids
+	 * @return
+	 */
+	public int deleteByIds(@Param("ids") List<String> ids);
+
+	/**
+	 * 根据对象查询符合条件结果列表
+	 * @param activityId
+	 * @return
+	 */
+	public List<ActivityCard> findByActivityId(String activityId);
+	
+	/**
+	 * 修改
+	 * @param activityCard
+	 * @return
+	 */
+	public int update(ActivityCard activityCard);
+	
+	/*
+	 * 查找活动列表 
+	 */
+	public List<ActivityCard> findByCardId(String cardId);
+	
+	
+	
+	
+	/**
+	 * 根据Id获取唯一记录
+	 * @param id
+	 * @return
+	 */
+	public ActivityCard findById(String id);
+	
+	/**
+	 * 根据指定对象查询唯一结果
+	 * @param activityCardInputDto
+	 * @return
+	 */
+	public ActivityCard findOneByObject(ActivityCardInputDTO activityCardInputDto);
+	
+	/**
+	 * 根据对象查询符合条件结果列表
+	 * @param activityCardInputDto
+	 * @return
+	 */
+	public List<ActivityCard> findByObject(ActivityCardInputDTO activityCardInputDto);
+	
+	
+	/**
+	 * 根据对象查询符合条件记录总条数
+	 * @param activityCardInputDto
+	 * @return
+	 */
+	public long countByObject(ActivityCardInputDTO activityCardInputDto);
+
+	/**
+	 * 根据活动编号删除
+	 * @param activityId
+	 * @return
+	 */
+	public int deleteByActivityId(String activityId);
+
+	/**
+	 * 根据活动编号查询已经选择卡券
+	 * @param inputDTO
+	 * @returngetChoosedRole
+	 */
+	public List<Card> getChoosedCard(ActivityCardInputDTO inputDTO);
+
+	/**
+	 * 根据活动编号查询未选择的卡券
+	 * @param inputDTO
+	 * @return
+	 */
+	public List<Card> getUnChoosedCard(ActivityCardInputDTO inputDTO);
+}

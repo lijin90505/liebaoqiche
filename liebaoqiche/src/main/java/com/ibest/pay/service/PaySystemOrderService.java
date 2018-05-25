@@ -1,0 +1,99 @@
+package com.ibest.pay.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.ibest.framework.common.utils.StringUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ibest.framework.common.utils.PageList;
+
+import com.ibest.pay.entity.PaySystemOrder;
+import com.ibest.pay.dao.PaySystemOrderDao;
+import com.ibest.pay.dto.input.PaySystemOrderInputDTO;
+
+@Service
+@Transactional(readOnly=true)
+public class PaySystemOrderService {
+
+	@Autowired
+	protected PaySystemOrderDao paySystemOrderDao;
+	
+	public PaySystemOrder findById(String id) throws Exception{
+		return paySystemOrderDao.findById(id);
+	}
+	
+	@Transactional(readOnly=false)
+	public int insert(PaySystemOrder paySystemOrder) throws Exception{
+		paySystemOrder.preInsert();
+		int result = paySystemOrderDao.insert(paySystemOrder);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteById(String id) throws Exception{
+		int result = paySystemOrderDao.deleteById(id);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteByIds(String ids) throws Exception{
+		int result = paySystemOrderDao.deleteByIds(StringUtils.tokenizeToList(ids));
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int update(PaySystemOrder paySystemOrder) throws Exception{
+		paySystemOrder.preUpdate();
+		int result = paySystemOrderDao.update(paySystemOrder);
+		return result;
+	}
+	
+	/**
+	 * 分页查询
+	 * @param page
+	 * @param inputDto
+	 * @return
+	 * @throws Exception
+	 */
+	public PageList<PaySystemOrder> findByPage(PageList<PaySystemOrder> page, PaySystemOrderInputDTO inputDto) throws Exception{
+		
+		if(page == null){
+			page = new PageList<PaySystemOrder>();
+		}
+		
+		long totalCount = paySystemOrderDao.countByObject(inputDto);
+		if(totalCount > 0){
+			// 设置记录总条数
+			page.setTotal(totalCount);
+			
+			// 设置分页参数，查询数据
+			inputDto.setLimitStart((page.getPage() - 1) * page.getPageSize());
+			inputDto.setLimitSize(page.getPageSize());
+			page.setRows(paySystemOrderDao.findByObject(inputDto));
+		}
+		
+		return page;
+	}
+	
+	/**
+	* 查询列表
+	*/
+	public PaySystemOrder findByObject(PaySystemOrderInputDTO inputDto) throws Exception{
+		return paySystemOrderDao.findOneByObject(inputDto);
+	}
+
+	public List<PaySystemOrder> findByTradeTime(String tradeTime) throws Exception{
+		return paySystemOrderDao.findByTradeTime(tradeTime);
+	}
+	
+	public List<PaySystemOrder> findByAll() throws Exception{
+		return paySystemOrderDao.findByAll();
+	}
+	
+	public List<PaySystemOrder> findByList(PaySystemOrderInputDTO inputDto) throws Exception{
+		return paySystemOrderDao.findByList(inputDto);
+	}
+}

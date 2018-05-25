@@ -1,0 +1,292 @@
+
+<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<!DOCTYPE>
+<html>
+<head>
+	<title>SysUser</title>
+	<%@ include file="/WEB-INF/views/include/head.jsp"%>
+</head>
+<body>
+<%@ include file="/WEB-INF/views/include/loading.jsp"%>
+<div style="height: 500px;margin:10px 20px;box-sizing:border-box;">
+	<div class="easyui-layout" data-options="fit:true">
+		<div data-options="region:'north', collapsible:false" title="当前操作系统信息"
+		     style="height: 80px; line-height: 40px; padding: 0 10px;">
+			系统名称：<span id="systemName"></span>
+		</div>
+		<div data-options="region: 'west', collapsible:false" title="未选活动"
+		     style="width: 350px;">
+			<table id="Grid_UnchoosedActivitys" class="easyui-datagrid"
+			       ctrlSelect="true" striped="true" rownumbers="true"
+			       pagination="false" fitColumns="true" loadMsg="正在加载数据，请稍等..."
+			       data-options="fit:true, checkOnSelect:true, selectOnCheck:true, border: false">
+				<thead>
+				<tr>
+					<th data-options="field:'ck',checkbox:true"></th>
+					<th data-options="field:'activityName',width:120">活动名称</th>
+					<th data-options="field:'id',hidden:true,width:150">活动代码</th>
+				</tr>
+				</thead>
+			</table>
+		</div>
+		<div class="btnLink" data-options="region:'center', border: false">
+			<a id="btnRight_SysSelectChannel" href="javascript:void(0)"
+			   class="easyui-linkbutton button-default"><i
+					class="fa fa-angle-right fa-lg"></i></a> <a
+				id="btnDoubleRight_SysUserSelectRole" href="javascript:void(0)"
+				class="easyui-linkbutton button-default"><i
+				class="fa fa-angle-double-right fa-lg"></i></a> <a
+				id="btnDoubleLeft_SysUserSelectRole" href="javascript:void(0)"
+				class="easyui-linkbutton button-default"><i
+				class="fa fa-angle-double-left fa-lg"></i></a> <a
+				id="btnLeft_SysUserSelectRole" href="javascript:void(0)"
+				class="easyui-linkbutton button-default"><i
+				class="fa fa-angle-left fa-lg"></i></a>
+		</div>
+		<div data-options="region: 'east', collapsible:false" title="已有活动"
+		     style="width: 350px">
+			<table id="Grid_choosedActivitys" class="easyui-datagrid"
+			       ctrlSelect="true" striped="true" rownumbers="true"
+			       pagination="false" fitColumns="true" loadMsg="正在加载数据，请稍等..."
+			       data-options="fit:true, checkOnSelect:true, selectOnCheck:true, border: false">
+				<thead>
+				<tr>
+					<th data-options="field:'ck',checkbox:true"></th>
+					<th data-options="field:'activityName',width:120">活动名称</th>
+					<th data-options="field:'id',hidden:true,width:150">活动代码</th>
+				</tr>
+				</thead>
+			</table>
+		</div>
+
+		<div data-options="region:'south',border:false"
+		     style="text-align: right; padding: 5px;">
+			<a id="btnSave_SysUserAccredit"
+			   class="easyui-linkbutton button-success"><i
+					class="fa fa-wrench fa-lg"></i>&nbsp;&nbsp;授权</a>
+			<a id="btnCancel" href="javascript:void(0)"
+			   class="easyui-linkbutton button-warning" style="width: 80px;"><i
+					class="fa fa-remove fa-lg"></i>&nbsp;&nbsp;取消</a>
+		</div>
+
+	</div></div>
+<!-- </div> -->
+
+<!-- js脚本，必须写在body中，tab的url加载模式只会异步加载body中的内容到tab中 -->
+<script type="text/javascript">
+	require(['jquery','common'], function($){
+		var systemSign = location.search.replace("?id=","");
+		$(function(){
+			// 加载角色授权信息
+			$.ajax({
+				url: '${ctx}/accesssystem/accessSystem/sysActivity',
+				data: {
+					systemSign: systemSign
+				},
+				type: 'POST',
+				dataType: 'JSON',
+				success: function (json) {
+
+					// 设置当前显示的角色名称
+					$("#systemName").html(json.accessSystemName);
+					$("#Grid_UnchoosedActivitys").datagrid();
+					$("#Grid_choosedActivitys").datagrid();
+					// 显示未选中的角色
+					if(json && json.sysUnChooseActivityList){
+						$("#Grid_UnchoosedActivitys").datagrid('loadData', json.sysUnChooseActivityList);
+					}
+
+					// 显示已经选中的角色
+					if(json && json.sysChooseActivityList){
+						$("#Grid_choosedActivitys").datagrid('loadData', json.sysChooseActivityList);
+					}
+
+				}
+			});
+		});
+
+		//授权按钮保存
+		$('#btnSave_SysUserAccredit').click(function () {
+			$.messager.confirm("授权确认","确认要给该系统进行授权？",function(r){
+				if(r){
+					var allChoosedActivitys = $("#Grid_choosedActivitys").datagrid('getData');
+					var allActivitys = [];
+					for(var i=0;i<allChoosedActivitys.rows.length;i++){
+						allActivitys.push(allChoosedActivitys.rows[i]);
+					}
+					var allActivityId = "";
+					for(var i = 0; i < allActivitys.length; i++){
+						allActivityId += allActivitys[i].id;
+						if(i != allActivitys.length - 1){
+							allActivityId += ",";
+						}
+					}
+
+					$.ajax({
+						url: '${ctx}/accesssystem/accessSystem/accreditActivity',
+						data: {
+							systemSign : systemSign,
+							allActivitysId : allActivityId
+						},
+						type: 'post',
+						dataType: 'json',
+						success: function (json) {
+							if (json && json.rtnCode == '00000000') {
+								$.messager.alert('提示', "授权成功", "success",function(){
+									hideDialog();
+								});
+							} else {
+								$.messager.alert('提示', json.rtnMsg, "error");
+							}
+						}
+					});
+				}
+			});
+		});
+
+		//点击插入选择的N个角色
+		$("#btnRight_SysSelectChannel").click(function(){
+
+			var selectedActivitys = $("#Grid_UnchoosedActivitys").datagrid('getSelections');
+			var allSelectedActivitys = [];
+			//插入行
+			for(var i=0;i<selectedActivitys.length;i++){
+				allSelectedActivitys.push(selectedActivitys[i]);
+				$("#Grid_choosedActivitys").datagrid('insertRow', {
+					row:{
+						activityName : selectedActivitys[i].activityName ,
+						code : selectedActivitys[i].code,
+						id : selectedActivitys[i].id
+					}
+				});
+
+			}
+			//删除行
+			for(var j =0;j<allSelectedActivitys.length;j++){
+				var index = $('#Grid_UnchoosedActivitys').datagrid('getRowIndex',allSelectedActivitys[j]);
+				$('#Grid_UnchoosedActivitys').datagrid('deleteRow',index);
+			}
+		});
+
+		//点击插入选择所有角色
+		$("#btnDoubleRight_SysUserSelectRole").click(function(){
+
+			var allUnchoosedActivitys = $("#Grid_UnchoosedActivitys").datagrid('getData');
+			var allActivitys = [];
+			//插入所有行
+			for(var i=0;i<allUnchoosedActivitys.rows.length;i++){
+				allActivitys.push(allUnchoosedActivitys.rows[i]);
+				$("#Grid_choosedActivitys").datagrid('insertRow', {
+					row:{
+						activityName : allUnchoosedActivitys.rows[i].activityName ,
+						code : allUnchoosedActivitys.rows[i].code,
+						id : allUnchoosedActivitys.rows[i].id
+					}
+				});
+			}
+			//删除所有行
+			for(var j =0;j<allActivitys.length;j++){
+				var index = $('#Grid_UnchoosedActivitys').datagrid('getRowIndex',allActivitys[j]);
+				$('#Grid_UnchoosedActivitys').datagrid('deleteRow',index);
+			}
+
+		});
+
+		//点击移除选择的N行
+		$("#btnLeft_SysUserSelectRole").click(function(){
+
+			var selectedActivitys = $("#Grid_choosedActivitys").datagrid('getSelections');
+			var allSelectedActivitys = [];
+			//插入行
+			for(var i=0;i<selectedActivitys.length;i++){
+				allSelectedActivitys.push(selectedActivitys[i]);
+				$("#Grid_UnchoosedActivitys").datagrid('insertRow', {
+					row:{
+						activityName : selectedActivitys[i].activityName ,
+						code : selectedActivitys[i].code,
+						id : selectedActivitys[i].id
+					}
+				});
+
+			}
+			//删除行
+			for(var j =0;j<allSelectedActivitys.length;j++){
+				var index = $('#Grid_choosedActivitys').datagrid('getRowIndex',allSelectedActivitys[j]);
+				$('#Grid_choosedActivitys').datagrid('deleteRow',index);
+			}
+		});
+
+		//点击移除选择的所有角色
+		$("#btnDoubleLeft_SysUserSelectRole").click(function(){
+
+			var allChoosedActivitys = $("#Grid_choosedActivitys").datagrid('getData');
+			var allActivitys = [];
+			//插入所有行
+			for(var i=0;i<allChoosedActivitys.rows.length;i++){
+				allActivitys.push(allChoosedActivitys.rows[i]);
+				$("#Grid_UnchoosedActivitys").datagrid('insertRow', {
+					row:{
+						activityName : allChoosedActivitys.rows[i].activityName ,
+						code : allChoosedActivitys.rows[i].code,
+						id : allChoosedActivitys.rows[i].id
+					}
+				});
+			}
+			//删除所有行
+			for(var j =0;j<allActivitys.length;j++){
+				var index = $('#Grid_choosedActivitys').datagrid('getRowIndex',allActivitys[j]);
+				$('#Grid_choosedActivitys').datagrid('deleteRow',index);
+			}
+
+		});
+
+		// 给取消按钮添加点击事件
+		$("#btnCancel").on('click', function(){
+			hideDialog();
+		});
+	});
+
+	// 验证是否已经选择过某一资源
+	function checkResourcesChoosed(resourcesId){
+		var choosed = $("#Grid_choosedActivitys").datagrid("getData");
+		//alert(choosed.rows.length);
+		var isExist = false;
+		for(var j = 0; j < choosed.rows.length; j++){
+			//alert(choosed.rows[j].id);
+			if(resourcesId == choosed.rows[j].id){
+				isExist = true;
+				break;
+			}
+		}
+		if(isExist){
+			return true;
+		}
+		return false;
+	}
+	// 获取指定资源在已选择资源中的下标
+	function getChoosedIndex(resourcesId){
+		var choosed = $("#Grid_choosedActivitys").datagrid("getData");
+		for(var j = 0; j < choosed.rows.length; j++){
+			if(resourcesId == choosed.rows[j].id){
+				index = j;
+				break;
+			}
+		}
+		return index;
+	}
+	//为选择资源的下标
+	function getUnchoosedIndex(resourcesId){
+		var index = -1;
+		var unchoosed = $("#Grid_UnchoosedActivitys").datagrid("getData");
+		for(var j = 0; j < unchoosed.rows.length; j++){
+			if(resourcesId == unchoosed.rows[j].id){
+				index = j;
+				break;
+			}
+		}
+		return index;
+	}
+</script>
+</body>
+</html>

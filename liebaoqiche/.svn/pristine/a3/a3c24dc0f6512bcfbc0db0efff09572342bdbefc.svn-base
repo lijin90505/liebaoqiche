@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.pay.dao.PayRefundInfoDao">
+
+    <sql id="allColumns">
+    	lpri.id as id,    	
+    	lpri.pay_info_id as payInfoId,    	
+    	lpri.wechat_pay_info_id as wechatPayInfoId,    	
+    	lpri.out_System_Id as outSystemId,    	
+    	lpri.refund_channel as refundChannel,    	
+    	lpri.user_id as userId,    	
+    	lpri.refund_no as refundNo,    	
+    	lpri.out_trade_no as outTradeNo,    	
+    	lpri.out_refund_no as outRefundNo,    	
+    	lpri.total_fee as totalFee,    	
+    	lpri.refund_fee as refundFee,    	
+    	lpri.refund_desc as refundDesc,    	
+    	lpri.notify_url as notifyUrl,    	
+    	lpri.refund_status as refundStatus,    	
+    	lpri.refund_start_time as refundStartTime,    	
+    	lpri.refund_end_time as refundEndTime,    	
+    	lpri.refund_success_time as refundSuccessTime,    	
+    	lpri.refund_recv_accout as refundRecvAccout,    	
+    	lpri.refund_account as refundAccount,    	
+    	lpri.refund_request_source as refundRequestSource,    	
+    	lpri.REMARKS as remarks,    	
+    	lpri.CREATE_BY as createBy,    	
+    	lpri.CREATE_DATE as createDate,    	
+    	lpri.UPDATE_BY as updateBy,    	
+    	lpri.UPDATE_date as updateDate    	
+    </sql>
+    
+    <sql id="joinOthers">
+    	INNER JOIN liebao_user b ON lpri.user_id = b.id
+<!-- 		INNER JOIN liebao_access_system c ON c.id = lpri.out_System_Id -->
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and lpri.id = #{id}
+		</if>
+		<if test="payInfoId != null and payInfoId != ''">
+			and lpri.pay_info_id = #{payInfoId}
+		</if>
+		<if test="wechatPayInfoId != null and wechatPayInfoId != ''">
+			and lpri.wechat_pay_info_id = #{wechatPayInfoId}
+		</if>
+		<if test="outSystemId != null and outSystemId != ''">
+			and lpri.out_System_Id = #{outSystemId}
+		</if>
+		<if test="refundChannel != null and refundChannel != ''">
+			and lpri.refund_channel = #{refundChannel}
+		</if>
+		<if test="userId != null and userId != ''">
+			and lpri.user_id = #{userId}
+		</if>
+		
+		<if test="totalFee != null and totalFee != ''">
+			and lpri.total_fee = #{totalFee}
+		</if>
+		<if test="refundFee != null and refundFee != ''">
+			and lpri.refund_fee = #{refundFee}
+		</if>
+		<if test="refundDesc != null and refundDesc != ''">
+			and lpri.refund_desc = #{refundDesc}
+		</if>
+		<if test="notifyUrl != null and notifyUrl != ''">
+			and lpri.notify_url = #{notifyUrl}
+		</if>
+		
+		<if test="refundEndTime != null">
+			and lpri.refund_end_time = #{refundEndTime}
+		</if>
+		<if test="refundSuccessTime != null">
+			and lpri.refund_success_time = #{refundSuccessTime}
+		</if>
+		<if test="refundRecvAccout != null and refundRecvAccout != ''">
+			and lpri.refund_recv_accout = #{refundRecvAccout}
+		</if>
+		<if test="refundAccount != null and refundAccount != ''">
+			and lpri.refund_account = #{refundAccount}
+		</if>
+		<if test="refundRequestSource != null and refundRequestSource != ''">
+			and lpri.refund_request_source = #{refundRequestSource}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lpri.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lpri.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lpri.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lpri.UPDATE_DATE = #{updateDate}
+		</if>
+		<if test="isDelete != null">
+			and lpri.IS_DELETE = #{isDelete}
+		</if>
+		-->
+		<if test="refundNo != null and refundNo != ''">
+			and lpri.refund_no = #{refundNo}
+		</if>
+		<if test="outTradeNo != null and outTradeNo != ''">
+			and lpri.out_trade_no = #{outTradeNo}
+		</if>
+		<if test="outRefundNo != null and outRefundNo != ''">
+			and lpri.out_refund_no = #{outRefundNo}
+		</if>
+		<if test="refundStartTime != null">
+			and DATE_FORMAT(lpri.refund_start_time, '%Y-%m-%d')=#{refundStartTime}
+		</if>	
+		<if test="refundStatus != null and refundStatus != ''">
+			and lpri.refund_status = #{refundStatus}
+		</if>
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lpri.#{order} #{desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_pay_refund_info(
+	    	pay_info_id,	    	
+	    	wechat_pay_info_id,	    	
+	    	out_System_Id,	    	
+	    	refund_channel,	    	
+	    	user_id,	    	
+	    	refund_no,	    	
+	    	out_trade_no,	    	
+	    	out_refund_no,	    	
+	    	total_fee,	    	
+	    	refund_fee,	    	
+	    	refund_desc,	    	
+	    	notify_url,	    	
+	    	refund_status,	    	
+	    	refund_start_time,	    	
+	    	refund_end_time,	    	
+	    	refund_success_time,	    	
+	    	refund_recv_accout,	    	
+	    	refund_account,	    	
+	    	refund_request_source,	    	
+	    	REMARKS,	    	
+	    	CREATE_BY,	    	
+	    	CREATE_DATE,	    	
+		) values(
+			#{payInfoId},			 
+			#{wechatPayInfoId},			 
+			#{outSystemId},			 
+			#{refundChannel},			 
+			#{userId},			 
+			#{refundNo},			 
+			#{outTradeNo},			 
+			#{outRefundNo},			 
+			#{totalFee},			 
+			#{refundFee},			 
+			#{refundDesc},			 
+			#{notifyUrl},			 
+			#{refundStatus},			 
+			#{refundStartTime},			 
+			#{refundEndTime},			 
+			#{refundSuccessTime},			 
+			#{refundRecvAccout},			 
+			#{refundAccount},			 
+			#{refundRequestSource},			 
+			#{remarks},			 
+			#{createBy},			 
+			#{createDate},			 
+		)
+	</insert>
+	
+	<select id="findById" resultType="PayRefundInfo">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_pay_refund_info lpri
+			<include refid="joinOthers"/>
+		where
+			lpri.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="PayRefundInfo">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_pay_refund_info lpri
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		SELECT
+			count(lpri.id)
+		FROM
+			liebao_pay_refund_info lpri
+		<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="PayRefundInfo">
+		SELECT
+			b.username  AS user_id,
+<!-- 			c.`name` AS out_system_id, -->
+			lpri.id,
+			lpri.refund_channel,
+			lpri.refund_no,
+			lpri.out_refund_no,
+			lpri.out_trade_no,
+			lpri.refund_fee,
+			lpri.refund_desc,
+			lpri.refund_status,
+			lpri.refund_start_time,
+			lpri.refund_success_time,
+			lpri.refund_end_time,
+			lpri.CREATE_BY,
+			lpri.CREATE_DATE,
+			lpri.UPDATE_BY,
+			lpri.UPDATE_DATE,
+			lpri.REMARKS
+		FROM
+			liebao_pay_refund_info lpri
+		<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		<include refid="searchOrder"/>
+			GROUP BY lpri.refund_start_time DESC
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_pay_refund_info set
+			pay_info_id=#{payInfoId},			
+			wechat_pay_info_id=#{wechatPayInfoId},			
+			out_System_Id=#{outSystemId},			
+			refund_channel=#{refundChannel},			
+			user_id=#{userId},			
+			refund_no=#{refundNo},			
+			out_trade_no=#{outTradeNo},			
+			out_refund_no=#{outRefundNo},			
+			total_fee=#{totalFee},			
+			refund_fee=#{refundFee},			
+			refund_desc=#{refundDesc},			
+			notify_url=#{notifyUrl},			
+			refund_status=#{refundStatus},			
+			refund_start_time=#{refundStartTime},			
+			refund_end_time=#{refundEndTime},			
+			refund_success_time=#{refundSuccessTime},			
+			refund_recv_accout=#{refundRecvAccout},			
+			refund_account=#{refundAccount},			
+			refund_request_source=#{refundRequestSource},			
+			REMARKS=#{remarks},			
+			UPDATE_BY=#{updateBy},			
+			UPDATE_date=#{updateDate}			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_pay_refund_info where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_pay_refund_info where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_pay_refund_info set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_pay_refund_info set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

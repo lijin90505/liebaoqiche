@@ -1,0 +1,22 @@
+package com.ibest.experience.dto.input;
+
+import com.ibest.framework.common.persistence.BaseInputDTO;
+
+public class ExpRuleInputDTO extends BaseInputDTO {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	// 规则名称
+	private String name;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+}

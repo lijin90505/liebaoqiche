@@ -1,0 +1,144 @@
+package com.ibest.activity.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.ibest.activity.dao.ActivityDao;
+import com.ibest.activity.dto.input.ActivityInputDTO;
+import com.ibest.activity.entity.Activity;
+import com.ibest.framework.common.utils.StringUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ibest.framework.common.utils.PageList;
+
+import com.ibest.activity.dao.ActivityDetailsDao;
+import com.ibest.activity.entity.ActivityDetails;
+import com.ibest.activity.dto.input.ActivityDetailsInputDTO;
+
+@Service
+@Transactional(readOnly = true)
+public class ActivityDetailsService {
+
+	@Autowired
+	protected ActivityDetailsDao activityDetailsDao;
+
+	@Autowired
+	protected ActivityDao activityDao;
+
+	public ActivityDetails findById(String id)
+			throws Exception {
+		return activityDetailsDao.findById(id);
+	}
+
+	@Transactional(readOnly = false)
+	public int insert(ActivityDetails activityDetails)
+			throws Exception {
+		activityDetails.preInsert();
+		int result = activityDetailsDao.insert(activityDetails);
+		return result;
+	}
+
+	@Transactional(readOnly = false)
+	public int deleteById(String id)
+			throws Exception {
+		int result = activityDetailsDao.deleteById(id);
+		return result;
+	}
+
+	@Transactional(readOnly = false)
+	public int deleteByIds(String ids)
+			throws Exception {
+		int result = activityDetailsDao.deleteByIds(StringUtils.tokenizeToList(ids));
+		return result;
+	}
+
+	@Transactional(readOnly = false)
+	public int update(ActivityDetails activityDetails)
+			throws Exception {
+		activityDetails.preUpdate();
+		int result = activityDetailsDao.update(activityDetails);
+		return result;
+	}
+
+	/**
+	 * 分页查询
+	 *
+	 * @param page
+	 * @param inputDto
+	 * @return
+	 * @throws Exception
+	 */
+	public PageList<ActivityDetails> findByPage(PageList<ActivityDetails> page, ActivityDetailsInputDTO inputDto)
+			throws Exception {
+
+		if (page == null) {
+			page = new PageList<ActivityDetails>();
+		}
+
+		long totalCount = activityDetailsDao.countByObject(inputDto);
+		if (totalCount > 0) {
+			// 设置记录总条数
+			page.setTotal(totalCount);
+
+			// 设置分页参数，查询数据
+			inputDto.setLimitStart((page.getPage() - 1) * page.getPageSize());
+			inputDto.setLimitSize(page.getPageSize());
+			page.setRows(activityDetailsDao.findByObject(inputDto));
+		}
+
+		return page;
+	}
+
+	/**
+	 * 查询列表
+	 */
+	public ActivityDetails findByObject(ActivityDetailsInputDTO inputDto)
+			throws Exception {
+		return activityDetailsDao.findOneByObject(inputDto);
+	}
+
+
+	/**
+	 * 获取系统拥有的积分
+	 *
+	 * @param activityId
+	 * @return
+	 * @throws Exception
+	 */
+	public ActivityDetails getActivityCard(String activityId)
+			throws Exception {
+		ActivityDetails activityDetails = activityDetailsDao.findById(activityId);
+		if (null != activityDetails) {
+			ActivityInputDTO inputDTO = new ActivityInputDTO();
+			inputDTO.setActivityDetailsId(activityId);
+			activityDetails.setActivityDetailsChooseIntegralList(activityDao.getChoosedIntegral(inputDTO));
+			activityDetails.setActivityDetailsUnChooseIntegralList(activityDao.getChoosedIntegral(inputDTO));
+		}
+		return activityDetails;
+	}
+
+	/**
+	 * 授权
+	 *
+	 * @param activityId   活动id
+	 * @param allCardsId   卡券id
+	 */
+	@Transactional(readOnly = false)
+	public void accreditCard(String activityId, String allCardsId) {
+		//删除已经授权的卡券
+		activityDao.deleteByActivityId(activityId);
+		// 重新授权
+		if (StringUtils.isNotEmpty(allCardsId)) {
+			String[] cids = allCardsId.split(",");
+			for (String cid : cids) {
+				Activity activity = new Activity();
+				activity.setActivityDetailsId(activityId);
+				activity.setCardId(cid);
+				activity.preInsert();
+				//TODO
+			}
+		}
+	}
+}

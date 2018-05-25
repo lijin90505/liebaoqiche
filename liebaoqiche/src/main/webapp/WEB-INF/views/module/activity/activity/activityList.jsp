@@ -1,0 +1,153 @@
+<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<!DOCTYPE>
+<html>
+<head>
+	<title>ActivityDetails</title>
+	<%@ include file="/WEB-INF/views/include/head.jsp"%>
+	<style>
+		.switch{
+			width:44px;
+			height:22px;
+			/* border:1px solid #264dbe; */
+			border-radius:22px;
+			overflow:hidden;
+		}
+		.switch>div{
+			position:relative;
+			width:100%;
+			height:100%;
+			background:#ccc;
+		}
+		.switch>div>b{
+			position:absolute;
+			top:1px;
+			left:1px;
+			diplay:block;
+			width:20px;
+			height:20px;
+			background:#fff;
+			border-radius:20px;
+		}
+		.switch.active>div{
+			background:#264dbe;
+		}
+		.switch.active>div>b{
+			left:23px;
+		}
+	</style>
+</head>
+<body>
+	<%@ include file="/WEB-INF/views/include/loading.jsp"%>
+	<!-- 数据列表  -->
+	<div class="easyui-layout" data-options="fit:true,border:false">
+		<div data-options="region:'center'">
+			<table id="Grid" class="easyui-datagrid" title="" ctrlSelect="true" striped="true"
+				rownumbers="true" pagination="true" fitColumns="true" toolbar="#Grid_Toolbar"
+				loadMsg="正在加载数据，请稍等..." emptyMsg="没有找到符合条件的数据"
+				data-options="url:'${ctx}/activity/activity/list',fit:true, fitColumns:true, checkOnSelect:true, selectOnCheck:true, border: false">
+			    <thead>
+			        <tr>
+			            <th data-options="field:'ck',checkbox:true"></th>
+			            <th data-options="field:'id',hidden:true,width:100">id</th>
+			            <th data-options="field:'activityDetailsName',width:100">活动名称</th>
+			            <th data-options="field:'isCard',width:100">是否关联卡券</th>
+			            <th data-options="field:'isIntegral',width:100">是否关联积分</th>
+			            <th data-options="field:'isExperience',width:100">是否关联经验值</th>
+			            <th data-options="field:'state',width:100 ,formatter:switchstate">状态</th>
+			            <th data-options="field:'isDeleteDesc',hidden:true,width:100">是否删除</th>
+			            <th data-options="field:'isDelete',hidden:true,width:100">是否删除；0未删除，1删除</th>
+<!-- 			        	<th data-options="field:'operate',fixed:true,width:230,align:'center',formatter:formatOperate">操作</th> -->
+			        </tr>
+			    </thead>
+			</table>
+			<div id="Grid_Toolbar">
+				<form id="searchForm" name="searchForm">
+					<input class="easyui-textbox" style="width:110px;" id="activityDetailsName" name="activityDetailsName" labelWidth="70" data-options="validType:'special',validType:'special',prompt:'活动名称'">
+					<a id="btnSearch" href="javascript:void(0)" class="easyui-linkbutton button-primary"><i class="fa fa-search fa-lg"></i>&nbsp;&nbsp;查询</a>
+					<a href="javascript:void(0)" class="easyui-linkbutton reset l-btn l-btn-small" plain="true" onclick="resetForm('searchForm')"><i class="fa fa-repeat fa-lg"></i>&nbsp;&nbsp;重置</a>
+					<div class="pull-right">
+						
+				    </div>
+				</form>
+		    </div>
+		</div>
+	</div>
+	
+    <!-- js脚本，必须写在body中，tab的url加载模式只会异步加载body中的内容到tab中 -->
+	<script type="text/javascript">
+		require(['jquery','common'], function($){
+			
+			// 给查询按钮添加点击事件
+			$("#btnSearch").on('click', function(){
+				if($('#searchForm').form('enableValidation').form('validate')){
+					reload();
+				}
+			});
+		});
+
+		/**
+		 * Easyui重置表单
+		 * @param formId
+		 */
+		function resetForm(formId){
+			$('#'+formId).form('clear');
+			reload();
+		};
+
+		function reload(){
+			var params = $('#Grid').datagrid('options').queryParams;
+			params.activityDetailsName = $('#activityDetailsName').val();
+			params.state = $('#state').val();
+			params.isDelete = $('#isDelete').val();
+			$('#Grid').datagrid('options').queryParams = params;
+			$('#Grid').datagrid('reload');
+		}
+		
+		function switchstate(value,rowData,rowIndex){
+			var operate = '';
+			if(value == "2"){ // 1 开启
+				operate = '<div class="switch active" id='+rowData.id+' onclick="switchClick(\''+value+'\',\''+rowData.id+'\',\''+rowIndex+'\',this)"><div><b></b></div></div>';
+			}else if(value == "1" ){ // 1 关闭
+				operate = '<div class="switch" id='+rowData.id+' onclick="switchClick(\''+value+'\',\''+rowData.id+'\',\''+rowIndex+'\',this)"><div><b></b></div></div>';
+			} else if(value == "0") {
+				operate = '未关联'
+			}
+			return operate;
+		}
+		
+		function switchClick(value,id,index,e){
+			var msg = (value=="2"?"关闭":"开启");
+			$.messager.confirm('警告', '您确定'+msg+'吗?', function (r) {
+				if(r) {
+					value=(value=="2"?"1":"2");
+					$.post('${ctx}/activity/activity/updateIsOpen',{id:id,state:value},function(data){
+						if(data.rtnCode == '00000000'){//修改成功
+							$("#Grid").datagrid("updateRow",{  
+	                            index:index, //行索引  
+	                            row:{  
+	                            	state:value //行中的某个字段  
+	                            }  
+	                        });  
+							if(value == "2"){
+								$("#"+id).addClass("active");
+							}else if(value == "1" || value == "0" ){
+								$("#"+id).removeClass("active");
+							}
+						}else{
+							$.messager.alert('提示', data.rtnMsg);
+						}
+					});
+				}
+			});
+		}
+		
+		// 操作列
+		function formatOperate(value,rowData,rowIndex){
+			return '<a class="btn btn-default" href="#"><i class="fa fa-eye fa-lg"></i> 查看详情 &nbsp;&nbsp;</a>'
+			+'<a class="btn btn-default" href="javascript:void(0)"><i class="fa fa-pencil fa-lg"></i> 修改 &nbsp;&nbsp;</a>'
+			+'<a class="btn btn-default" href="javascript:void(0)"><i class="fa fa-minus-circle fa-lg"></i> 删除 &nbsp;&nbsp;</a>'
+		}
+	</script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+package com.ibest.accesssystem.entity;
+
+import java.util.Date;
+
+import com.ibest.framework.common.persistence.BaseEntity;
+
+public class PayChannelPermissionAssignment extends BaseEntity {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+					
+	// 支付渠道编号
+	private String payChannelId;
+				
+	// 支付渠道名称
+	private String payChannelName;
+				
+	// 系统标识
+	private String systemSign;
+				
+	// 系统名称
+	private String systemSignName;
+						
+	// creater
+	private String creater;
+				
+	// create_time
+	private Date createTime;
+				
+	// 修改人
+	private String modifier;
+				
+	// 修改时间
+	private Date modifyTime;
+				
+	// 版本
+	private String version;
+									
+	public String getPayChannelId(){
+		return payChannelId;
+	}
+	
+	public void setPayChannelId(String payChannelId){
+		this.payChannelId = payChannelId;
+	}
+				
+	public String getPayChannelName(){
+		return payChannelName;
+	}
+	
+	public void setPayChannelName(String payChannelName){
+		this.payChannelName = payChannelName;
+	}
+				
+	public String getSystemSign(){
+		return systemSign;
+	}
+	
+	public void setSystemSign(String systemSign){
+		this.systemSign = systemSign;
+	}
+				
+	public String getSystemSignName(){
+		return systemSignName;
+	}
+	
+	public void setSystemSignName(String systemSignName){
+		this.systemSignName = systemSignName;
+	}
+						
+	public String getCreater(){
+		return creater;
+	}
+	
+	public void setCreater(String creater){
+		this.creater = creater;
+	}
+				
+	public Date getCreateTime(){
+		return createTime;
+	}
+	
+	public void setCreateTime(Date createTime){
+		this.createTime = createTime;
+	}
+				
+	public String getModifier(){
+		return modifier;
+	}
+	
+	public void setModifier(String modifier){
+		this.modifier = modifier;
+	}
+				
+	public Date getModifyTime(){
+		return modifyTime;
+	}
+	
+	public void setModifyTime(Date modifyTime){
+		this.modifyTime = modifyTime;
+	}
+				
+	public String getVersion(){
+		return version;
+	}
+	
+	public void setVersion(String version){
+		this.version = version;
+	}
+					
+}

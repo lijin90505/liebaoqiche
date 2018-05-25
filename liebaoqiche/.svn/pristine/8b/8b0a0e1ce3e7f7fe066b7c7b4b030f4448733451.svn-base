@@ -1,0 +1,180 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ include file="/WEB-INF/views/include/taglib.jsp" %>
+<!DOCTYPE>
+<html>
+<head>
+	<title>Card</title>
+	<%@ include file="/WEB-INF/views/include/head.jsp" %>
+</head>
+<body>
+<%@ include file="/WEB-INF/views/include/loading.jsp" %>
+<div class="easyui-layout" data-options="fit:true">
+	<div data-options="region:'center'">
+		<form id="DataForm" method="post">
+			<table style="width: 100%;">
+				<tbody>
+				<tr>
+					<td colspan="2" class="chapter">
+						基本信息
+					</td>
+				</tr>
+				<tr>
+					<td style="width: 50%; padding: 5px; text-align: center;">
+						<input class="easyui-textbox" required="true" maxlength="100" id="name" name="name" value="${card.name}" labelWidth="100" label="卡券名称" data-options="prompt:'卡券名称'" style="width: 90%;">
+					</td>
+					<td style="width: 50%; padding: 5px; text-align: center;">
+						<input class="easyui-textbox" required="true" maxlength="200" id="content" name="content" value="${card.content}" labelWidth="100" label="卡券内容" data-options="prompt:'卡券内容'" style="width: 90%;">
+					</td>
+				</tr>
+				<tr>
+					<td style="width: 50%; padding: 5px; text-align: center;">
+						<input class="easyui-textbox" required="true" maxlength="200" id="imageUrl" name="imageUrl" value="${card.imageUrl}" labelWidth="100" label="图片url" data-options="prompt:'图片url'" style="width: 90%;">
+					</td>
+					<td style="width: 50%; padding: 5px; text-align: center;">
+						<input class="easyui-combobox" required="true" id="buildId" name="buildId" value="${card.buildId}" labelWidth="100" label="卡券生成形式" style="width: 90%;"
+						       data-options="
+									        url:'${ctx}/card/cardBuild/cardBuilds',
+									        textField:'name',
+									        valueField:'id',
+									        width:120,
+									        panelHeight:'auto',
+									        editable:false,
+									        prompt:'卡券生成形式'">
+					</td>
+				</tr>
+				<tr>
+					<td style="width: 50%; padding: 5px; text-align: center;">
+						<input class="easyui-combobox" required="true" id="getId" name="getId" value="${card.getId}" labelWidth="100" label="卡券领取形式" style="width: 90%;"
+						       data-options="
+									        url:'${ctx}/card/cardGet/cardGets',
+									        textField:'name',
+									        valueField:'id',
+									        width:120,
+									        panelHeight:'auto',
+									        editable:false,
+									        prompt:'卡券领取形式'">
+					</td>
+					<td style="width: 50%; padding: 5px; text-align: center;">
+						<input class="easyui-combobox" required="true" id="useId" name="useId" value="${card.useId}" labelWidth="100" label="卡券用途形式" style="width: 90%;"
+						       data-options="
+									        url:'${ctx}/card/cardUse/cardUses',
+									        textField:'name',
+									        valueField:'id',
+									        width:120,
+									        panelHeight:'auto',
+									        editable:false,
+									        prompt:'卡券用途形式'">
+					</td>
+				</tr>
+				<tr>
+					<td style="width: 50%; padding: 5px; text-align: center;">
+						<input class="easyui-numberbox" required="true" maxlength="100" id="num" name="num" value="${card.num}" labelWidth="100" label="卡券生成最大数量" data-options="prompt:'卡券生成最大数量'" style="width: 90%;">
+					</td>
+				</tr>
+				<tr>
+					<td style="width: 50%; padding: 5px; text-align: center;">
+						<input class="easyui-numberbox" required="true" maxlength="100" id="numTimeMax" name="numTimeMax" value="${card.numTimeMax}" labelWidth="100" label="单次领取数量" data-options="prompt:'单次领取数量'" style="width: 90%;">
+					</td>
+					<td style="width: 50%; padding: 5px; text-align: center;">
+						<input class="easyui-numberbox" required="true" maxlength="100" id="numVinMax" name="numVinMax" value="${card.numVinMax}" labelWidth="100" label="单次领取最大次数" data-options="prompt:'单车领取最大次数'" style="width: 90%;">
+					</td>
+				</tr>
+				<tr>
+					<td style="width: 50%; padding: 5px; text-align: center;" colspan="2">
+                        <textarea class="easyui-textbox" name="remarks"
+					              style="width: 95%; height: 80px;" labelWidth="70" label="备注" maxlength="1200"
+					              data-options="validType:'length[1,300]',prompt:'备注'">${card.remarks}</textarea>
+					</td>
+				</tr>
+				<tr>
+					<td style="width: 50%; padding: 5px; text-align: center;">
+						<input class="" hidden="true" id="id" name="id" value="${card.id}" labelWidth="100" label="id" required="true" data-options="prompt:'id'" style="width: 90%;">
+					</td>
+					<td style="width: 50%; padding: 5px; text-align: center;">
+						<input class="" hidden="true" id="isDelete" name="isDelete" value="${card.isDelete}" labelWidth="100" label="是否删除；0未删除，1删除" data-options="prompt:'是否删除；0未删除，1删除'" style="width: 90%;">
+					</td>
+				</tr>
+				<tr>
+					<td style="width: 50%; padding: 5px; text-align: center;">
+						<input class="" hidden="true" id="creater" name="creater" value="${card.creater}" labelWidth="100" label="创建人" data-options="prompt:'创建人'" style="width: 90%;">
+					</td>
+					<td style="width: 50%; padding: 5px; text-align: center;">
+						<input class="" hidden="true" id="createTime" name="createTime" value="${card.createTime}" labelWidth="100" label="创建时间" data-options="prompt:'创建时间'" style="width: 90%;">
+					</td>
+				</tr>
+				<tr>
+					<td style="width: 50%; padding: 5px; text-align: center;">
+						<input class="" hidden="true" id="modifier" name="modifier" value="${card.modifier}" labelWidth="100" label="修改人" data-options="prompt:'修改人'" style="width: 90%;">
+					</td>
+					<td style="width: 50%; padding: 5px; text-align: center;">
+						<input class="" hidden="true" id="modifyTime" name="modifyTime" value="${card.modifyTime}" labelWidth="100" label="修改时间" data-options="prompt:'修改时间'" style="width: 90%;">
+					</td>
+				</tr>
+				<tr>
+					<td style="width: 50%; padding: 5px; text-align: center;">
+						<input class="" hidden="true" id="buildName" name="buildName" value="${card.buildName}" labelWidth="100" label="生成券名称" data-options="prompt:'生成券名称'" style="width: 90%;">
+					</td>
+					<td style="width: 50%; padding: 5px; text-align: center;">
+						<input class="" hidden="true" id="getName" name="getName" value="${card.getName}" labelWidth="100" label="领取券名称" data-options="prompt:'领取券名称'" style="width: 90%;">
+					</td>
+					<td style="width: 50%; padding: 5px; text-align: center;">
+						<input class="" hidden="true" id="useName" name="useName" value="${card.useName}" labelWidth="100" label="卡券用途名称" data-options="prompt:'卡券用途名称'" style="width: 90%;">
+					</td>
+				</tr>
+				<tr>
+					<td style="width: 50%; padding: 5px; text-align: center;">
+						<input class="" hidden="true" id="version" name="version" value="${card.version}" labelWidth="100" label="版本" data-options="prompt:'版本'" style="width: 90%;">
+					</td>
+				</tr>
+				</tbody>
+			</table>
+		</form>
+	</div>
+	<div data-options="region:'south',border:false" style="text-align:left; padding:5px;">
+		<a id="btnSave" href="javascript:void(0)" class="easyui-linkbutton button-success" style="width: 80px;">
+			<i class="fa fa-check fa-lg"></i>&nbsp;&nbsp;保存
+		</a>
+		<a id="btnCancel" href="javascript:void(0)" class="easyui-linkbutton button-warning" style="width: 80px;">
+			<i class="fa fa-remove fa-lg"></i>&nbsp;&nbsp;取消
+		</a>
+	</div>
+</div>
+
+<!-- js脚本，必须写在body中，tab的url加载模式只会异步加载body中的内容到tab中 -->
+<script type="text/javascript">
+	require(['jquery', 'common'], function ($) {
+		// 给保存按钮添加点击事件
+		$("#btnSave").on('click', function () {
+
+			$("#btnSave").linkbutton('disable');
+
+			$("#DataForm").form('submit', {
+				url: $("#id").val() == '' ? '${ctx}/card/card/create' : '${ctx}/card/card/update',
+				onSubmit: function () {
+					return $(this).form('enableValidation').form('validate');
+				},
+				success: function (data) {
+					var json = $.parseJSON(data);
+					if (json && json.rtnCode == '00000000') {
+						$.messager.alert('提示', "保存成功", "success");
+						$("#btnSave").linkbutton('enable');
+						hideDialog();
+					} else {
+						$.messager.alert('提示', json.rtnMsg, "error");
+						$("#btnSave").linkbutton('enable');
+					}
+				},
+				error: function () {
+					$("#btnSave").linkbutton('enable');
+				}
+			});
+		});
+
+		// 给保存按钮添加点击事件
+		$("#btnCancel").on('click', function () {
+			hideDialog();
+		});
+	});
+</script>
+</body>
+</html>

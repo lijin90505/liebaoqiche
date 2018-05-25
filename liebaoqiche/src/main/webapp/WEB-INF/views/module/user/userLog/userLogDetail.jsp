@@ -1,0 +1,111 @@
+<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<!DOCTYPE>
+<html>
+<head>
+	<title>UserLog</title>
+	<%@ include file="/WEB-INF/views/include/head.jsp"%>
+</head>
+<body>
+	<%@ include file="/WEB-INF/views/include/loading.jsp"%>
+	<div class="easyui-layout" data-options="fit:true">
+		<div data-options="region:'center'">
+    		<table style="width: 100%;">
+    			<tbody>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						主键，UUID
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${userLog.id}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						用户访问URL
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${userLog.url}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						用户访问ip
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${userLog.ip}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						操作事件
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${userLog.event}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						操作记录详情
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${userLog.detail}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						记录时间
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${userLog.createTime}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						操作用户uuid
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${userLog.userId}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						操作用户名
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${userLog.username}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						删除标识（0 未删除 1 已删除 2 删除审核）
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${userLog.isDelete}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						<label class="label-top">备注:</label>
+    						<input class="easyui-textbox" name="remarks" style="width:99.5%; height:80px;" data-options="multiline:true">
+    					</td>
+    				</tr>
+    			</tbody>
+    		</table>
+		</div>
+		<div data-options="region:'south',border:false" style="text-align:right; padding:10px;">
+            <a id="btnCancel_UserLog" href="javascript:void(0)" class="easyui-linkbutton button-warning" style="width: 80px;"><i class="fa fa-remove fa-lg"></i>&nbsp;&nbsp;取消</a>
+        </div>
+   	</div>
+    
+    <!-- js脚本，必须写在body中，tab的url加载模式只会异步加载body中的内容到tab中 -->
+	<script type="text/javascript">
+		require(['jquery','common'], function($){
+			// 给保存按钮添加点击事件
+			$("#btnCancel_UserLog").on('click', function(){
+				history.go(-1);
+			});
+		});
+	</script>
+</body>
+</html>

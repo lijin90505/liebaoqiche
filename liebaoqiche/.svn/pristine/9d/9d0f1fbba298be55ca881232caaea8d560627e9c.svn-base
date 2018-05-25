@@ -1,0 +1,143 @@
+<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<!DOCTYPE>
+<html>
+<head>
+	<title>ActivityExp</title>
+	<%@ include file="/WEB-INF/views/include/head.jsp"%>
+</head>
+<body>
+	<%@ include file="/WEB-INF/views/include/loading.jsp"%>
+	<div class="easyui-layout" data-options="fit:true">
+		<div data-options="region:'center'">
+    		<table style="width: 100%;">
+    			<tbody>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						id
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${activityExp.id}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						is_delete
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${activityExp.isDelete}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						exp_id
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${activityExp.expId}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						exp_name
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${activityExp.expName}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						activity_id
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${activityExp.activityId}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						activity_name
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${activityExp.activityName}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						活动状态
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${activityExp.status}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						creater
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${activityExp.creater}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						create_time
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${activityExp.createTime}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						modifier
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${activityExp.modifier}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						modify_time
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${activityExp.modifyTime}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						version
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${activityExp.version}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						remark
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${activityExp.remark}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						<label class="label-top">备注:</label>
+    						<input class="easyui-textbox" name="remarks" style="width:99.5%; height:80px;" data-options="multiline:true">
+    					</td>
+    				</tr>
+    			</tbody>
+    		</table>
+		</div>
+		<div data-options="region:'south',border:false" style="text-align:left; padding:5px;">
+            <a id="btnCancel_ActivityExp" href="javascript:void(0)" class="easyui-linkbutton button-warning" style="width: 80px;"><i class="fa fa-remove fa-lg"></i>&nbsp;&nbsp;取消</a>
+        </div>
+   	</div>
+    
+    <!-- js脚本，必须写在body中，tab的url加载模式只会异步加载body中的内容到tab中 -->
+	<script type="text/javascript">
+		require(['jquery','common'], function($){
+			// 给保存按钮添加点击事件
+			$("#btnCancel_ActivityExp").on('click', function(){
+				history.go(-1);
+			});
+		});
+	</script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+package com.ibest.pay.dao;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.ibest.framework.common.persistence.MyBatisDao;
+import com.ibest.pay.entity.PayType;
+
+import com.ibest.pay.dto.input.PayTypeInputDTO;
+
+@MyBatisDao
+public interface PayTypeDao {
+
+	/**
+	 * 新增
+	 * @param entity
+	 * @return
+	 */
+	public int insert(PayType payType);
+	
+	/**
+	 * 根据主键ID删除
+	 * @param id
+	 * @return
+	 */
+	public int deleteById(String id);
+	
+	/**
+	 * 批量删除
+	 * @param ids
+	 * @return
+	 */
+	public int deleteByIds(@Param("ids") List<String> ids); 
+	
+	/**
+	 * 修改
+	 * @param entity
+	 * @return
+	 */
+	public int update(PayType payType);
+	
+	/**
+	 * 根据Id获取唯一记录
+	 * @param id
+	 * @return
+	 */
+	public PayType findById(String id);
+	
+	/**
+	 * 根据指定对象查询唯一结果
+	 * @param entity
+	 * @return
+	 */
+	public PayType findOneByObject(PayTypeInputDTO payTypeInputDto);
+	
+	/**
+	 * 根据对象查询符合条件结果列表
+	 * @param entity
+	 * @return
+	 */
+	public List<PayType> findByObject(PayTypeInputDTO payTypeInputDto);
+	
+	
+	/**
+	 * 根据对象查询符合条件记录总条数
+	 * @param entity
+	 * @return
+	 */
+	public long countByObject(PayTypeInputDTO payTypeInputDto);
+	
+	public List<PayType> findByAll();
+	
+	/**
+	 * 根据渠道ID查询所有的支付类型
+	 * @Title: findByPayChannelId  
+	 * @param: @param payChannelId
+	 * @return:List<PayType>
+	 * @author: WeiJia
+	 * @date:2018年4月19日 上午9:01:58
+	 */
+	public List<PayType> findByPayChannelId(@Param("payChannelId") String payChannelId);
+	
+	/**
+	 * 根据支付类型编码查询
+	 * @Title: findByPayType  
+	 * @param: @param payType
+	 * @return:PayType
+	 * @author: WeiJia
+	 * @date:2018年4月19日 下午9:40:23
+	 */
+	public PayType findByPayType(String payType);
+	
+	/**
+	 * 根据支付名称查询
+	 * @Title: findByPayName  
+	 * @param: @param payName
+	 * @return:PayType
+	 * @author: WeiJia
+	 * @date:2018年4月19日 下午9:40:57
+	 */
+	public PayType findByPayName(String payName);
+	
+	/**
+	 * 根据类型渠道查询支付方式
+	 * @Title: findByPayTypes  
+	 * @param: @param payChannelId
+	 * @param: @throws Exception
+	 * @return:List<PayType>
+	 * @author: WeiJia
+	 * @date:2018年4月20日 上午11:32:59
+	 */
+	public List<PayType> queryByPayTypes(String payChannelId);
+
+	public List<PayType> findByNames(PayTypeInputDTO inputDto);
+}

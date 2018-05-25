@@ -1,0 +1,88 @@
+package com.ibest.pay.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ibest.framework.common.utils.PageList;
+import com.ibest.framework.common.utils.StringUtils;
+import com.ibest.pay.dao.PayUnionPayCheckInfoDao;
+import com.ibest.pay.dto.input.PayUnionPayCheckInfoInputDTO;
+import com.ibest.pay.entity.PayUnionPayCheckInfo;
+
+@Service
+@Transactional(readOnly=true)
+public class PayUnionPayCheckInfoService {
+
+	@Autowired
+	protected PayUnionPayCheckInfoDao payUnionPayCheckInfoDao;
+	
+	public PayUnionPayCheckInfo findById(String id) throws Exception{
+		return payUnionPayCheckInfoDao.findById(id);
+	}
+	
+	public PayUnionPayCheckInfo findByOrderId(String OrderId) throws Exception{
+		return payUnionPayCheckInfoDao.findByOrderId(OrderId);
+	}
+	
+	@Transactional(readOnly=false)
+	public int insert(PayUnionPayCheckInfo payUnionPayCheckInfo) throws Exception{
+		payUnionPayCheckInfo.preInsert();
+		int result = payUnionPayCheckInfoDao.insert(payUnionPayCheckInfo);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteById(String id) throws Exception{
+		int result = payUnionPayCheckInfoDao.deleteById(id);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteByIds(String ids) throws Exception{
+		int result = payUnionPayCheckInfoDao.deleteByIds(StringUtils.tokenizeToList(ids));
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int update(PayUnionPayCheckInfo payUnionPayCheckInfo) throws Exception{
+		payUnionPayCheckInfo.preUpdate();
+		int result = payUnionPayCheckInfoDao.update(payUnionPayCheckInfo);
+		return result;
+	}
+	
+	/**
+	 * 分页查询
+	 * @param page
+	 * @param inputDto
+	 * @return
+	 * @throws Exception
+	 */
+	public PageList<PayUnionPayCheckInfo> findByPage(PageList<PayUnionPayCheckInfo> page, PayUnionPayCheckInfoInputDTO inputDto) throws Exception{
+		
+		if(page == null){
+			page = new PageList<PayUnionPayCheckInfo>();
+		}
+		
+		long totalCount = payUnionPayCheckInfoDao.countByObject(inputDto);
+		if(totalCount > 0){
+			// 设置记录总条数
+			page.setTotal(totalCount);
+			
+			// 设置分页参数，查询数据
+			inputDto.setLimitStart((page.getPage() - 1) * page.getPageSize());
+			inputDto.setLimitSize(page.getPageSize());
+			page.setRows(payUnionPayCheckInfoDao.findByObject(inputDto));
+		}
+		
+		return page;
+	}
+	
+	/**
+	* 查询列表
+	*/
+	public PayUnionPayCheckInfo findByObject(PayUnionPayCheckInfoInputDTO inputDto) throws Exception{
+		return payUnionPayCheckInfoDao.findOneByObject(inputDto);
+	}
+
+}

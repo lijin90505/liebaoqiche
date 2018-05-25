@@ -1,0 +1,129 @@
+package com.ibest.user.service;
+
+import java.util.List;
+
+import com.ibest.framework.common.utils.StringUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ibest.framework.common.utils.PageList;
+
+import com.ibest.user.dao.UserDao;
+import com.ibest.user.entity.User;
+import com.ibest.user.dto.input.UserInputDTO;
+
+@Service
+@Transactional(readOnly=true)
+public class UserService {
+
+	@Autowired
+	protected UserDao userDao;
+	
+	public User findById(String id) throws Exception{
+		return userDao.findById(id);
+	}
+	
+	@Transactional(readOnly=false)
+	public int insert(User user) throws Exception{
+		user.preInsert();
+		int result = userDao.insert(user);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteById(String id) throws Exception{
+		int result = userDao.deleteById(id);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteByIds(String ids) throws Exception{
+		int result = userDao.deleteByIds(StringUtils.tokenizeToList(ids));
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int update(User user) throws Exception{
+		user.preUpdate();
+		int result = userDao.update(user);
+		return result;
+	}
+
+	/**
+	 * 根据条件对象查询用户个数
+	 * @param inputDTO
+	 * @return
+	 */
+	public int countUserByObject(UserInputDTO inputDTO) {
+
+		return userDao.countUserByObject(inputDTO);
+	}
+	
+	/**
+	 * 分页查询
+	 * @param page
+	 * @param inputDto
+	 * @return
+	 * @throws Exception
+	 */
+	public PageList<User> findByPage(PageList<User> page, UserInputDTO inputDto) throws Exception{
+		
+		if(page == null){
+			page = new PageList<User>();
+		}
+		
+		long totalCount = userDao.countByObject(inputDto);
+		if(totalCount > 0){
+			// 设置记录总条数
+			page.setTotal(totalCount);
+			
+			// 设置分页参数，查询数据
+			inputDto.setLimitStart((page.getPage() - 1) * page.getPageSize());
+			inputDto.setLimitSize(page.getPageSize());
+			page.setRows(userDao.findByObject(inputDto));
+		}
+		
+		return page;
+	}
+	
+	/**
+	* 查询列表
+	*/
+	public User findOneByObject(UserInputDTO inputDto) throws Exception{
+		return userDao.findOneByObject(inputDto);
+	}
+
+	public List<User> findByObject(UserInputDTO inputDTO) throws Exception{
+		return userDao.findByObject(inputDTO);
+	}
+	
+	public User findByPhone(String phone) throws Exception{
+		return userDao.findByPhone(phone);
+	}
+	
+	public User findByEmail(String email) throws Exception{
+		return userDao.findByEmail(email);
+	}
+	
+	public User findByUserName(String username) throws Exception{
+		return userDao.findByUserName(username);
+	}
+
+	/**
+	 * 解锁/锁定
+	 *
+	 * @param ids
+	 * @param locked
+	 * @throws Exception
+	 */
+	@Transactional(readOnly = false)
+	public int handle(List<String> ids, Integer locked)
+			throws Exception {
+		return userDao.handle(ids, locked);
+	}
+	
+	public List<User> findAllUsers() throws Exception{
+		return userDao.findAllUsers();
+	}
+}

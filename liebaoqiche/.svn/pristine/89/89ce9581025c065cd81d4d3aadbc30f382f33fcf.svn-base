@@ -1,0 +1,248 @@
+package com.ibest.integral.controller;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.ibest.framework.common.enums.EnumsRtnMapResult;
+import com.ibest.framework.common.persistence.BaseController;
+import com.ibest.framework.common.utils.PageList;
+import com.ibest.framework.common.utils.UserUtils;
+import com.ibest.integral.dto.input.IntegralCategoryInputDTO;
+import com.ibest.integral.entity.IntegralCategory;
+import com.ibest.integral.service.IntegralCategoryService;
+import com.ibest.utils.ConstantUtils;
+import com.ibest.utils.RandomUtils;
+
+@Controller
+@RequestMapping(value="${adminPath}/integral/integralCategory")
+public class IntegralCategoryController extends BaseController {
+	
+	private static final Logger logger = LoggerFactory.getLogger(IntegralCategoryController.class);
+	
+	@Autowired
+	private IntegralCategoryService integralCategoryService;
+	
+	/**
+	* 进入到列表页
+	*/
+	@RequestMapping(value="/")
+	public String index(){
+		return "module/integral/integralCategory/integralCategoryList";
+	}
+	
+	/**
+	* 进入到表单页-创建
+	*/
+	@RequestMapping(value="/add")
+	public String add(){
+		
+		return "module/integral/integralCategory/integralCategoryForm";
+	}
+	
+	/**
+	* 进入到表单页，编辑
+	*/
+	@RequestMapping(value="/edit")
+	public String edit(@RequestParam String id, Model model){
+		try {
+			if(StringUtils.isNotEmpty(id)){
+				IntegralCategory integralCategory = integralCategoryService.findById(id);
+				if(integralCategory != null){
+					model.addAttribute("integralCategory", integralCategory);
+				}else{
+					setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "您查看的信息不存在！", model);
+				}
+			}else{
+				setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "请选择需要编辑的信息！", model);
+			}
+		} catch (Exception e) {
+			setRtnCodeAndMsg(EnumsRtnMapResult.EXCEPTION.getCode(), EnumsRtnMapResult.EXCEPTION.getMsg(), model);
+		}
+		return "module/integral/integralCategory/integralCategoryForm";
+	}
+	
+	/**
+	* 进入到详情页
+	*/
+	@RequestMapping(value="/view")
+	public String view(@RequestParam String id, Model model){
+		try {
+			if(StringUtils.isNotEmpty(id)){
+				IntegralCategory integralCategory = integralCategoryService.findById(id);
+				if(integralCategory != null){
+					model.addAttribute("integralCategory", integralCategory);
+				}else{
+					setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "您查看的信息不存在！", model);
+				}
+			}else{
+				setRtnCodeAndMsg(EnumsRtnMapResult.FAILURE.getCode(), "请选择需要查看的信息！", model);
+			}
+		} catch (Exception e) {
+			setRtnCodeAndMsg(EnumsRtnMapResult.EXCEPTION.getCode(), EnumsRtnMapResult.EXCEPTION.getMsg(), model);
+		}
+		return "module/integral/integralCategory/integralCategoryDetail";
+	}
+
+	/**
+	 * 检测用户名唯一性
+	 * @param inputDTO
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value="checkCategoryName")
+	public String checkCategoryName(IntegralCategoryInputDTO inputDTO) {
+
+		boolean isSame=true;
+
+		int userCount = integralCategoryService.countIntegralCategoryByObject(inputDTO);
+
+		if (userCount == 1) {
+			isSame = false;
+		}
+		return isSame+"";
+	}
+
+	/**
+	* 异步分页查询
+	*/
+	@ResponseBody
+	@RequiresPermissions("integralCategory:query")
+	@RequestMapping(value="/list")
+	public PageList<IntegralCategory> list(IntegralCategoryInputDTO integralCategory, HttpServletRequest request){
+		
+		PageList<IntegralCategory> pageList = new PageList<IntegralCategory>();
+		
+		try {
+			//设置分页参数
+			super.setPage(request, pageList);
+		
+			pageList = integralCategoryService.findByPage(pageList, integralCategory);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return pageList;
+	}
+	
+	/**
+	 * 异步分页查询
+	 */
+	@ResponseBody
+	@RequestMapping(value="/types")
+	public List<IntegralCategory> types(IntegralCategoryInputDTO pointType, HttpServletRequest request) throws Exception{
+		return integralCategoryService.findByObject(pointType);
+	}
+	
+	/**
+	* 异步表单提交
+	*/
+	@ResponseBody
+	@RequiresPermissions("integralCategory:create")
+	@RequestMapping(value="create")
+	public Map<String, Object> insert(IntegralCategory integralCategory){
+
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		setRtnCodeAndMsgBySuccess(rtnMap, "保存成功");
+		
+		try {
+			IntegralCategory nameUnique = 
+					integralCategoryService.checkNameUnique(integralCategory.getCategoryName());
+			if(nameUnique!=null){
+				setRtnCodeAndMsgByFailure(rtnMap, "操作失败,积分类别名称已存在！");
+			}
+			else{
+				integralCategory.setIsDelete(ConstantUtils.UPDATE_SET_ZERO);
+				integralCategory.setId(RandomUtils.RandomUUID());
+				integralCategory.setType("00");
+				integralCategory.setCreater(UserUtils.getCurrentUser().getRealname());
+				integralCategory.setCreateTime(new Date());
+				integralCategory.setModifier(UserUtils.getCurrentUser().getRealname());
+				integralCategory.setModifyTime(new Date());
+				int result = integralCategoryService.insert(integralCategory);
+				if(result == 0){
+					setRtnCodeAndMsgByFailure(rtnMap, "保存失败");
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+		return rtnMap;
+	}
+	
+	@ResponseBody
+	@RequiresPermissions("integralCategory:update")
+	@RequestMapping(value="update")
+	public Map<String, Object> update(IntegralCategory integralCategory){
+
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		setRtnCodeAndMsgBySuccess(rtnMap, "保存成功");
+		
+		try {
+			String oldName =
+					integralCategoryService.findById(integralCategory.getId()).getCategoryName();
+			if(!oldName.equals(integralCategory.getCategoryName())){
+				IntegralCategory nameUnique = 
+						integralCategoryService.checkNameUnique(integralCategory.getCategoryName());
+				if(nameUnique!=null){
+					setRtnCodeAndMsgByFailure(rtnMap, "操作失败,积分类别名称已存在！");
+				}else{
+					integralCategory.setModifier(UserUtils.getCurrentUser().getRealname());
+					integralCategory.setModifyTime(new Date());
+					integralCategory.setType("00");
+					int result = integralCategoryService.update(integralCategory);
+					if(result == 0){
+						setRtnCodeAndMsgByFailure(rtnMap, "保存失败");
+					}
+				}
+			}else{
+				integralCategory.setModifier(UserUtils.getCurrentUser().getRealname());
+				integralCategory.setModifyTime(new Date());
+				integralCategory.setType("00");
+				int result = integralCategoryService.update(integralCategory);
+				if(result == 0){
+					setRtnCodeAndMsgByFailure(rtnMap, "保存失败");
+				}
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+		return rtnMap;
+	}
+	
+	@ResponseBody
+	@RequiresPermissions("integralCategory:delete")
+	@RequestMapping(value="delete")
+	public Map<String, Object> delete(@RequestParam(required=true) String ids){
+		
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		setRtnCodeAndMsgBySuccess(rtnMap, "删除成功");
+		
+		try {
+			int result = integralCategoryService.deleteByIds(ids);
+			if(result == 0){
+				setRtnCodeAndMsgByFailure(rtnMap, "删除失败");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			setRtnCodeAndMsgByException(rtnMap, null);
+		}
+		return rtnMap;
+	}
+}

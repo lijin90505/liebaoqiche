@@ -1,0 +1,207 @@
+package com.ibest.activity.entity;
+
+import java.util.Date;
+
+import com.ibest.activity.enums.EnumsActivityStatus;
+import com.ibest.framework.common.persistence.BaseEntity;
+
+public class SystemActivityStatistics extends BaseEntity {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+							
+	// activity_id
+	private String activityId;
+				
+	// activity_name
+	private String activityName;
+				
+	// activity_content
+	private String activityContent;
+				
+	// start_time
+	private Date startTime;
+				
+	// end_time
+	private Date endTime;
+				
+	// status
+	private Integer status;
+	private String statusDesc;
+
+	// join_people_num
+	private Integer joinPeopleNum;
+				
+	// accumulation_people_num
+	private Integer accumulationPeopleNum;
+				
+	// back_people_num
+	private String backPeopleNum;
+				
+	// system_id
+	private String systemId;
+				
+	// system_name
+	private String systemName;
+				
+	// creater
+	private String creater;
+				
+	// create_time
+	private Date createTime;
+				
+	// modifier
+	private String modifier;
+				
+	// modify_time
+	private Date modifyTime;
+				
+	// version
+	private String version;
+				
+	// remark
+	private String remark;
+									
+	public String getActivityId(){
+		return activityId;
+	}
+	
+	public void setActivityId(String activityId){
+		this.activityId = activityId;
+	}
+				
+	public String getActivityName(){
+		return activityName;
+	}
+	
+	public void setActivityName(String activityName){
+		this.activityName = activityName;
+	}
+				
+	public String getActivityContent(){
+		return activityContent;
+	}
+	
+	public void setActivityContent(String activityContent){
+		this.activityContent = activityContent;
+	}
+				
+	public Date getStartTime(){
+		return startTime;
+	}
+	
+	public void setStartTime(Date startTime){
+		this.startTime = startTime;
+	}
+				
+	public Date getEndTime(){
+		return endTime;
+	}
+	
+	public void setEndTime(Date endTime){
+		this.endTime = endTime;
+	}
+				
+	public Integer getStatus(){
+		return status;
+	}
+	
+	public void setStatus(Integer status){
+		this.status = status;
+	}
+				
+	public Integer getJoinPeopleNum(){
+		return joinPeopleNum;
+	}
+	
+	public void setJoinPeopleNum(Integer joinPeopleNum){
+		this.joinPeopleNum = joinPeopleNum;
+	}
+				
+	public Integer getAccumulationPeopleNum(){
+		return accumulationPeopleNum;
+	}
+	
+	public void setAccumulationPeopleNum(Integer accumulationPeopleNum){
+		this.accumulationPeopleNum = accumulationPeopleNum;
+	}
+				
+	public String getBackPeopleNum(){
+		return backPeopleNum;
+	}
+	
+	public void setBackPeopleNum(String backPeopleNum){
+		this.backPeopleNum = backPeopleNum;
+	}
+				
+	public String getSystemId(){
+		return systemId;
+	}
+	
+	public void setSystemId(String systemId){
+		this.systemId = systemId;
+	}
+				
+	public String getSystemName(){
+		return systemName;
+	}
+	
+	public void setSystemName(String systemName){
+		this.systemName = systemName;
+	}
+				
+	public String getCreater(){
+		return creater;
+	}
+	
+	public void setCreater(String creater){
+		this.creater = creater;
+	}
+				
+	public Date getCreateTime(){
+		return createTime;
+	}
+	
+	public void setCreateTime(Date createTime){
+		this.createTime = createTime;
+	}
+				
+	public String getModifier(){
+		return modifier;
+	}
+	
+	public void setModifier(String modifier){
+		this.modifier = modifier;
+	}
+				
+	public Date getModifyTime(){
+		return modifyTime;
+	}
+	
+	public void setModifyTime(Date modifyTime){
+		this.modifyTime = modifyTime;
+	}
+				
+	public String getVersion(){
+		return version;
+	}
+	
+	public void setVersion(String version){
+		this.version = version;
+	}
+				
+	public String getRemark(){
+		return remark;
+	}
+	
+	public void setRemark(String remark){
+		this.remark = remark;
+	}
+
+	public String getStatusDesc() {
+		return statusDesc = EnumsActivityStatus.getLabel(this.status);
+	}
+}

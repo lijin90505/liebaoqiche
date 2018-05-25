@@ -1,0 +1,156 @@
+@charset "UTF-8";
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-size: 14px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.login-cont{
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    bottom: 0;
+    background-repeat:no-repeat;
+    background-position:right top;
+    background-size: cover;
+}
+
+.login-box-body{
+	position: absolute;
+    top:0;
+    left:0;
+    right: 0;
+    bottom: 0;
+    margin:auto;
+    width:748px;
+    height:460px;
+    background-repeat:no-repeat;
+    background-position:center center;
+    background-size: content;
+}
+
+.login_content{
+	width:50%;
+	height:100%;
+	float:right;
+	border-radius:0 10px 10px 0;
+}
+
+.login-from{
+	width:326px;
+	padding:0 40px;
+	margin:40px 0;
+	float:left;
+}
+
+.login_topIcon{
+	position:absolute;
+	top:-60px;
+	right:-120px;
+	width:200px;
+}
+
+.login-title{
+	font-size:20px;
+	color:#fff;
+	text-align:center;
+	margin:30px 0;
+	font-weight:normal;
+	font-family:"微软雅黑"
+}
+
+.form-input{
+    height: 50px;
+    margin-bottom: 20px;
+    border:1px solid #ccc;
+    border-radius:6px;
+    overflow:hidden;
+    position:relative;
+}
+
+.form-input>input{
+    width: 100%;
+    padding-left: 50px;
+    height: 50px;
+    float: left;
+    outline: none!important;
+    border: none!important;
+/*     -webkit-box-shadow: 0 0 0 1000px #264dbe inset!important; */
+    color: rgba(30, 30, 30, 1);
+}
+
+.form-input>input::-webkit-input-placeholder{   
+	color:#fff !important;   
+} 
+
+.form-input>label{
+    position:absolute;
+    top:0;
+    left:15px;
+    bottom:0;
+    margin:auto;
+    width:20px;
+    height:20px;
+    background-size: contain;
+}
+
+.uName{
+    background-repeat:no-repeat;
+    background-position:center;
+    background-size: cover;
+}
+
+.pWord{
+    background-repeat:no-repeat;
+    background-position:center;
+    background-size: cover;
+}
+
+.form-aside{
+    width:100%;
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+.forPassword{
+    float: right;
+    color:#fff!important;
+    text-decoration: none!important;
+}
+
+.form-btn{
+    text-align: center;
+}
+
+.loginBtn{
+    width:100%;
+    height:50px;
+    font-size:16px;
+    outline:none;
+    border:none;
+    color:#264dbe;
+    background-color:#fff;
+    margin-top:20px;
+    margin-bottom:10px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.loginBtn:hover{
+	background-color:#f6f6f6;
+}
+
+.msg{
+    height: 28px;
+    line-height: 28px;
+}
+
+.msg>p{
+    color:#fe6f7e;
+}

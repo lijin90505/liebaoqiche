@@ -1,0 +1,110 @@
+package com.ibest.activity.dao;
+
+import java.util.List;
+
+import com.ibest.activity.entity.Activity;
+import org.apache.ibatis.annotations.Param;
+
+import com.ibest.framework.common.persistence.MyBatisDao;
+import com.ibest.activity.entity.ActivitySystem;
+import com.ibest.activity.dto.input.ActivitySystemInputDTO;
+
+@MyBatisDao
+public interface ActivitySystemDao {
+
+	/**
+	 * 新增
+	 * @param activitySystem
+	 * @return
+	 */
+	public int insert(ActivitySystem activitySystem);
+	
+	/**
+	 * 根据主键ID删除
+	 * @param id
+	 * @return
+	 */
+	public int deleteById(String id);
+	
+	/**
+	 * @param activityId
+	 * @return
+	 */
+	public List<ActivitySystem> findByActivityId(String activityId);
+	
+	public List<ActivitySystem> findByAccessId(String accessSystemId);
+	
+	public List<ActivitySystem> findListByAccessId(String accessSystemId);
+	
+	/**
+	 * 批量删除
+	 * @param ids
+	 * @return
+	 */
+	public int deleteByIds(@Param("ids") List<String> ids); 
+	
+	/**
+	 * 修改
+	 * @param activitySystem
+	 * @return
+	 */
+	public int update(ActivitySystem activitySystem);
+	
+	/**
+	 * 根据Id获取唯一记录
+	 * @param id
+	 * @return
+	 */
+	public ActivitySystem findById(String id);
+	
+	public List<ActivitySystem> findAll(String accessSystemId);
+	/**
+	 * 根据对象查询符合条件记录总条数
+	 * @param entity
+	 * @return
+	 */
+	
+	/**
+	 * 根据指定对象查询唯一结果
+	 * @param activitySystemInputDto
+	 * @return
+	 */
+	public ActivitySystem findOneByObject(ActivitySystemInputDTO activitySystemInputDto);
+	
+	/**
+	 * 根据对象查询符合条件结果列表
+	 * @param activitySystemInputDto
+	 * @return
+	 */
+	public List<ActivitySystem> findByObject(ActivitySystemInputDTO activitySystemInputDto);
+	
+	
+	/**
+	 * 根据对象查询符合条件记录总条数
+	 * @param activitySystemInputDto
+	 * @return
+	 */
+	public long countByObject(ActivitySystemInputDTO activitySystemInputDto);
+
+	/**
+	 * 根据系统标识删除
+	 * @param accessSystemId
+	 * @return
+	 */
+	public int deleteBySystemSign(String accessSystemId);
+
+	/**
+	 * 根据系統标识查询已经选择活动
+	 * @param inputDTO
+	 * @returngetChoosedRole
+	 */
+	public List<Activity> getChoosedActivity(ActivitySystemInputDTO inputDTO);
+
+	/**
+	 * 根据系統标识查询未选择的活动
+	 * @param inputDTO
+	 * @return
+	 */
+	public List<Activity> getUnChoosedActivity(ActivitySystemInputDTO inputDTO);
+	
+}

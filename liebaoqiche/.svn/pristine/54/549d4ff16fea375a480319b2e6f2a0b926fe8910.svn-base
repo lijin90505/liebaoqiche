@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.pay.dao.PaySystemOrderDao">
+
+    <sql id="allColumns">
+    	lpso.id as id,    	
+    	lpso.trade_time as tradeTime,    	
+    	lpso.appid as appid,    	
+    	lpso.merchant_no as merchantNo,    	
+    	lpso.sub_merchant_no as subMerchantNo,    	
+    	lpso.device_no as deviceNo,    	
+    	lpso.transaction_id as transactionId,    	
+    	lpso.order_id as orderId,    	
+    	lpso.openid as openid,    	
+    	lpso.trade_type as tradeType,    	
+    	lpso.trade_state as tradeState,    	
+    	lpso.bank_type as bankType,    	
+    	lpso.fee_type as feeType,    	
+    	lpso.trade_amount as tradeAmount,    	
+    	lpso.coupon_fee as couponFee,    	
+    	lpso.product_name as productName,    	
+    	lpso.attach as attach,    	
+    	lpso.service_charge as serviceCharge,    	
+    	lpso.rate as rate,    	
+    	lpso.creater as creater,    	
+    	lpso.create_time as createTime,    	
+    	lpso.modifier as modifier,    	
+    	lpso.modify_time as modifyTime,    	
+    	lpso.remarks as remarks    	
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and lpso.id = #{id}
+		</if>
+		
+		<if test="appid != null and appid != ''">
+			and lpso.appid = #{appid}
+		</if>
+		<if test="merchantNo != null and merchantNo != ''">
+			and lpso.merchant_no = #{merchantNo}
+		</if>
+		<if test="subMerchantNo != null and subMerchantNo != ''">
+			and lpso.sub_merchant_no = #{subMerchantNo}
+		</if>
+		<if test="deviceNo != null and deviceNo != ''">
+			and lpso.device_no = #{deviceNo}
+		</if>
+		<if test="transactionId != null and transactionId != ''">
+			and lpso.transaction_id = #{transactionId}
+		</if>
+		
+		<if test="openid != null and openid != ''">
+			and lpso.openid = #{openid}
+		</if>
+		<if test="tradeType != null and tradeType != ''">
+			and lpso.trade_type = #{tradeType}
+		</if>
+		<if test="bankType != null and bankType != ''">
+			and lpso.bank_type = #{bankType}
+		</if>
+		<if test="tradeAmount != null and tradeAmount != ''">
+			and lpso.trade_amount = #{tradeAmount}
+		</if>
+		<if test="totalFee != null and totalFee != ''">
+			and lpso.trade_amount = #{totalFee}
+		</if>
+		<if test="couponFee != null and couponFee != ''">
+			and lpso.coupon_fee = #{couponFee}
+		</if>
+		<if test="productName != null and productName != ''">
+			and lpso.product_name = #{productName}
+		</if>
+		<if test="attach != null and attach != ''">
+			and lpso.attach = #{attach}
+		</if>
+		<if test="serviceCharge != null and serviceCharge != ''">
+			and lpso.service_charge = #{serviceCharge}
+		</if>
+		<if test="rate != null and rate != ''">
+			and lpso.rate = #{rate}
+		</if>
+		<if test="creater != null and creater != ''">
+			and lpso.creater = #{creater}
+		</if>
+		<if test="createTime != null">
+			and lpso.create_time = #{createTime}
+		</if>
+		<if test="modifier != null and modifier != ''">
+			and lpso.modifier = #{modifier}
+		</if>
+		<if test="modifyTime != null">
+			and lpso.modify_time = #{modifyTime}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lpso.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lpso.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lpso.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lpso.UPDATE_DATE = #{updateDate}
+		</if>
+		<if test="isDelete != null">
+			and lpso.IS_DELETE = #{isDelete}
+		</if>
+		-->
+		<if test="orderId != null and orderId != ''">
+			and lpso.order_id = #{orderId}
+		</if>
+		<if test="tradeTime != null and tradeTime!=''">
+			and  DATE_FORMAT(lpso.trade_time, '%Y-%m-%d')=#{tradeTime}
+		</if>
+		<if test="tradeState != null and tradeState != ''">
+			and lpso.trade_state = #{tradeState}
+		</if>
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lpso.#{order} #{desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_pay_system_order(
+	    	trade_time,	    	
+	    	appid,	    	
+	    	merchant_no,	    	
+	    	sub_merchant_no,	    	
+	    	device_no,	    	
+	    	transaction_id,	    	
+	    	order_id,	    	
+	    	openid,	    	
+	    	trade_type,	    	
+	    	trade_state,	    	
+	    	bank_type,	    	
+	    	fee_type,	    	
+	    	trade_amount,	    	
+	    	coupon_fee,	    	
+	    	product_name,	    	
+	    	attach,	    	
+	    	service_charge,	    	
+	    	rate,	    	
+	    	creater,	    	
+	    	create_time,	    	
+	    	modifier,	    	
+	    	modify_time,	    	
+	    	remarks	    	
+		) values(
+			#{tradeTime},			 
+			#{appid},			 
+			#{merchantNo},			 
+			#{subMerchantNo},			 
+			#{deviceNo},			 
+			#{transactionId},			 
+			#{orderId},			 
+			#{openid},			 
+			#{tradeType},			 
+			#{tradeState},			 
+			#{bankType},			 
+			#{feeType},			 
+			#{tradeAmount},			 
+			#{couponFee},			 
+			#{productName},			 
+			#{attach},			 
+			#{serviceCharge},			 
+			#{rate},			 
+			#{creater},			 
+			#{createTime},			 
+			#{modifier},			 
+			#{modifyTime},			 
+			#{remarks}			 
+		)
+	</insert>
+	
+	<select id="findById" resultType="PaySystemOrder">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_pay_system_order lpso
+			<include refid="joinOthers"/>
+		where
+			lpso.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="PaySystemOrder">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_pay_system_order lpso
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(lpso.id)
+		from
+			liebao_pay_system_order lpso
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="PaySystemOrder">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_pay_system_order lpso
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		<include refid="searchOrder"/>
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_pay_system_order set
+			trade_time=#{tradeTime},			
+			appid=#{appid},			
+			merchant_no=#{merchantNo},			
+			sub_merchant_no=#{subMerchantNo},			
+			device_no=#{deviceNo},			
+			transaction_id=#{transactionId},			
+			order_id=#{orderId},			
+			openid=#{openid},			
+			trade_type=#{tradeType},			
+			trade_state=#{tradeState},			
+			bank_type=#{bankType},			
+			fee_type=#{feeType},			
+			trade_amount=#{tradeAmount},			
+			coupon_fee=#{couponFee},			
+			product_name=#{productName},			
+			attach=#{attach},			
+			service_charge=#{serviceCharge},			
+			rate=#{rate},			
+			creater=#{creater},			
+			create_time=#{createTime},			
+			modifier=#{modifier},			
+			modify_time=#{modifyTime},			
+			remarks=#{remarks}			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_pay_system_order where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_pay_system_order where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_pay_system_order set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_pay_system_order set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+	
+	<select id="findByTradeTime" resultType="PaySystemOrder">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_pay_system_order lpso
+		<where>
+			DATE_FORMAT(lpso.trade_time, '%Y-%m-%d')=#{tradeTime}
+		</where>	
+	</select>
+	
+	<select id="findByAll" resultType="PaySystemOrder">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_pay_system_order lpso
+	</select>
+	
+	<select id="findByList" resultType="PaySystemOrder">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_pay_system_order lpso
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		order by lpso.trade_time desc
+	</select>
+</mapper>

@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.accesssystem.dao.AccessSystemDao">
+
+    <sql id="allColumns">
+    	las.id as id,    	
+    	las.access_system_name as accessSystemName,    	
+    	las.company_code as companyCode,    	
+    	las.company_name as companyName,    	
+    	las.province as province,    	
+    	las.city as city,    	
+    	las.telephone as telephone,    	
+    	las.addrees as addrees,    	
+    	las.email as email,
+    	las.is_delete as isDelete,
+    	las.creater as creater,    	
+    	las.create_time as createTime,    	
+    	las.modifier as modifier,    	
+    	las.modify_time as modifyTime,    	
+    	las.version as version,    	
+    	las.remarks as remarks    	
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and las.id = #{id}
+		</if>
+		-->
+		<if test="accessSystemName != null and accessSystemName != ''">
+			and CONCAT(
+			IFNULL(las.access_system_name,'')
+			) LIKE CONCAT('%%', #{accessSystemName}, '%%')
+		</if>
+	    <!-- <if test="companyCode != null and companyCode != ''">
+			and las.company_code = #{companyCode}
+		</if>
+		<if test="companyName != null and companyName != ''">
+			and CANCAT(
+			IFNULL(las.company_name,'')
+			) LIKE CONCAT('%%', #{companyName}, '%%')
+		</if>
+	    <if test="province != null and province != ''">
+			and las.province = #{province}
+		</if>
+		<if test="city != null and city != ''">
+			and las.city = #{city}
+		</if>
+		<if test="telephone != null and telephone != ''">
+			and las.telephone = #{telephone}
+		</if>
+		<if test="addrees != null and addrees != ''">
+			and las.addrees = #{addrees}
+		</if>
+		<if test="email != null and email != ''">
+			and las.email = #{email}
+		</if>
+		<if test="creater != null and creater != ''">
+			and las.creater = #{creater}
+		</if>
+		<if test="createTime != null">
+			and las.create_time = #{createTime}
+		</if>
+		<if test="modifier != null and modifier != ''">
+			and las.modifier = #{modifier}
+		</if>
+		<if test="modifyTime != null">
+			and las.modify_time = #{modifyTime}
+		</if>
+		<if test="version != null and version != ''">
+			and las.version = #{version}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and las.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and las.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and las.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and las.UPDATE_DATE = #{updateDate}
+		</if>
+		-->
+		<if test="isDelete != null">
+			and las.IS_DELETE = #{isDelete}
+		</if>
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by las.${order} ${desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_access_system(
+			id,
+	    	access_system_name,	    	
+	    	company_code,	    	
+	    	company_name,	    	
+	    	province,	    	
+	    	city,	    	
+	    	telephone,	    	
+	    	addrees,	    	
+	    	email,
+			is_delete,
+	    	creater,	    	
+	    	create_time,	    	
+	    	modifier,	    	
+	    	modify_time,	    	
+	    	version,	    	
+	    	remarks	    	
+		) values(
+			#{id},
+			#{accessSystemName},
+			#{companyCode},
+			#{companyName},			 
+			#{province},			 
+			#{city},			 
+			#{telephone},			 
+			#{addrees},			 
+			#{email},
+			#{isDelete},
+			#{creater},			 
+			#{createTime},			 
+			#{modifier},			 
+			#{modifyTime},			 
+			#{version},			 
+			#{remarks}			 
+		)
+	</insert>
+	
+	<select id="findById" resultType="AccessSystem">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_access_system las
+			<include refid="joinOthers"/>
+		where
+			las.id = #{id} and las.is_delete = 0
+	</select>
+	
+	<select id="findOneByObject" resultType="AccessSystem">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_access_system las
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(las.id)
+		from
+			liebao_access_system las
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="AccessSystem">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_access_system las
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		<include refid="searchOrder"/>
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_access_system set
+			access_system_name=#{accessSystemName},			
+			company_code=#{companyCode},			
+			company_name=#{companyName},			
+			province=#{province},			
+			city=#{city},			
+			telephone=#{telephone},			
+			addrees=#{addrees},			
+			email=#{email},			
+			creater=#{creater},
+			is_delete=#{isDelete},
+			create_time=#{createTime},			
+			modifier=#{modifier},			
+			modify_time=#{modifyTime},			
+			version=#{version},			
+			remarks=#{remarks}			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_access_system where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_access_system where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_access_system set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_access_system set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

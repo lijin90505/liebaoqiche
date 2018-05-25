@@ -1,0 +1,138 @@
+package com.ibest.pay.controller;
+
+import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Random;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.alibaba.fastjson.JSONObject;
+import com.ibest.framework.common.persistence.BaseController;
+import com.ibest.utils.HttpRequestUtils;
+
+@Controller
+@RequestMapping(value="${adminPath}/pay/pay")
+public class PayController extends BaseController{
+		
+	/**
+	* 进入支付页面
+	*/
+	@RequestMapping(value="/")
+	public String index(){
+		return "module/pay/pay";
+	}
+	
+	/**
+	* 进入wxpay支付页面
+	*/
+	@RequestMapping(value="/wxsmpay")
+	public String wxsmpay(){
+		return "module/pay/wxsmpay";
+	}
+	/**
+	 * 进入zfbpay支付页面
+	 */
+	@RequestMapping(value="/alismpay")
+	public String alismpay(){
+		return "module/pay/alismpay";
+	}
+	/**
+	 * 进入银联支付页面
+	 */
+	@RequestMapping(value="/unionGatePay")
+	public String unionPay(){
+		return "module/pay/unionGatePay";
+	}
+	
+	@RequestMapping("/sendWechatScanPay")
+	public String sendWechatScanPay(Model model) throws UnsupportedEncodingException {
+		String orderId = getOrderNo();
+		String userId = getOrderNo();
+		String nonceStr = buildRandom();
+		
+		String jsonParm = "{\"reqMap\":{\"orderId\":\""+orderId+"\",\"txnAmt\":\"10\",\"payType\":\"03\",\"outSystemId\":\"01\",\"deviceId\":\"01\",\"userId\":\""+userId+"\",\"nonceStr\":\""+nonceStr+"\",\"body\":\"测试\",\"spbillCreateIp\":\"192.168.100.103\"}}";
+		
+		String url = "http://123.125.218.30:60005/liebaoqiche_interface";
+//		String url = "http://172.24.102.61:8085/liebaoqiche_interface";
+		String rs = HttpRequestUtils.doJsonRequest(url+"/api/liebao/pay/consume", jsonParm, "");
+		JSONObject json = JSONObject.parseObject(rs);
+		String returnCode = json.getString("rtnCode");
+		if("00000000".equals(returnCode)) {
+			JSONObject returnInfo = json.getJSONObject("rtnInfo");
+			model.addAttribute("codeUrl", returnInfo.get("codeurl"));
+			System.out.println(model.toString());
+		}
+        return "module/pay/wechatQRCode";
+	}
+	
+
+	@RequestMapping("/sendUnionGatePay")
+	public String sendUnionGatePay(Model model) throws UnsupportedEncodingException {
+		String orderId = getOrderNo();
+		String userId = getOrderNo();
+		String nonceStr = buildRandom();
+		
+		String jsonParm = "{\"reqMap\":{\"orderId\":\""+orderId+"\",\"txnAmt\":\"10\",\"payType\":\"00\",\"outSystemId\":\"01\",\"deviceId\":\"01\",\"userId\":\""+userId+"\",\"nonceStr\":\""+nonceStr+"\",\"body\":\"测试\",\"spbillCreateIp\":\"192.168.100.103\"}}";
+		
+		String url = "http://123.125.218.30:60005/liebaoqiche_interface";
+//		String url = "http://172.24.102.61:8085/liebaoqiche_interface";
+		String rs = HttpRequestUtils.doJsonRequest(url+"/api/liebao/pay/consume", jsonParm, "");
+		JSONObject json = JSONObject.parseObject(rs);
+		JSONObject returnInfo = json.getJSONObject("rtnInfo");
+		model.addAttribute("html", returnInfo.get("html").toString());
+        return "module/pay/html";
+	}
+
+	@RequestMapping("/sendAliScanPay")
+	public String sendAliScanPay(Model model) throws UnsupportedEncodingException {
+		String orderId = getOrderNo();
+		String userId = getOrderNo();
+		String nonceStr = buildRandom();
+
+		String jsonParm = "{\"reqMap\":{\"orderId\":\"" + orderId
+				+ "\",\"txnAmt\":\"10\",\"payType\":\"01\",\"outSystemId\":\"01\",\"deviceId\":\"01\",\"userId\":\""
+				+ userId + "\",\"nonceStr\":\"" + nonceStr
+				+ "\",\"body\":\"测试\",\"spbillCreateIp\":\"192.168.100.103\"}}";
+
+		// String url = "http://123.125.218.30:60005/liebaoqiche_interface";
+		String url = "http://123.125.218.30:60005/liebaoqiche_interface";
+		String rs = HttpRequestUtils.doJsonRequest(url + "/api/liebao/pay/consume", jsonParm, "");
+		JSONObject json = JSONObject.parseObject(rs);
+		JSONObject returnInfo = json.getJSONObject("rtnInfo");
+		model.addAttribute("html", returnInfo.get("html").toString());
+        return "module/pay/html";
+	}	
+
+	private static String getOrderNo() {
+		String order = new SimpleDateFormat("yyyyMMdd").format(new Date());
+		Random r = new Random();
+		for (int i = 0; i < 10; i++) {
+			order += r.nextInt(9);
+		}
+		return order;
+	}
+	
+	private static String getCurrTime() {
+		Date now = new Date();
+		SimpleDateFormat outFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+		String s = outFormat.format(now);
+		return s;
+	}
+	private static String buildRandom() {
+		String currTime = getCurrTime();
+		String strTime = currTime.substring(8, currTime.length());
+		int num = 1;
+		double random = Math.random();
+		if (random < 0.1) {
+			random = random + 0.1;
+		}
+		for (int i = 0; i < 4; i++) {
+			num = num * 10;
+		}
+		return (int) ((random * num)) + strTime;
+	}
+	
+}

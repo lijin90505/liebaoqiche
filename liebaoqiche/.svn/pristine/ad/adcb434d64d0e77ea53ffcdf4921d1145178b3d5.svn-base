@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.pay.dao.PayTypeDao">
+
+    <sql id="allColumns">
+    	lpt.id as id,    	
+    	lpt.pay_channel_id as payChannelId,    	
+    	lpt.pay_type as payType,    	
+    	lpt.pay_name as payName,    	
+    	lpt.is_delete as isDelete,    	
+    	lpt.CREATE_BY as createBy,    	
+    	lpt.create_date as createDate,    	
+    	lpt.UPDATE_BY as updateBy,    	
+    	lpt.UPDATE_DATE as updateDate,    	
+    	lpt.REMARKS as remarks    	
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and lpt.id = #{id}
+		</if>
+		<if test="payChannelId != null and payChannelId != ''">
+			and lpt.pay_channel_id = #{payChannelId}
+		</if>
+		
+		<if test="createBy != null and createBy != ''">
+			and lpt.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lpt.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lpt.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lpt.UPDATE_DATE = #{updateDate}
+		</if>
+		<if test="isDelete != null">
+			and lpt.IS_DELETE = #{isDelete}
+		</if>-->
+		<if test="payType != null and payType != ''">
+			AND CONCAT(
+				IFNULL(lpt.pay_type, '')
+			) LIKE CONCAT('%%', #{payType}, '%%')
+		</if>
+		<if test="payName != null and payName != ''">
+			<!-- and lpt.pay_name = #{payName} -->
+			AND CONCAT(
+				IFNULL(lpt.pay_name, '')
+			) LIKE CONCAT('%%', #{payName}, '%%')
+		</if>
+		lpt.is_delete=0
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lpt.#{order} #{desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		<selectKey  keyProperty="id" resultType="java.lang.String" order="BEFORE">
+             select uuid()
+		</selectKey>
+		insert into liebao_pay_type(
+			id,
+	    	pay_channel_id,	    	
+	    	pay_type,	    	
+	    	pay_name,	    	
+	    	is_delete,	    	
+	    	CREATE_BY,	    	
+	    	CREATE_DATE,
+	    	UPDATE_BY,    	
+    		UPDATE_DATE,    		    	
+	    	REMARKS	    	
+		) values(
+			#{id},
+			#{payChannelId},			 
+			#{payType},			 
+			#{payName},			 
+			#{isDelete},			 
+			#{createBy},			 
+			#{createDate},	
+			#{updateBy},
+			#{updateDate},		 
+			#{remarks}			 
+		)
+	</insert>
+	
+	<select id="findById" resultType="PayType">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_pay_type lpt
+			<include refid="joinOthers"/>
+		where
+			lpt.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="PayType">
+		select
+			<include refid="allColumns"/>
+		from
+			<include refid="joinOthers"/>
+		<where>
+			liebao_pay_type lpt 
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(lpt.id)
+		from
+			liebao_pay_type lpt
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="PayType">
+		select
+			p.pay_channel_name as payChannelName,
+			<include refid="allColumns"/>
+		from
+			liebao_pay_type lpt 
+			<include refid="joinOthers"/>
+			INNER JOIN liebao_pay_channel p on lpt.pay_channel_id = p.id
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		<include refid="searchOrder"/>
+		order by lpt.UPDATE_DATE desc
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_pay_type set
+			pay_channel_id=#{payChannelId},			
+			pay_type=#{payType},			
+			pay_name=#{payName},			
+			is_delete=#{isDelete},			
+			UPDATE_BY=#{updateBy},			
+			UPDATE_DATE=#{updateDate},			
+			REMARKS=#{remarks}			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_pay_type where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_pay_type where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_pay_type set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_pay_type set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+	
+	<select id="findByAll" resultType="PayType">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_pay_type lpt
+	</select>
+	
+	<!-- 根据渠道ID查询所有的支付类型 -->
+	<select id="findByPayChannelId" resultType="PayType">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_pay_type lpt
+		<where>
+			1=1
+			<if test="payChannelId != null and payChannelId != ''">
+				and lpt.pay_channel_id = #{payChannelId}
+			</if>
+		</where> 
+	</select>
+	
+	<select id="findByPayType" resultType="PayType">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_pay_type lpt
+		<where>
+			lpt.pay_type = #{payType}  
+			and lpt.is_delete=0  	
+		</where>	
+	</select>
+	
+	<select id="findByPayName" resultType="PayType">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_pay_type lpt
+		<where>
+			lpt.pay_name = #{payName}    
+			and lpt.is_delete=0
+		</where>	
+	</select>
+	
+	<select id="queryByPayTypes" resultType="PayType">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_pay_type lpt
+		<where>
+			lpt.pay_channel_id = #{payChannelId}	
+			and lpt.is_delete=0
+		</where>	
+	</select>
+</mapper>

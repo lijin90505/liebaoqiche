@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ibest.card.dao.CardDao">
+	
+	<sql id="allColumns">
+    	lc.id as id,    	
+    	lc.name as name,    	
+    	lc.content as content,    	
+    	lc.image_url as imageUrl,    	
+    	lc.build_id as buildId,    	
+    	lc.build_name as buildName,    	
+    	lc.get_name as getName,    	
+    	lc.get_id as getId,    	
+    	lc.use_id as useId,    	
+    	lc.use_name as useName,    	
+    	lc.state as state,
+    	lc.num as num,
+    	lc.num_time_max as numTimeMax,    	
+    	lc.num_vin_max as numVinMax,
+    	lc.effective_date as effectiveDate,
+    	lc.end_date as endDate,
+    	lc.expiry_days as expiryDays,
+    	lc.is_delete as isDelete,
+    	lc.creater as creater,    	
+    	lc.create_time as createTime,    	
+    	lc.modifier as modifier,    	
+    	lc.modify_time as modifyTime,    	
+    	lc.version as version,    	
+    	lc.remarks as remarks    	
+    </sql>
+	
+	<sql id="joinOthers">
+	</sql>
+	
+	<sql id="searchWhere">
+		<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and lc.id = #{id}
+		</if>-->
+		<if test="name != null and name != ''">
+			and CONCAT(
+			IFNULL(lc.name,'')
+			) LIKE CONCAT('%%', #{name},'%%')
+		</if>
+		<if test="content != null and content != ''">
+			and CONCAT(
+			IFNULL(lc.content,'')
+			) LIKE CONCAT('%%', #{content},'%%')
+		</if>
+		<!--<if test="imageUrl != null and imageUrl != ''">
+			and lc.image_url = #{imageUrl}
+		</if>
+		<if test="buildId != null and buildId != ''">
+			and lc.build_id = #{buildId}
+		</if>
+		<if test="buildName != null and buildName != ''">
+			and lc.build_name = #{buildName}
+		</if>
+		<if test="getName != null and getName != ''">
+			and lc.get_name = #{getName}
+		</if>
+		<if test="getId != null and getId != ''">
+			and lc.get_id = #{getId}
+		</if>
+		<if test="useId != null and useId != ''">
+			and lc.use_id = #{useId}
+		</if>
+		<if test="useName != null and useName != ''">
+			and lc.use_name = #{useName}
+		</if>
+		<if test="num != null">
+			and lc.num = #{num}
+		</if>
+		<if test="numTimeMax != null">
+			and lc.num_time_max = #{numTimeMax}
+		</if>
+		<if test="numVinMax != null">
+			and lc.num_vin_max = #{numVinMax}
+		</if>
+		<if test="creater != null and creater != ''">
+			and lc.creater = #{creater}
+		</if>
+		<if test="createTime != null">
+			and lc.create_time = #{createTime}
+		</if>
+		<if test="modifier != null and modifier != ''">
+			and lc.modifier = #{modifier}
+		</if>
+		<if test="modifyTime != null">
+			and lc.modify_time = #{modifyTime}
+		</if>
+		<if test="version != null and version != ''">
+			and lc.version = #{version}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lc.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lc.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lc.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lc.UPDATE_DATE = #{updateDate}
+		</if>
+		-->
+		<if test="isDelete != null">
+			and lc.IS_DELETE = #{isDelete}
+		</if>
+	</sql>
+	
+	<sql id="searchOrder">
+		<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lc.${order} ${desc}
+		</if>
+	</sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_card(
+			id,
+	    	name,	    	
+	    	content,	    	
+	    	image_url,	    	
+	    	build_id,	    	
+	    	build_name,	    	
+	    	get_name,	    	
+	    	get_id,	    	
+	    	use_id,	    	
+	    	use_name,	    	
+	    	state,
+	    	num,
+	    	num_time_max,
+	    	num_vin_max,
+	    	effective_date,
+	    	end_date,
+	    	expiry_days,
+	    	is_delete,
+	    	creater,
+	    	create_time,	    	
+	    	modifier,	    	
+	    	modify_time,	    	
+	    	version,	    	
+	    	remarks	    	
+		) values(
+			#{id},			 
+			#{name},			 
+			#{content},			 
+			#{imageUrl},			 
+			#{buildId},			 
+			#{buildName},			 
+			#{getName},			 
+			#{getId},			 
+			#{useId},			 
+			#{useName},			 
+			#{state},
+			#{num},
+			#{numTimeMax},
+			#{numVinMax},			 
+			#{effectiveDate},
+			#{endDate},
+			#{expiryDays},
+			#{isDelete},
+			#{creater},			 
+			#{createTime},			 
+			#{modifier},			 
+			#{modifyTime},			 
+			#{version},			 
+			#{remarks}			 
+		)
+	</insert>
+	
+	<select id="findById" resultType="Card">
+		select
+			lc.id as id,
+			lc.name as name,
+			lc.content as content,
+			lc.image_url as imageUrl,
+			lc.build_id as buildId,
+			lcb.name as buildName,
+			lcg.name as getName,
+			lc.get_id as getId,
+			lc.use_id as useId,
+			lcu.name as useName,
+			lc.state as state,
+			lc.num as num,
+			lc.num_time_max as numTimeMax,
+			lc.num_vin_max as numVinMax,
+			lc.effective_date as effectiveDate,
+			lc.end_date as endDate,
+			lc.expiry_days as expiryDays,
+			lc.is_delete as isDelete,
+			lc.creater as creater,
+			lc.create_time as createTime,
+			lc.modifier as modifier,
+			lc.modify_time as modifyTime,
+			lc.version as version,
+			lc.remarks as remarks
+		from
+			liebao_card lc
+		LEFT JOIN
+			liebao_card_build lcb ON lc.build_id = lcb.id
+		LEFT JOIN
+			liebao_card_get lcg ON lc.get_id = lcg.id
+		LEFT JOIN
+			liebao_card_use lcu ON lc.use_id = lcu.id
+		<include refid="joinOthers"/>
+		where
+		lc.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="Card">
+		select
+		<include refid="allColumns"/>
+		from
+		liebao_card lc
+		<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+		count(lc.id)
+		from
+		liebao_card lc
+		<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="Card">
+		select
+			lc.id as id,
+			lc.name as name,
+			lc.content as content,
+			lc.image_url as imageUrl,
+			lc.build_id as buildId,
+			lcb.name as buildName,
+			lcg.name as getName,
+			lc.get_id as getId,
+			lc.use_id as useId,
+			lcu.name as useName,
+			lc.state as state,
+			lc.num as num,
+			lc.num_time_max as numTimeMax,
+			lc.num_vin_max as numVinMax,
+			lc.effective_date as effectiveDate,
+			lc.end_date as endDate,
+			lc.expiry_days as expiryDays,
+			lc.is_delete as isDelete,
+			lc.creater as creater,
+			lc.create_time as createTime,
+			lc.modifier as modifier,
+			lc.modify_time as modifyTime,
+			lc.version as version,
+			lc.remarks as remarks
+		from
+			liebao_card lc
+		LEFT JOIN
+			liebao_card_build lcb ON lc.build_id = lcb.id
+		LEFT JOIN
+			liebao_card_get lcg ON lc.get_id = lcg.id
+		LEFT JOIN
+			liebao_card_use lcu ON lc.use_id = lcu.id
+		<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		order by lc.modify_time desc
+		<include refid="searchOrder"/>
+		<if test="limitStart != null and limitSize != null">
+			LIMIT #{limitStart},#{limitSize}
+		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_card set
+			name=#{name},			
+			content=#{content},			
+			image_url=#{imageUrl},			
+			build_id=#{buildId},			
+			build_name=#{buildName},			
+			get_name=#{getName},			
+			get_id=#{getId},			
+			use_id=#{useId},			
+			use_name=#{useName},			
+			state=#{state},
+			num=#{num},
+			num_time_max=#{numTimeMax},
+			num_vin_max=#{numVinMax},			
+			effective_date=#{effectiveDate},
+			end_date=#{endDate},
+			expiry_days=#{expiryDays},
+			is_delete=#{isDelete},
+			creater=#{creater},			
+			modifier=#{modifier},
+			modify_time=#{modifyTime},			
+			version=#{version},			
+			remarks=#{remarks}			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_card where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_card where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_card set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_card set is_delete = 1 where id in
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

@@ -1,0 +1,202 @@
+package com.ibest.accesssystem.dto.output;
+
+import com.ibest.framework.common.persistence.BaseOutputDTO;
+
+import java.util.Date;
+
+public class ActivityPointPermissionAssignmentOutputDTO extends BaseOutputDTO {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+					
+	// 活动积分关联编号
+	private String activityPointRelevanceId;
+				
+	// 活动编号
+	private String activityId;
+				
+	// 活动内容
+	private String activityName;
+				
+	// 积分类别编号
+	private String pointTypeId;
+				
+	// 积分类别名称
+	private String pointTypeName;
+				
+	// 积分规则编号
+	private String pointRuleId;
+				
+	// 积分规则名称
+	private String pointRuleName;
+				
+	// 活动开始时间
+	private Date activityStartTime;
+				
+	// 活动截止时间
+	private Date activityEndTime;
+				
+	// 系统标识
+	private String systemSign;
+				
+	// 系统名称
+	private String systemSignName;
+				
+	// 创建人
+	private String creater;
+				
+	// 创建时间
+	private Date createTime;
+				
+	// 修改人
+	private String modifier;
+				
+	// 修改时间
+	private Date modifyTime;
+				
+	// 版本
+	private String version;
+				
+	// 备注
+	private String remark;
+							
+	public String getActivityPointRelevanceId(){
+		return activityPointRelevanceId;
+	}
+	
+	public void setActivityPointRelevanceId(String activityPointRelevanceId){
+		this.activityPointRelevanceId = activityPointRelevanceId;
+	}
+				
+	public String getActivityId(){
+		return activityId;
+	}
+	
+	public void setActivityId(String activityId){
+		this.activityId = activityId;
+	}
+				
+	public String getActivityName(){
+		return activityName;
+	}
+	
+	public void setActivityName(String activityName){
+		this.activityName = activityName;
+	}
+				
+	public String getPointTypeId(){
+		return pointTypeId;
+	}
+	
+	public void setPointTypeId(String pointTypeId){
+		this.pointTypeId = pointTypeId;
+	}
+				
+	public String getPointTypeName(){
+		return pointTypeName;
+	}
+	
+	public void setPointTypeName(String pointTypeName){
+		this.pointTypeName = pointTypeName;
+	}
+				
+	public String getPointRuleId(){
+		return pointRuleId;
+	}
+	
+	public void setPointRuleId(String pointRuleId){
+		this.pointRuleId = pointRuleId;
+	}
+				
+	public String getPointRuleName(){
+		return pointRuleName;
+	}
+	
+	public void setPointRuleName(String pointRuleName){
+		this.pointRuleName = pointRuleName;
+	}
+				
+	public Date getActivityStartTime(){
+		return activityStartTime;
+	}
+	
+	public void setActivityStartTime(Date activityStartTime){
+		this.activityStartTime = activityStartTime;
+	}
+				
+	public Date getActivityEndTime(){
+		return activityEndTime;
+	}
+	
+	public void setActivityEndTime(Date activityEndTime){
+		this.activityEndTime = activityEndTime;
+	}
+				
+	public String getSystemSign(){
+		return systemSign;
+	}
+	
+	public void setSystemSign(String systemSign){
+		this.systemSign = systemSign;
+	}
+				
+	public String getSystemSignName(){
+		return systemSignName;
+	}
+	
+	public void setSystemSignName(String systemSignName){
+		this.systemSignName = systemSignName;
+	}
+			
+	public String getCreater(){
+		return creater;
+	}
+	
+	public void setCreater(String creater){
+		this.creater = creater;
+	}
+				
+	public Date getCreateTime(){
+		return createTime;
+	}
+	
+	public void setCreateTime(Date createTime){
+		this.createTime = createTime;
+	}
+				
+	public String getModifier(){
+		return modifier;
+	}
+	
+	public void setModifier(String modifier){
+		this.modifier = modifier;
+	}
+				
+	public Date getModifyTime(){
+		return modifyTime;
+	}
+	
+	public void setModifyTime(Date modifyTime){
+		this.modifyTime = modifyTime;
+	}
+				
+	public String getVersion(){
+		return version;
+	}
+	
+	public void setVersion(String version){
+		this.version = version;
+	}
+				
+	public String getRemark(){
+		return remark;
+	}
+	
+	public void setRemark(String remark){
+		this.remark = remark;
+	}
+			
+}

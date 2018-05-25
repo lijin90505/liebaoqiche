@@ -1,0 +1,85 @@
+package com.ibest.experience.service;
+
+import com.ibest.framework.common.utils.StringUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ibest.framework.common.utils.PageList;
+
+import com.ibest.experience.dao.ExpLogDao;
+import com.ibest.experience.entity.ExpLog;
+import com.ibest.experience.dto.input.ExpLogInputDTO;
+
+@Service
+@Transactional(readOnly=true)
+public class ExpLogService {
+
+	@Autowired
+	protected ExpLogDao expLogDao;
+	
+	public ExpLog findById(String id) throws Exception{
+		return expLogDao.findById(id);
+	}
+	
+	@Transactional(readOnly=false)
+	public int insert(ExpLog expLog) throws Exception{
+		expLog.preInsert();
+		int result = expLogDao.insert(expLog);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteById(String id) throws Exception{
+		int result = expLogDao.deleteById(id);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteByIds(String ids) throws Exception{
+		int result = expLogDao.deleteByIds(StringUtils.tokenizeToList(ids));
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int update(ExpLog expLog) throws Exception{
+		expLog.preUpdate();
+		int result = expLogDao.update(expLog);
+		return result;
+	}
+	
+	/**
+	 * 分页查询
+	 * @param page
+	 * @param inputDto
+	 * @return
+	 * @throws Exception
+	 */
+	public PageList<ExpLog> findByPage(PageList<ExpLog> page, ExpLogInputDTO inputDto) throws Exception{
+		
+		if(page == null){
+			page = new PageList<ExpLog>();
+		}
+		
+		long totalCount = expLogDao.countByObject(inputDto);
+		if(totalCount > 0){
+			// 设置记录总条数
+			page.setTotal(totalCount);
+			
+			// 设置分页参数，查询数据
+			inputDto.setLimitStart((page.getPage() - 1) * page.getPageSize());
+			inputDto.setLimitSize(page.getPageSize());
+			page.setRows(expLogDao.findByObject(inputDto));
+		}
+		
+		return page;
+	}
+	
+	/**
+	* 查询列表
+	*/
+	public ExpLog findByObject(ExpLogInputDTO inputDto) throws Exception{
+		return expLogDao.findOneByObject(inputDto);
+	}
+
+}

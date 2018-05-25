@@ -1,0 +1,84 @@
+package com.ibest.pay.dao;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.ibest.framework.common.persistence.MyBatisDao;
+import com.ibest.pay.entity.PayChannel;
+
+import com.ibest.pay.dto.input.PayChannelInputDTO;
+
+@MyBatisDao
+public interface PayChannelDao {
+
+	/**
+	 * 新增
+	 * @param entity
+	 * @return
+	 */
+	public int insert(PayChannel payChannel);
+	
+	/**
+	 * 根据主键ID删除
+	 * @param id
+	 * @return
+	 */
+	public int deleteById(String id);
+	
+	/**
+	 * 批量删除
+	 * @param ids
+	 * @return
+	 */
+	public int deleteByIds(@Param("ids") List<String> ids); 
+	
+	/**
+	 * 修改
+	 * @param entity
+	 * @return
+	 */
+	public int update(PayChannel payChannel);
+	
+	/**
+	 * 根据Id获取唯一记录
+	 * @param id
+	 * @return
+	 */
+	public PayChannel findById(String id);
+	
+	/**
+	 * 根据指定对象查询唯一结果
+	 * @param entity
+	 * @return
+	 */
+	public PayChannel findOneByObject(PayChannelInputDTO payChannelInputDto);
+	
+	/**
+	 * 根据对象查询符合条件结果列表
+	 * @param entity
+	 * @return
+	 */
+	public List<PayChannel> findByObject(PayChannelInputDTO payChannelInputDto);
+	
+	
+	/**
+	 * 根据对象查询符合条件记录总条数
+	 * @param entity
+	 * @return
+	 */
+	public long countByObject(PayChannelInputDTO payChannelInputDto);
+	
+	/**
+	 * 查询所有
+	 * @Title: findByAll  
+	 * @return:List<PayChannel>
+	 * @author: WeiJia
+	 * @date:2018年4月18日 下午3:04:48
+	 */
+	public List<PayChannel> findByAll();
+	
+	public PayChannel findByPayChannelName(String payChannelName);
+
+	public List<PayChannel> findByName(String name);
+}

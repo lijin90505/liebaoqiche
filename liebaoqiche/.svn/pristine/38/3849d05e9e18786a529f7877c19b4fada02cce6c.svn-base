@@ -1,0 +1,157 @@
+#*********************************************
+# 
+# 			Database Setting
+# 
+#*********************************************
+#Oracle
+#jdbc_driver=oracle.jdbc.driver.OracleDriver
+#jdbc_url=jdbc:oracle:thin:@192.168.100.88:1521:IBEST
+#jdbc_username=IBEST
+#jdbc_password=IBEST
+#validationQuery=select 1
+
+#MySQL
+#jdbc_driver=com.mysql.jdbc.Driver
+#jdbc_url=jdbc:mysql://47.93.195.183:3306/db_liebao?useUnicode=true&characterEncoding=utf-8
+#jdbc_username=root
+#jdbc_password=ibest_database@2017!@#
+#validationQuery=select 1
+
+#jdbc_driver=com.mysql.jdbc.Driver
+#jdbc_url=jdbc:mysql://localhost:3306/liebao?useUnicode=true&characterEncoding=utf-8
+#jdbc_username=root
+#jdbc_password=root123
+#validationQuery=select 1
+
+#123.125.218.30\u5916\u7F51
+#jdbc_driver=com.mysql.jdbc.Driver
+#jdbc_url=jdbc:mysql://123.125.218.30:33606/liebao?useUnicode=true&characterEncoding=utf-8
+#jdbc_username=root
+#jdbc_password=ibest@123
+#validationQuery=select 1
+
+#\u7EBF\u4E0A
+#jdbc_driver=com.mysql.jdbc.Driver
+#jdbc_url=jdbc:mysql://123.125.218.30:33606/db_liebao?useUnicode=true&characterEncoding=utf-8
+#jdbc_username=root
+#jdbc_password=ibest@123
+#validationQuery=select 1
+
+#\u7EBF\u4E0A
+#jdbc_driver=com.mysql.jdbc.Driver
+#jdbc_url=jdbc:mysql://123.125.218.30:33606/liebao?useUnicode=true&characterEncoding=utf-8
+#jdbc_username=root
+#jdbc_password=ibest@123
+#validationQuery=select 1
+
+jdbc_driver=com.mysql.jdbc.Driver
+jdbc_url=jdbc:mysql://47.93.195.183:3306/liebao?useUnicode=true&characterEncoding=utf-8
+jdbc_username=root
+jdbc_password=ibest_database@2017!@#
+validationQuery=select 1
+
+#MySQL
+#IP:192.168.0.6
+#jdbc_driver=com.mysql.jdbc.Driver
+#jdbc_url=jdbc:mysql://localhost:3306/liebao?useUnicode=true&characterEncoding=utf-8
+#jdbc_username=root
+#jdbc_password=root123
+#validationQuery=select 1
+
+#47.93.195.183
+#jdbc_driver=com.mysql.jdbc.driver
+#jdbc_url=jdbc:mysql://47.93.195.183:3306/liebao?useunicode=true&characterencoding=utf-8
+#jdbc_username=root
+#jdbc_password=ibest_database@2017!@#
+#validationquery=select 1
+
+#jdbc_driver=com.mysql.jdbc.Driver
+#jdbc_url=jdbc:mysql://localhost:3306/development_framework?useUnicode=true&characterEncoding=utf-8
+#jdbc_username=root
+#jdbc_password=root
+#validationQuery=select 1
+
+#*********************************************
+# 
+# 			Secret Setting
+# 
+#*********************************************
+secret.private=
+secret.public=
+
+#*********************************************
+# 
+# 			Shiro Session Setting
+# 
+#*********************************************
+#\u4f1a\u8bdd\u8d85\u65f6\uff0c \u5355\u4f4d\uff1a\u6beb\u79d2\uff0c 20m=1200000ms, 30m=1800000ms, 60m=3600000ms
+session.sessionTimeout=1800000
+#\u4f1a\u8bdd\u6e05\u7406\u95f4\u9694\u65f6\u95f4\uff0c \u5355\u4f4d\uff1a\u6beb\u79d2\uff0c2m=120000ms\u3002
+session.sessionTimeoutClean=600000
+
+session.sessionIdCookie=ibestwh.development_framework
+
+#*********************************************
+# 
+# 			Redis Setting
+# 
+#*********************************************
+redis.pool.maxTotal=600
+redis.pool.maxIdle=300
+redis.pool.maxWaitMillis=10000
+redis.pool.testOnBorrow=true
+
+redis.host=192.168.100.190
+redis.port=6379
+redis.password=redis!@#
+redis.timeout=120000
+redis.database=1
+
+#*********************************************
+# 
+# 			Upload Setting
+# 
+#*********************************************
+# 1 local 2 ftp 3 aliyun
+upload.server=1
+upload.rootpath=
+
+# local settings
+local.url=
+
+# ftp settings
+ftp.url=
+ftp.server=192.168.100.189
+ftp.port=21
+ftp.username=FtpUser
+ftp.password=ibest!@#
+
+# aliyun settings
+aliyun.endpoint=oss-cn-shanghai.aliyuncs.com
+aliyun.accessKeyId=LTAICSRSwO1qpRG8
+aliyun.accessKeySecret=JvrHaOQ3b62knMncKdsFa49TWAW5uq
+aliyun.bucketName=heqixuan5031
+
+#*********************************************
+# 
+# 			App Setting
+# 
+#*********************************************
+appname=\u57fa\u7840\u5f00\u53d1\u6846\u67b6
+
+#deploy setting
+distributed=true
+
+#url setting
+adminPath=/admin
+servicePath=/api
+
+defaultIcon=fa-cog
+defaultPass=123456
+
+#*********************************************
+#
+#Scheme \u8bf7\u6c42\u65b9\u5f0f\uff1adev--->http prd--->https
+#
+#*********************************************
+schemeType=0

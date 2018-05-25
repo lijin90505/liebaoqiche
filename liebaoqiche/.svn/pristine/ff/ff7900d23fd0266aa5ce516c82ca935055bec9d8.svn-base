@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.accesssystem.dao.PayChannelPermissionAssignmentDao">
+
+    <sql id="allColumns">
+    	lpcpa.id as id,    	
+    	lpcpa.pay_type_id as payTypeId,    	
+    	lpcpa.system_sign as systemSign,    	
+    	lpcpa.system_sign_name as systemSignName,    	
+    	lpcpa.is_delete as isDelete,    	
+    	lpcpa.creater as creater,    	
+    	lpcpa.create_time as createTime,    	
+    	lpcpa.modifier as modifier,    	
+    	lpcpa.modify_time as modifyTime,    	
+    	lpcpa.version as version,    	
+    	lpcpa.remarks as remark,
+    	lpcpa.is_open as isOpen
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and lpcpa.id = #{id}
+		</if>
+		
+		<if test="payChannelName != null and payChannelName != ''">
+			and lpcpa.pay_channel_name = #{payChannelName}
+		</if>
+		<if test="systemSign != null and systemSign != ''">
+			and lpcpa.system_sign = #{systemSign}
+		</if>
+		
+		<if test="creater != null and creater != ''">
+			and lpcpa.creater = #{creater}
+		</if>
+		<if test="createTime != null">
+			and lpcpa.create_time = #{createTime}
+		</if>
+		<if test="modifier != null and modifier != ''">
+			and lpcpa.modifier = #{modifier}
+		</if>
+		<if test="modifyTime != null">
+			and lpcpa.modify_time = #{modifyTime}
+		</if>
+		<if test="version != null and version != ''">
+			and lpcpa.version = #{version}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lpcpa.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lpcpa.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lpcpa.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lpcpa.UPDATE_DATE = #{updateDate}
+		</if>
+		-->
+		<if test="isDelete != null">
+			and lpcpa.IS_DELETE = #{isDelete}
+		</if>
+		<if test="systemSignName != null and systemSignName != ''">
+			and lpcpa.system_sign_name = #{systemSignName}
+		</if>
+		<if test="payTypeId">
+			and lpcpa.pay_type_id = #{payTypeId}
+		</if>
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lpcpa.${order} ${desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		<selectKey  keyProperty="id" resultType="java.lang.String" order="BEFORE">
+             select uuid()
+		</selectKey>
+		insert into liebao_pay_channel_permission_assignment(
+			id,
+	    	pay_type_id,	    	
+	    	system_sign,	    	
+	    	system_sign_name,	    	
+	    	is_delete,	    	
+	    	creater,	    	
+	    	create_time,	    	
+	    	modifier,	    	
+	    	modify_time,	    	
+	    	version,	    	
+	    	remarks,
+	    	is_open	    	
+		) values(
+			#{id},			 
+			#{payTypeId},			 
+			#{systemSign},			 
+			#{systemSignName},			 
+			#{isDelete},			 
+			#{creater},			 
+			#{createTime},			 
+			#{modifier},			 
+			#{modifyTime},			 
+			#{version},			 
+			#{remarks},
+			#{isOpen}			 
+		)
+	</insert>
+	
+	<!-- <select id="getChoosedPayChannel" resultType="PayChannel" >
+		SELECT lpc.* FROM liebao_pay_channel lpc
+		INNER JOIN liebao_pay_channel_permission_assignment lpcpa ON lpc.ID=lpcpa.pay_channel_id
+		INNER JOIN liebao_access_system las ON las.ID=lpcpa.system_sign
+		WHERE las.id=#{systemSign}
+		AND lpc.IS_DELETE = 0
+		order by lpc.ID
+	</select>
+	
+	<select id="getUnChoosedPayChannel" resultType="PayChannel" >
+		SELECT lpc.* FROM liebao_pay_channel lpc
+		WHERE lpc.ID NOT IN
+		(SELECT pay_channel_id FROM liebao_pay_channel_permission_assignment
+		WHERE system_sign=#{systemSign} )
+		AND IS_DELETE = 0
+		order by lpc.ID
+	</select> -->
+	
+	<select id="findBySystemSign" resultType="PayChannelPermissionAssignment">
+		select
+		<include refid="allColumns"/>
+		from
+		liebao_pay_channel_permission_assignment lpcpa
+		<include refid="joinOthers"/>
+		where
+		lpcpa.system_sign = #{systemSign}
+	</select>
+	
+	<select id="findById" resultType="PayChannelPermissionAssignment">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_pay_channel_permission_assignment lpcpa
+			<include refid="joinOthers"/>
+		where
+			lpcpa.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="PayChannelPermissionAssignment">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_pay_channel_permission_assignment lpcpa
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(lpcpa.id)
+		from
+			liebao_pay_channel_permission_assignment lpcpa
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="PayChannelPermissionAssignment">
+		SELECT
+			<include refid="allColumns"/>
+		FROM
+			liebao_pay_channel_permission_assignment lpcpa
+		LEFT JOIN liebao_pay_type lpt ON lpcpa.pay_type_id = lpt.id
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		order by lpcpa.create_time desc
+		<include refid="searchOrder"/>
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_pay_channel_permission_assignment set
+			pay_type_id=#{payTypeId},			
+			system_sign=#{systemSign},			
+			system_sign_name=#{systemSignName},			
+			is_delete=#{isDelete},			
+			creater=#{creater},			
+			create_time=#{createTime},			
+			modifier=#{modifier},			
+			modify_time=#{modifyTime},			
+			version=#{version},			
+			remarks=#{remarks},
+			is_open=#{isOpen}			
+		where
+			id = #{id}
+	</update>
+	
+	<delete id="deleteBySystemSign">
+		delete from liebao_pay_channel_permission_assignment where system_sign = #{systemSign}
+	</delete>
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_pay_channel_permission_assignment where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_pay_channel_permission_assignment where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_pay_channel_permission_assignment set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_pay_channel_permission_assignment set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+	
+	<select id="findByAll" resultType="PayChannelPermissionAssignment">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_pay_channel_permission_assignment lpcpa
+	</select>
+	
+	<!-- 状态开启关闭 -->
+		<update id="updateIsOpen" parameterType="PayChannelPermissionAssignment">
+		update liebao_pay_channel_permission_assignment set
+			is_open=#{isOpen}			
+		where
+			id = #{id}
+	</update>
+</mapper>

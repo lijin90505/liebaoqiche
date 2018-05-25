@@ -1,0 +1,33 @@
+package com.ibest.experience.dto.input;
+
+import com.ibest.framework.common.persistence.BaseInputDTO;
+
+public class ExpInputDTO extends BaseInputDTO {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	// 接入系统用户标识
+	private String outUserName;
+
+	//系统编号
+	private String systemId;
+
+	public String getOutUserName() {
+		return outUserName;
+	}
+
+	public void setOutUserName(String outUserName) {
+		this.outUserName = outUserName;
+	}
+
+	public String getSystemId() {
+		return systemId;
+	}
+
+	public void setSystemId(String systemId) {
+		this.systemId = systemId;
+	}
+}

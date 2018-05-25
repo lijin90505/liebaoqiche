@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ibest.user.dao.UserDao">
+	
+	<sql id="allColumns">
+    	lu.id as id,    	
+    	lu.username as username,    	
+    	lu.password as password,    	
+    	lu.realname as realname,    	
+    	lu.phone as phone,    	
+    	lu.email as email,    	
+    	lu.sex as sex,    	
+    	lu.birthday as birthday,    	
+    	lu.auth_phone as authPhone,    	
+    	lu.idcard as idcard,    	
+    	lu.car_vin as carVin,    	
+    	lu.address as address,    	
+    	lu.register_type as registerType,    	
+    	lu.modified as modified,    	
+    	lu.locked as locked,    	
+    	lu.level_id as levelId,    	
+    	lu.create_time as createTime,    	
+    	lu.modify_time as modifyTime,    	
+    	lu.create_user_id as createUserId,    	
+    	lu.create_user_name as createUserName,    	
+    	lu.modify_user_id as modifyUserId,    	
+    	lu.modify_user_name as modifyUserName,    	
+    	lu.is_delete as isDelete    	
+    </sql>
+	
+	<sql id="joinOthers">
+	</sql>
+	
+	<sql id="searchWhere">
+		<!-- 根据需要自行设置，同时同步InputDTO中的参数-->
+		<if test="keyword != null and keyword !=''">
+			AND CONCAT(
+			IFNULL(username, ''),
+			IFNULL(realname, ''),
+			IFNULL(phone, ''),
+			IFNULL(email, ''),
+			IFNULL(idcard, ''),
+			IFNULL(car_vin, '')
+			) LIKE CONCAT('%%', #{keyword}, '%%')
+		</if>
+		<!--<if test="username != null and username != ''">
+			and lu.username = #{username}
+		</if>
+		<if test="realname != null and realname != ''">
+			and lu.realname = #{realname}
+		</if>
+		<if test="phone != null and phone != ''">
+			and lu.phone = #{phone}
+		</if>
+		<if test="email != null and email != ''">
+			and lu.email = #{email}
+		</if>-->
+		<if test="sex != null">
+			and lu.sex = #{sex}
+		</if>
+		<!--<if test="birthday != null">
+			and lu.birthday = #{birthday}
+		</if>
+		<if test="authPhone != null and authPhone != ''">
+			and lu.auth_phone = #{authPhone}
+		</if>
+		<if test="idcard != null and idcard != ''">
+			and lu.idcard LIKE CONCAT('%%', #{idcard}, '%%')
+		</if>
+		<if test="carVin != null and carVin != ''">
+			and lu.car_vin LIKE CONCAT('%%', #{carVin}, '%%')
+		</if>
+		<if test="address != null and address != ''">
+			and lu.address = #{address}
+		</if>-->
+		<if test="registerType != null">
+			and lu.register_type = #{registerType}
+		</if>
+		<!--<if test="modified != null">
+			and lu.modified = #{modified}
+		</if>-->
+		<if test="locked != null">
+			and lu.locked = #{locked}
+		</if>
+		<if test="levelId != null">
+			and lu.level_id = #{levelId}
+		</if>
+		<!--<if test="createTime != null">
+			and lu.create_time = #{createTime}
+		</if>
+		<if test="modifyTime != null">
+			and lu.modify_time = #{modifyTime}
+		</if>
+		<if test="createUserId != null and createUserId != ''">
+			and lu.create_user_id = #{createUserId}
+		</if>
+		<if test="createUserName != null and createUserName != ''">
+			and lu.create_user_name = #{createUserName}
+		</if>
+		<if test="modifyUserId != null and modifyUserId != ''">
+			and lu.modify_user_id = #{modifyUserId}
+		</if>
+		<if test="modifyUserName != null and modifyUserName != ''">
+			and lu.modify_user_name = #{modifyUserName}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lu.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lu.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lu.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lu.UPDATE_DATE = #{updateDate}
+		</if>
+		<if test="isDelete != null">
+			and lu.IS_DELETE = #{isDelete}
+		</if>-->
+	
+	</sql>
+	
+	<sql id="searchOrder">
+		<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lu.${order} ${desc}
+		</if>
+	</sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_user(
+			id,
+	    	username,	    	
+	    	password,	    	
+	    	realname,	    	
+	    	phone,	    	
+	    	email,	    	
+	    	sex,	    	
+	    	birthday,	    	
+	    	auth_phone,	    	
+	    	idcard,	    	
+	    	car_vin,	    	
+	    	address,	    	
+	    	register_type,	    	
+	    	modified,	    	
+	    	locked,	    	
+	    	level_id,	    	
+	    	create_time,	    	
+	    	modify_time,	    	
+	    	create_user_id,	    	
+	    	create_user_name,	    	
+	    	modify_user_id,	    	
+	    	modify_user_name,	    	
+	    	is_delete	    	
+		) values(
+			#{id},
+			#{username},			 
+			#{password},			 
+			#{realname},			 
+			#{phone},			 
+			#{email},			 
+			#{sex},			 
+			#{birthday},			 
+			#{authPhone},			 
+			#{idcard},			 
+			#{carVin},			 
+			#{address},			 
+			#{registerType},			 
+			#{modified},			 
+			#{locked},			 
+			#{levelId},			 
+			#{createTime},			 
+			#{modifyTime},			 
+			#{createUserId},			 
+			#{createUserName},			 
+			#{modifyUserId},			 
+			#{modifyUserName},			 
+			#{isDelete}			 
+		)
+	</insert>
+	
+	<select id="findById" resultType="User">
+		select
+		<include refid="allColumns"/>
+		from
+		liebao_user lu
+		<include refid="joinOthers"/>
+		where
+		lu.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="User">
+		select
+		<include refid="allColumns"/>
+		from
+		liebao_user lu
+		<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+		count(lu.id)
+		from
+		liebao_user lu
+		<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="User">
+		select
+		<include refid="allColumns"/>
+		from
+		liebao_user lu
+		<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		<include refid="searchOrder"/>
+		<if test="limitStart != null and limitSize != null">
+			LIMIT #{limitStart},#{limitSize}
+		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_user set
+			phone=#{phone},
+			email=#{email},			
+			sex=#{sex},			
+			birthday=#{birthday},			
+			auth_phone=#{authPhone},			
+			idcard=#{idcard},			
+			car_vin=#{carVin},			
+			address=#{address},			
+			locked=#{locked},
+			level_id=#{levelId},			
+			modify_time=#{modifyTime},
+			modify_user_id=#{modifyUserId},
+			modify_user_name=#{modifyUserName},			
+			is_delete=#{isDelete}			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_user where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_user where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_user set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_user set is_delete = 1 where id in
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

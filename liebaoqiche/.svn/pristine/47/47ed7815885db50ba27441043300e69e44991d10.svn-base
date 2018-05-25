@@ -1,0 +1,158 @@
+package com.ibest.accesssystem.dto.output;
+
+import com.ibest.framework.common.persistence.BaseOutputDTO;
+
+import java.util.Date;
+
+public class AccessSystemOutputDTO extends BaseOutputDTO {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+					
+	// 系统名称
+	private String accessSystemName;
+				
+	// 公司编号
+	private String companyCode;
+				
+	// 公司名称
+	private String companyName;
+				
+	// 省
+	private String province;
+				
+	// 市
+	private String city;
+				
+	// 联系电话
+	private String telephone;
+				
+	// 地址
+	private String addrees;
+				
+	// 邮箱
+	private String email;
+				
+	// 创建人
+	private String creater;
+				
+	// 创建时间
+	private Date createTime;
+				
+	// 修改人
+	private String modifier;
+				
+	// 修改时间
+	private Date modifyTime;
+				
+	// 版本
+	private String version;
+									
+	public String getAccessSystemName(){
+		return accessSystemName;
+	}
+	
+	public void setAccessSystemName(String accessSystemName){
+		this.accessSystemName = accessSystemName;
+	}
+				
+	public String getCompanyCode(){
+		return companyCode;
+	}
+	
+	public void setCompanyCode(String companyCode){
+		this.companyCode = companyCode;
+	}
+				
+	public String getCompanyName(){
+		return companyName;
+	}
+	
+	public void setCompanyName(String companyName){
+		this.companyName = companyName;
+	}
+				
+	public String getProvince(){
+		return province;
+	}
+	
+	public void setProvince(String province){
+		this.province = province;
+	}
+				
+	public String getCity(){
+		return city;
+	}
+	
+	public void setCity(String city){
+		this.city = city;
+	}
+				
+	public String getTelephone(){
+		return telephone;
+	}
+	
+	public void setTelephone(String telephone){
+		this.telephone = telephone;
+	}
+				
+	public String getAddrees(){
+		return addrees;
+	}
+	
+	public void setAddrees(String addrees){
+		this.addrees = addrees;
+	}
+				
+	public String getEmail(){
+		return email;
+	}
+	
+	public void setEmail(String email){
+		this.email = email;
+	}
+				
+	public String getCreater(){
+		return creater;
+	}
+	
+	public void setCreater(String creater){
+		this.creater = creater;
+	}
+				
+	public Date getCreateTime(){
+		return createTime;
+	}
+	
+	public void setCreateTime(Date createTime){
+		this.createTime = createTime;
+	}
+				
+	public String getModifier(){
+		return modifier;
+	}
+	
+	public void setModifier(String modifier){
+		this.modifier = modifier;
+	}
+				
+	public Date getModifyTime(){
+		return modifyTime;
+	}
+	
+	public void setModifyTime(Date modifyTime){
+		this.modifyTime = modifyTime;
+	}
+				
+	public String getVersion(){
+		return version;
+	}
+	
+	public void setVersion(String version){
+		this.version = version;
+	}
+					
+}

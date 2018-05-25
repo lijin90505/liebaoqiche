@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.activity.dao.ActivityDao">
+
+    <sql id="allColumns">
+    	la.id as id,    	
+    	la.activity_details_id as activityDetailsId,    	
+    	la.activity_details_name as activityDetailsName,    	
+    	la.integral_id as integralId,    	
+    	la.integral_name as integralName,    	
+    	la.card_id as cardId,    	
+    	la.card_name as cardName,    	
+    	la.experience_id as experienceId,    	
+    	la.experience_name as experienceName,    	
+    	la.is_delete as isDelete,    	
+    	la.state as state,    	
+    	la.creater as creater,    	
+    	la.create_time as createTime,    	
+    	la.modifier as modifier,    	
+    	la.modify_time as modifyTime,    	
+    	la.version as version,    	
+    	la.remarks as remarks    	
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and la.id = #{id}
+		</if>
+		<if test="activityDetailsId != null and activityDetailsId != ''">
+			and la.activity_details_id = #{activityDetailsId}
+		</if>-->
+		<if test="activityDetailsName != null and activityDetailsName != ''">
+			and CONCAT(
+			IFNULL(la.activity_details_name,'')
+			) LIKE CONCAT('%%', #{activityDetailsName},'%%')
+		</if>
+		<!--<if test="integralId != null and integralId != ''">
+			and la.integral_id = #{integralId}
+		</if>
+		<if test="integralName != null and integralName != ''">
+			and la.integral_name = #{integralName}
+		</if>
+		<if test="cardId != null and cardId != ''">
+			and la.card_id = #{cardId}
+		</if>
+		<if test="cardName != null and cardName != ''">
+			and la.card_name = #{cardName}
+		</if>
+		<if test="experienceId != null and experienceId != ''">
+			and la.experience_id = #{experienceId}
+		</if>
+		<if test="experienceName != null and experienceName != ''">
+			and la.experience_name = #{experienceName}
+		</if>
+		<if test="state != null and state != ''">
+			and la.state = #{state}
+		</if>
+		<if test="creater != null and creater != ''">
+			and la.creater = #{creater}
+		</if>
+		<if test="createTime != null">
+			and la.create_time = #{createTime}
+		</if>
+		<if test="modifier != null and modifier != ''">
+			and la.modifier = #{modifier}
+		</if>
+		<if test="modifyTime != null">
+			and la.modify_time = #{modifyTime}
+		</if>
+		<if test="version != null and version != ''">
+			and la.version = #{version}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and la.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and la.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and la.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and la.UPDATE_DATE = #{updateDate}
+		</if>
+		-->
+		<if test="isDelete != null">
+			and la.IS_DELETE = #{isDelete}
+		</if>
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by la.${order} ${desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_activity(
+			id,
+	    	activity_details_id,	    	
+	    	activity_details_name,	    	
+	    	integral_id,	    	
+	    	integral_name,	    	
+	    	card_id,	    	
+	    	card_name,	    	
+	    	experience_id,	    	
+	    	experience_name,	    	
+	    	is_delete,	    	
+	    	state,	    	
+	    	creater,	    	
+	    	create_time,	    	
+	    	modifier,	    	
+	    	modify_time,	    	
+	    	version,	    	
+	    	remarks	    	
+		) values(
+			#{id},			 
+			#{activityDetailsId},			 
+			#{activityDetailsName},			 
+			#{integralId},			 
+			#{integralName},			 
+			#{cardId},			 
+			#{cardName},			 
+			#{experienceId},			 
+			#{experienceName},			 
+			#{isDelete},			 
+			#{state},			 
+			#{creater},			 
+			#{createTime},			 
+			#{modifier},			 
+			#{modifyTime},			 
+			#{version},			 
+			#{remarks}			 
+		)
+	</insert>
+	
+	<select id="findById" resultType="Activity">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_activity la
+			<include refid="joinOthers"/>
+		where
+			la.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="Activity">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_activity la
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(la.id)
+		from
+			liebao_activity la
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="Activity">
+		select
+			la.activity_details_id as activityDetailsId,
+			la.activity_details_name as activityDetailsName,
+			la.integral_id as integralId,
+			li.name as integralName,
+			la.card_id as cardId,
+			lc.name as cardName,
+			la.experience_id as experienceId,
+			le.name as experienceName,
+			la.is_delete as isDelete,
+			la.state as state,
+			la.creater as creater,
+			la.create_time as createTime,
+			la.modifier as modifier,
+			la.modify_time as modifyTime,
+			la.version as version,
+			la.remarks as remarks
+		from
+			liebao_activity la
+			LEFT JOIN liebao_card lc ON la.card_id = lc.id
+			LEFT JOIN liebao_integral li ON la.integral_id = li.id
+			LEFT JOIN liebao_experience le ON la.experience_id = le.id
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		<include refid="searchOrder"/>
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_activity set
+			activity_details_id=#{activityDetailsId},			
+			activity_details_name=#{activityDetailsName},			
+			integral_id=#{integralId},			
+			integral_name=#{integralName},			
+			card_id=#{cardId},			
+			card_name=#{cardName},			
+			experience_id=#{experienceId},			
+			experience_name=#{experienceName},			
+			is_delete=#{isDelete},			
+			state=#{state},			
+			creater=#{creater},			
+			modifier=#{modifier},
+			modify_time=#{modifyTime},			
+			version=#{version},			
+			remarks=#{remarks}			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_activity where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_activity where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_activity set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_activity set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

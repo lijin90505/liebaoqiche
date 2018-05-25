@@ -1,0 +1,33 @@
+package com.ibest.experience.dto.input;
+
+import com.ibest.framework.common.persistence.BaseInputDTO;
+
+public class ExpLogInputDTO extends BaseInputDTO {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	// 用户名称
+	private String username;
+
+	//终端类型
+	private String platform;
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPlatform() {
+		return platform;
+	}
+
+	public void setPlatform(String platform) {
+		this.platform = platform;
+	}
+}

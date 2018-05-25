@@ -1,0 +1,191 @@
+<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<!DOCTYPE>
+<html>
+<head>
+	<title>UserCouponUsedRecord</title>
+	<%@ include file="/WEB-INF/views/include/head.jsp"%>
+</head>
+<body>
+	<%@ include file="/WEB-INF/views/include/loading.jsp"%>
+	<div class="easyui-layout" data-options="fit:true">
+		<div data-options="region:'center'">
+    		<table style="width: 100%;">
+    			<tbody>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						编号
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${userCouponUsedRecord.id}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						卡券识别码
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${userCouponUsedRecord.couponCode}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						用户编号
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${userCouponUsedRecord.userId}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						用户名称
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${userCouponUsedRecord.userName}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						卡券名称
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${userCouponUsedRecord.couponName}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						卡券内容
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${userCouponUsedRecord.couponContent}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						卡券状态
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${userCouponUsedRecord.status}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						卡券获取编号
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${userCouponUsedRecord.couponGetId}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						卡券用途编号
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${userCouponUsedRecord.couponUseId}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						卡券获取时间
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${userCouponUsedRecord.couponGetTime}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						卡券使用时间
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${userCouponUsedRecord.couponUsedTime}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						终端编号
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${userCouponUsedRecord.erminalId}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						系统标识
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${userCouponUsedRecord.systemSign}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						系统名称
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${userCouponUsedRecord.systemSignName}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						创建人
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${userCouponUsedRecord.creater}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						创建时间
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${userCouponUsedRecord.createTime}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						修改人
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${userCouponUsedRecord.modifier}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						修改时间
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${userCouponUsedRecord.modifyTime}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						版本
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${userCouponUsedRecord.version}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						<label class="label-top">备注:</label>
+    						<input class="easyui-textbox" name="remarks" style="width:99.5%; height:80px;" data-options="multiline:true">
+    					</td>
+    				</tr>
+    			</tbody>
+    		</table>
+		</div>
+		<div data-options="region:'south',border:false" style="text-align:right; padding:10px;">
+            <a id="btnCancel_UserCouponUsedRecord" href="javascript:void(0)" class="easyui-linkbutton button-warning" style="width: 80px;"><i class="fa fa-remove fa-lg"></i>&nbsp;&nbsp;取消</a>
+        </div>
+   	</div>
+    
+    <!-- js脚本，必须写在body中，tab的url加载模式只会异步加载body中的内容到tab中 -->
+	<script type="text/javascript">
+		require(['jquery','common'], function($){
+			// 给保存按钮添加点击事件
+			$("#btnCancel_UserCouponUsedRecord").on('click', function(){
+				history.go(-1);
+			});
+		});
+	</script>
+</body>
+</html>

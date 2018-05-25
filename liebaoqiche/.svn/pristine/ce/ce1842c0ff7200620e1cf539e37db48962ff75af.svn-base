@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.pay.dao.PayRefundInfoDao">
+
+    <sql id="allColumns">
+    	lri.id as id,    	
+    	lri.pay_info_id as payInfoId,    	
+    	lri.wechat_pay_info_id as wechatPayInfoId,    	
+    	lri.out_System_Id as outSystemId,    	
+    	lri.refund_channel as refundChannel,    	
+    	lri.user_id as userId,    	
+    	lri.refund_no as refundNo,    	
+    	lri.out_trade_no as outTradeNo,    	
+    	lri.out_refund_no as outRefundNo,    	
+    	lri.total_fee as totalFee,    	
+    	lri.refund_fee as refundFee,    	
+    	lri.refund_desc as refundDesc,    	
+    	lri.notify_url as notifyUrl,    	
+    	lri.refund_status as refundStatus,    	
+    	lri.refund_start_time as refundStartTime,    	
+    	lri.refund_end_time as refundEndTime,    	
+    	lri.refund_success_time as refundSuccessTime,    	
+    	lri.refund_recv_accout as refundRecvAccout,    	
+    	lri.refund_account as refundAccount,    	
+    	lri.refund_request_source as refundRequestSource,    	
+    	lri.REMARKS as remarks,    	
+    	lri.CREATE_BY as createBy,    	
+    	lri.CREATE_DATE as createDate,    	
+    	lri.UPDATE_BY as updateBy,    	
+    	lri.UPDATE_date as updateDate    	
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null">
+			and lri.id = #{id}
+		</if>
+		<if test="payInfoId != null">
+			and lri.pay_info_id = #{payInfoId}
+		</if>
+		<if test="wechatPayInfoId != null">
+			and lri.wechat_pay_info_id = #{wechatPayInfoId}
+		</if>
+		<if test="outSystemId != null and outSystemId != ''">
+			and lri.out_System_Id = #{outSystemId}
+		</if>
+		<if test="refundChannel != null and refundChannel != ''">
+			and lri.refund_channel = #{refundChannel}
+		</if>
+		<if test="userId != null and userId != ''">
+			and lri.user_id = #{userId}
+		</if>
+		<if test="refundNo != null and refundNo != ''">
+			and lri.refund_no = #{refundNo}
+		</if>
+		<if test="outTradeNo != null and outTradeNo != ''">
+			and lri.out_trade_no = #{outTradeNo}
+		</if>
+		<if test="outRefundNo != null and outRefundNo != ''">
+			and lri.out_refund_no = #{outRefundNo}
+		</if>
+		<if test="totalFee != null and totalFee != ''">
+			and lri.total_fee = #{totalFee}
+		</if>
+		<if test="refundFee != null and refundFee != ''">
+			and lri.refund_fee = #{refundFee}
+		</if>
+		<if test="refundDesc != null and refundDesc != ''">
+			and lri.refund_desc = #{refundDesc}
+		</if>
+		<if test="notifyUrl != null and notifyUrl != ''">
+			and lri.notify_url = #{notifyUrl}
+		</if>
+		<if test="refundStatus != null and refundStatus != ''">
+			and lri.refund_status = #{refundStatus}
+		</if>
+		<if test="refundStartTime != null">
+			and lri.refund_start_time = #{refundStartTime}
+		</if>
+		<if test="refundEndTime != null">
+			and lri.refund_end_time = #{refundEndTime}
+		</if>
+		<if test="refundSuccessTime != null">
+			and lri.refund_success_time = #{refundSuccessTime}
+		</if>
+		<if test="refundRecvAccout != null and refundRecvAccout != ''">
+			and lri.refund_recv_accout = #{refundRecvAccout}
+		</if>
+		<if test="refundAccount != null and refundAccount != ''">
+			and lri.refund_account = #{refundAccount}
+		</if>
+		<if test="refundRequestSource != null and refundRequestSource != ''">
+			and lri.refund_request_source = #{refundRequestSource}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lri.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lri.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lri.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lri.UPDATE_DATE = #{updateDate}
+		</if>
+		<if test="isDelete != null">
+			and lri.IS_DELETE = #{isDelete}
+		</if>
+		-->
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lri.#{order} #{desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_pay_refund_info(
+			id,
+	    	pay_info_id,	    	
+	    	wechat_pay_info_id,	    	
+	    	out_System_Id,	    	
+	    	refund_channel,	    	
+	    	user_id,	    	
+	    	refund_no,	    	
+	    	out_trade_no,	    	
+	    	out_refund_no,	    	
+	    	total_fee,	    	
+	    	refund_fee,	    	
+	    	refund_desc,	    	
+	    	notify_url,	    	
+	    	refund_status,	    	
+	    	refund_start_time,	    	
+	    	refund_end_time,	    	
+	    	refund_success_time,	    	
+	    	refund_recv_accout,	    	
+	    	refund_account,	    	
+	    	refund_request_source,	    	
+	    	REMARKS,	    	
+	    	CREATE_BY,	    	
+	    	CREATE_DATE	    	
+		) values(
+			replace(UUID(), '-',''),
+			#{payInfoId},			 
+			#{wechatPayInfoId},			 
+			#{outSystemId},			 
+			#{refundChannel},			 
+			#{userId},			 
+			#{refundNo},			 
+			#{outTradeNo},			 
+			#{outRefundNo},			 
+			#{totalFee},			 
+			#{refundFee},			 
+			#{refundDesc},			 
+			#{notifyUrl},			 
+			#{refundStatus},			 
+			#{refundStartTime},			 
+			#{refundEndTime},			 
+			#{refundSuccessTime},			 
+			#{refundRecvAccout},			 
+			#{refundAccount},			 
+			#{refundRequestSource},			 
+			#{remarks},			 
+			#{createBy},			 
+			#{createDate}			 
+		)
+	</insert>
+	
+	<select id="findById" resultType="PayRefundInfo">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_pay_refund_info lri
+			<include refid="joinOthers"/>
+		where
+			lri.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="PayRefundInfo">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_pay_refund_info lri
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(lri.id)
+		from
+			liebao_pay_refund_info lri
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="PayRefundInfo">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_pay_refund_info lri
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		<include refid="searchOrder"/>
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_pay_refund_info set
+			pay_info_id=#{payInfoId},			
+			wechat_pay_info_id=#{wechatPayInfoId},			
+			out_System_Id=#{outSystemId},			
+			refund_channel=#{refundChannel},			
+			user_id=#{userId},			
+			refund_no=#{refundNo},			
+			out_trade_no=#{outTradeNo},			
+			out_refund_no=#{outRefundNo},			
+			total_fee=#{totalFee},			
+			refund_fee=#{refundFee},			
+			refund_desc=#{refundDesc},			
+			notify_url=#{notifyUrl},			
+			refund_status=#{refundStatus},			
+			refund_start_time=#{refundStartTime},			
+			refund_end_time=#{refundEndTime},			
+			refund_success_time=#{refundSuccessTime},			
+			refund_recv_accout=#{refundRecvAccout},			
+			refund_account=#{refundAccount},			
+			refund_request_source=#{refundRequestSource},			
+			REMARKS=#{remarks},			
+			UPDATE_BY=#{updateBy},			
+			UPDATE_date=#{updateDate}			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_pay_refund_info where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_pay_refund_info where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_pay_refund_info set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_pay_refund_info set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+	
+	<select id="findByRefundInfo" resultType="PayRefundInfo">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_pay_refund_info lri
+		<where>
+			<if test="refundChannel != null and refundChannel != ''">
+				and lri.refund_channel = #{refundChannel}
+			</if>
+			<if test="refundStatus != null and refundStatus != ''">
+				and lri.refund_status = #{refundStatus}
+			</if>
+			<if test="totalFee != null and totalFee != ''">
+				and lri.total_fee = #{totalFee}
+			</if>
+			<if test="outTradeNo != null and outTradeNo != ''">
+				and lri.out_trade_no = #{outTradeNo}
+			</if>
+		</where>
+	</select>
+</mapper>

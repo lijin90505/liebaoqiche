@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.pay.dao.PayInfoDao">
+
+    <sql id="allColumns">
+    	lpi.id as id,    	
+    	lpi.order_id as orderId,    	
+    	lpi.serial_no as serialNo,    	
+    	lpi.amount as amount,    	
+    	lpi.pay_type as payType,    	
+    	lpi.out_system_id as outSystemId,    	
+    	lpi.device_id as deviceId,    	
+    	lpi.notify_url as notifyUrl,    	
+    	lpi.order_status as orderStatus,    	
+    	lpi.order_send_time as orderSendTime,    	
+    	lpi.done_time as doneTime,    	
+    	lpi.user_id as userId,    	
+    	lpi.CREATE_BY as createBy,    	
+    	lpi.CREATE_DATE as createDate,    	
+    	lpi.UPDATE_BY as updateBy,    	
+    	lpi.UPDATE_DATE as updateDate,    	
+    	lpi.REMARKS as remarks    	
+    </sql>
+    
+    <sql id="joinOthers">
+   		inner JOIN liebao_user lu ON lu.id = lpi.user_id
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and lpi.id = #{id}
+		</if>
+		
+		
+		<if test="amount != null and amount != ''">
+			and lpi.amount = #{amount}
+		</if>
+		<if test="payType != null and payType != ''">
+			and lpi.pay_type = #{payType}
+		</if>
+		<if test="outSystemId != null and outSystemId != ''">
+			and lpi.out_system_id = #{outSystemId}
+		</if>
+		<if test="deviceId != null and deviceId != ''">
+			and lpi.device_id = #{deviceId}
+		</if>
+		<if test="notifyUrl != null and notifyUrl != ''">
+			and lpi.notify_url = #{notifyUrl}
+		</if>
+		<if test="doneTime != null">
+			and lpi.done_time = #{doneTime}
+		</if>
+		<if test="userId != null and userId != ''">
+			and lpi.user_id = #{userId}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lpi.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lpi.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lpi.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lpi.UPDATE_DATE = #{updateDate}
+		</if>
+		<if test="isDelete != null">
+			and lpi.IS_DELETE = #{isDelete}
+		</if>
+		-->
+		<if test="orderId != null and orderId != ''">
+			and lpi.order_id = #{orderId}
+		</if>
+		<if test="orderStatus != null and orderStatus != ''">
+			and lpi.order_status = #{orderStatus}
+		</if>
+		<if test="orderSendTime != null">
+			and DATE_FORMAT(lpi.order_send_time, '%Y-%m-%d')=#{orderSendTime}
+		</if>
+		<if test="serialNo != null and serialNo != ''">
+			and lpi.serial_no = #{serialNo}
+		</if>
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lpi.#{order} #{desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		<selectKey  keyProperty="id" resultType="java.lang.String" order="BEFORE">
+             select uuid()
+		</selectKey>
+		insert into liebao_pay_info(
+			id,
+	    	order_id,	    	
+	    	serial_no,	    	
+	    	amount,	    	
+	    	pay_type,	    	
+	    	out_system_id,	    	
+	    	device_id,	    	
+	    	notify_url,	    	
+	    	order_status,	    	
+	    	order_send_time,	    	
+	    	done_time,	    	
+	    	user_id,	    	
+	    	CREATE_BY,	    	
+	    	CREATE_DATE,	    	
+	    	REMARKS	    	
+		) values(
+			#{id},
+			#{orderId},			 
+			#{serialNo},			 
+			#{amount},			 
+			#{payType},			 
+			#{outSystemId},			 
+			#{deviceId},			 
+			#{notifyUrl},			 
+			#{orderStatus},			 
+			#{orderSendTime},			 
+			#{doneTime},			 
+			#{userId},			 
+			#{createBy},			 
+			#{createDate},			 
+			#{remarks}			 
+		)
+	</insert>
+	
+	<select id="findById" resultType="PayInfo">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_pay_info lpi
+			<include refid="joinOthers"/>
+		where
+			lpi.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="PayInfo">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_pay_info lpi
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		SELECT
+			count(lpi.id)
+		FROM
+			liebao_pay_info lpi
+		<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="PayInfo">
+		SELECT
+			lpi.id,lpi.order_id,lpi.serial_no,lpi.amount,lpi.pay_type,lpi.device_id,
+		    lpi.notify_url,lpi.order_status,lpi.order_send_time,lpi.done_time,lpi.CREATE_BY,lpi.CREATE_DATE,lpi.UPDATE_BY,lpi.UPDATE_DATE,lpi.REMARKS,
+			lpi.out_system_id,lu.username as user_id
+		FROM
+			liebao_pay_info lpi
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		<include refid="searchOrder"/>
+		GROUP BY 
+			lpi.order_send_time DESC
+		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_pay_info set
+			order_id=#{orderId},			
+			serial_no=#{serialNo},			
+			amount=#{amount},			
+			pay_type=#{payType},			
+			out_system_id=#{outSystemId},			
+			device_id=#{deviceId},			
+			notify_url=#{notifyUrl},			
+			order_status=#{orderStatus},			
+			order_send_time=#{orderSendTime},			
+			done_time=#{doneTime},			
+			user_id=#{userId},			
+			UPDATE_BY=#{updateBy},			
+			UPDATE_DATE=#{updateDate},			
+			REMARKS=#{remarks}			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_pay_info where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_pay_info where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_pay_info set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_pay_info set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+	
+	<select id="findAllOrderId" resultType="PayInfo">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_pay_info lpi
+	</select>
+	
+	<select id="countAmount" resultType="String" parameterType="com.ibest.pay.dto.input.PayInfoTime">
+		select 
+			sum(a.amount)
+		from 
+			liebao_pay_info a 
+		<where>
+		 	1=1
+		 <if test="beginDate != null and beginDate != ''">
+		 	AND DATE_FORMAT(a.done_time, '%Y-%m-%d %T')<![CDATA[>=]]> #{beginDate}
+		 </if>
+		 <if test="endDate != null and endDate != ''">
+			AND DATE_FORMAT(a.done_time, '%Y-%m-%d %T')<![CDATA[<=]]> #{endDate}
+		 </if>
+		</where>
+	</select>
+	
+	<select id="countPayInfoTime" resultType="String" parameterType="com.ibest.pay.dto.input.PayInfoTime">
+		SELECT
+			round(avg(TIMESTAMPDIFF(MINUTE,a.order_send_time,a.done_time)),0)
+		FROM
+			liebao_pay_info a 
+		<where>
+			1=1
+		 <if test="beginDate != null and beginDate != ''">
+		 	AND DATE_FORMAT(a.done_time, '%Y-%m-%d %T')<![CDATA[>=]]> #{beginDate}
+		 </if>
+		 <if test="endDate != null and endDate != ''">
+			AND DATE_FORMAT(a.done_time, '%Y-%m-%d %T')<![CDATA[<=]]> #{endDate}
+		 </if>
+		</where>
+	</select>
+	
+	<select id="countPayInfoRate" resultType="String" parameterType="com.ibest.pay.dto.input.PayInfoTime">
+		SELECT DISTINCT
+			ROUND(a.cnt/b.ctn*100,2)
+		FROM
+			(SELECT COUNT(c.id) as cnt FROM liebao_pay_info c where c.done_time is not null ) as a ,
+			(SELECT count(d.id) as ctn from liebao_pay_info d ) as b,
+			liebao_pay_info f
+		<where>
+			 1=1
+		 <if test="beginDate != null and beginDate != ''">
+		 	AND DATE_FORMAT(f.done_time, '%Y-%m-%d %T')<![CDATA[>=]]> #{beginDate}
+		 </if>
+		 <if test="endDate != null and endDate != ''">
+			AND DATE_FORMAT(f.done_time, '%Y-%m-%d %T')<![CDATA[<=]]> #{endDate}
+		 </if>
+		</where>
+	</select>
+	
+	<select id="findByOrderSendTime" resultType="PayInfo">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_pay_info lpi
+		<where>
+			lpi.order_send_time = #{orderSendTime}
+		</where>	
+	</select>
+	
+	<select id="countPayInfoNum" resultType="String" parameterType="com.ibest.pay.dto.input.PayInfoTime">
+		select 
+			count(a.id)
+		from 
+			liebao_pay_info a 
+		<where>
+			1=1
+		 <if test="beginDate != null and beginDate != ''">
+		 	AND DATE_FORMAT(a.done_time, '%Y-%m-%d %T')<![CDATA[>=]]> #{beginDate}
+		 </if>
+		 <if test="endDate != null and endDate != ''">
+			AND DATE_FORMAT(a.done_time, '%Y-%m-%d %T')<![CDATA[<=]]> #{endDate}
+		 </if>
+		</where>
+	</select>
+	
+</mapper>

@@ -1,0 +1,119 @@
+<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<!DOCTYPE>
+<html>
+<head>
+	<title>PayType</title>
+	<%@ include file="/WEB-INF/views/include/head.jsp"%>
+</head>
+<body>
+	<%@ include file="/WEB-INF/views/include/loading.jsp"%>
+	<div class="easyui-layout" data-options="fit:true">
+		<div data-options="region:'center'">
+    		<table style="width: 100%;">
+    			<tbody>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						主键
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${payType.id}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						支付渠道主键
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${payType.payChannelId}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						支付类型；银联网关支付：00,支付宝电脑网站支付：01,支付宝手机网站支付：06,支付宝当面扫码支付：07,支付宝APP支付：11,支付宝条码支付：02, 微信扫码支付：03,微信APP支付：04,微信公众号支付：05
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${payType.payType}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						支付类型名称
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${payType.payName}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						是否删除；0未删除，1删除
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${payType.isDelete}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						创建人
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${payType.createBy}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						创建时间
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${payType.createDate}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						修改人
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${payType.updateBy}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						修改时间
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${payType.updateDate}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						备注
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${payType.remarks}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						<label class="label-top">备注:</label>
+    						<input class="easyui-textbox" name="remarks" style="width:99.5%; height:80px;" data-options="multiline:true">
+    					</td>
+    				</tr>
+    			</tbody>
+    		</table>
+		</div>
+		<div data-options="region:'south',border:false" style="text-align:left; padding:5px;">
+            <a id="btnCancel_PayType" href="javascript:void(0)" class="easyui-linkbutton button-warning" style="width: 80px;"><i class="fa fa-remove fa-lg"></i>&nbsp;&nbsp;取消</a>
+        </div>
+   	</div>
+    
+    <!-- js脚本，必须写在body中，tab的url加载模式只会异步加载body中的内容到tab中 -->
+	<script type="text/javascript">
+		require(['jquery','common'], function($){
+			// 给保存按钮添加点击事件
+			$("#btnCancel_PayType").on('click', function(){
+				history.go(-1);
+			});
+		});
+	</script>
+</body>
+</html>

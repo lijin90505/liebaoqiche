@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.integral.dao.IntegralCategoryDao">
+
+    <sql id="allColumns">
+    	lic.id as id,    	
+    	lic.category_name as categoryName,    	
+    	lic.type as type,    	
+    	lic.is_delete as isDelete,    	
+    	lic.creater as creater,    	
+    	lic.create_time as createTime,    	
+    	lic.modifier as modifier,    	
+    	lic.modify_time as modifyTime,    	
+    	lic.version as version,    	
+    	lic.remarks as remarks    	
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and lic.id = #{id}
+		</if>-->
+		<if test="categoryName != null and categoryName != ''">
+			and CONCAT(
+		    IFNULL(lic.category_name,'')
+		    ) LIKE CONCAT('%%', #{categoryName},'%%')
+		</if>
+		<if test="type != null and type != ''">
+			and lic.type = #{type}
+		</if>
+	    <!-- <if test="creater != null and creater != ''">
+			and lic.creater = #{creater}
+		</if>
+		<if test="createTime != null">
+			and lic.create_time = #{createTime}
+		</if>
+		<if test="modifier != null and modifier != ''">
+			and lic.modifier = #{modifier}
+		</if>
+		<if test="modifyTime != null">
+			and lic.modify_time = #{modifyTime}
+		</if>
+		<if test="version != null and version != ''">
+			and lic.version = #{version}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lic.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lic.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lic.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lic.UPDATE_DATE = #{updateDate}
+		</if>
+		-->
+		<if test="isDelete != null">
+			and lic.IS_DELETE = #{isDelete}
+		</if>
+    </sql>
+	
+	<sql id="searchParam">
+		<if test="categoryName != null and categoryName != ''">
+			and binary lic.category_name = #{categoryName}
+		</if>
+	</sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lic.${order} ${desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_integral_category(
+			id,
+	    	category_name,	    	
+	    	type,	    	
+	    	is_delete,	    	
+	    	creater,	    	
+	    	create_time,	    	
+	    	modifier,	    	
+	    	modify_time,	    	
+	    	version,	    	
+	    	remarks	    	
+		) values(
+			#{id},			 
+			#{categoryName},			 
+			#{type},			 
+			#{isDelete},			 
+			#{creater},			 
+			#{createTime},			 
+			#{modifier},			 
+			#{modifyTime},			 
+			#{version},			 
+			#{remarks}			 
+		)
+	</insert>
+	
+	<select id="checkNameUnique" resultType="IntegralCategory">
+		select category_name from liebao_integral_category 
+		where is_delete ='0' and category_name =#{categoryName}
+	</select>
+	
+	<select id="countIntegralCategoryByObject" resultType="Integer">
+		select
+		count(lic.id)
+		from
+		liebao_integral_category lic
+		<where>
+			<include refid="searchParam"/>
+		</where>
+	</select>
+	
+	<select id="findById" resultType="IntegralCategory">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_integral_category lic
+			<include refid="joinOthers"/>
+		where
+			lic.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="IntegralCategory">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_integral_category lic
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(lic.id)
+		from
+			liebao_integral_category lic
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="IntegralCategory">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_integral_category lic
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		order by modify_time desc
+		<include refid="searchOrder"/>
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_integral_category set
+			category_name=#{categoryName},			
+			type=#{type},			
+			is_delete=#{isDelete},			
+			creater=#{creater},			
+			modifier=#{modifier},
+			modify_time=#{modifyTime},			
+			version=#{version},			
+			remarks=#{remarks}			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_integral_category where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_integral_category where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_integral_category set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_integral_category set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

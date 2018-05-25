@@ -1,0 +1,91 @@
+package com.ibest.pay.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.ibest.framework.common.utils.StringUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ibest.framework.common.utils.PageList;
+
+import com.ibest.pay.dao.OutSystemOrderDao;
+import com.ibest.pay.entity.OutSystemOrder;
+import com.ibest.pay.dto.input.OutSystemOrderInputDTO;
+
+@Service
+@Transactional(readOnly=true)
+public class OutSystemOrderService {
+
+	@Autowired
+	protected OutSystemOrderDao outSystemOrderDao;
+	
+	public OutSystemOrder findById(String id) throws Exception{
+		return outSystemOrderDao.findById(id);
+	}
+	
+	@Transactional(readOnly=false)
+	public int insert(OutSystemOrder outSystemOrder) throws Exception{
+		outSystemOrder.preInsert();
+		int result = outSystemOrderDao.insert(outSystemOrder);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteById(String id) throws Exception{
+		int result = outSystemOrderDao.deleteById(id);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteByIds(String ids) throws Exception{
+		int result = outSystemOrderDao.deleteByIds(StringUtils.tokenizeToList(ids));
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int update(OutSystemOrder outSystemOrder) throws Exception{
+		outSystemOrder.preUpdate();
+		int result = outSystemOrderDao.update(outSystemOrder);
+		return result;
+	}
+	
+	/**
+	 * 分页查询
+	 * @param page
+	 * @param inputDto
+	 * @return
+	 * @throws Exception
+	 */
+	public PageList<OutSystemOrder> findByPage(PageList<OutSystemOrder> page, OutSystemOrderInputDTO inputDto) throws Exception{
+		
+		if(page == null){
+			page = new PageList<OutSystemOrder>();
+		}
+		
+		long totalCount = outSystemOrderDao.countByObject(inputDto);
+		if(totalCount > 0){
+			// 设置记录总条数
+			page.setTotal(totalCount);
+			
+			// 设置分页参数，查询数据
+			inputDto.setLimitStart((page.getPage() - 1) * page.getPageSize());
+			inputDto.setLimitSize(page.getPageSize());
+			page.setRows(outSystemOrderDao.findByObject(inputDto));
+		}
+		
+		return page;
+	}
+	
+	/**
+	* 查询列表
+	*/
+	public OutSystemOrder findByObject(OutSystemOrderInputDTO inputDto) throws Exception{
+		return outSystemOrderDao.findOneByObject(inputDto);
+	}
+
+	public List<OutSystemOrder> findByOrderPayTime(String orderPayTime) throws Exception{
+		return outSystemOrderDao.findByOrderPayTime(orderPayTime);
+	}
+}

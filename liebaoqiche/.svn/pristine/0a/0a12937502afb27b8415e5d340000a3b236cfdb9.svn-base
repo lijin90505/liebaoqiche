@@ -1,0 +1,175 @@
+<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<!DOCTYPE>
+<html>
+<head>
+	<title>SystemActivity</title>
+	<%@ include file="/WEB-INF/views/include/head.jsp"%>
+</head>
+<body>
+	<%@ include file="/WEB-INF/views/include/loading.jsp"%>
+	<div class="easyui-layout" data-options="fit:true">
+		<div data-options="region:'center'">
+    		<table style="width: 100%;">
+    			<tbody>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						id
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemActivity.id}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						活动编号
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemActivity.activityId}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						活动名称
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemActivity.activityName}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						活动内容
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemActivity.activityContent}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						生效时间
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemActivity.startTime}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						截止时间
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemActivity.endTime}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						活动状态
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemActivity.activityStatus}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						活动URL
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemActivity.activityUrl}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						图片URL
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemActivity.pictureUrl}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						系统标识
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemActivity.systemId}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						系统名称
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemActivity.systemName}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						创建人
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemActivity.creater}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						创建时间
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemActivity.createTime}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						修改人
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemActivity.modifier}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						修改时间
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemActivity.modifyTime}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						版本
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemActivity.version}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						备注
+    					</td>
+    					<td style="width: 50%; padding: 5px;">
+    						${systemActivity.remarks}
+    					</td>
+    				</tr>
+    				<tr>
+    					<td style="width: 50%; padding: 5px;">
+    						<label class="label-top">备注:</label>
+    						<input class="easyui-textbox" name="remarks" style="width:99.5%; height:80px;" data-options="multiline:true">
+    					</td>
+    				</tr>
+    			</tbody>
+    		</table>
+		</div>
+		<div data-options="region:'south',border:false" style="text-align:left; padding:5px;">
+            <a id="btnCancel_SystemActivity" href="javascript:void(0)" class="easyui-linkbutton button-warning" style="width: 80px;"><i class="fa fa-remove fa-lg"></i>&nbsp;&nbsp;取消</a>
+        </div>
+   	</div>
+    
+    <!-- js脚本，必须写在body中，tab的url加载模式只会异步加载body中的内容到tab中 -->
+	<script type="text/javascript">
+		require(['jquery','common'], function($){
+			// 给保存按钮添加点击事件
+			$("#btnCancel_SystemActivity").on('click', function(){
+				history.go(-1);
+			});
+		});
+	</script>
+</body>
+</html>

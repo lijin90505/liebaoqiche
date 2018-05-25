@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ibest.integral.dao.IntegralDao">
+	
+	<sql id="allColumns">
+    	li.id as id,    	
+    	li.name as name,    	
+    	li.integral as integral,    	
+    	li.integral_category_id as integralCategoryId,
+    	li.state as state,    	
+    	li.is_delete as isDelete,    	
+    	li.creater as creater,    	
+    	li.create_time as createTime,    	
+    	li.modifier as modifier,    	
+    	li.modify_time as modifyTime,    	
+    	li.version as version,    	
+    	li.remarks as remarks    	
+    </sql>
+	
+	<sql id="joinOthers">
+	</sql>
+	
+	<sql id="searchWhere">
+		<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and li.id = #{id}
+		</if>-->
+		<if test="name != null and name != ''">
+			and CONCAT(
+			IFNULL(li.name,'')
+			) LIKE CONCAT('%%', #{name},'%%')
+		</if>
+		<if test="integralCategoryId != null and integralCategoryId != ''">
+			and li.integral_category_id = #{integralCategoryId}
+		</if>
+		<!--<if test="integral != null">
+			and li.integral = #{integral}
+		</if>
+		<if test="creater != null and creater != ''">
+			and li.creater = #{creater}
+		</if>
+		<if test="createTime != null">
+			and li.create_time = #{createTime}
+		</if>
+		<if test="modifier != null and modifier != ''">
+			and li.modifier = #{modifier}
+		</if>
+		<if test="modifyTime != null">
+			and li.modify_time = #{modifyTime}
+		</if>
+		<if test="version != null and version != ''">
+			and li.version = #{version}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and li.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and li.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and li.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and li.UPDATE_DATE = #{updateDate}
+		</if>
+		-->
+		<if test="isDelete != null">
+			and li.IS_DELETE = #{isDelete}
+		</if>
+	</sql>
+	
+	
+	<sql id="searchOrder">
+		<if test="order != null and order != '' and desc != null and desc != ''">
+			order by li.${order} ${desc}
+		</if>
+	</sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_integral(
+			id,
+	    	name,	    	
+	    	integral,	    	
+	    	integral_category_id,
+	    	state,	    	
+	    	is_delete,	    	
+	    	creater,	    	
+	    	create_time,	    	
+	    	modifier,	    	
+	    	modify_time,	    	
+	    	version,	    	
+	    	remarks	    	
+		) values(
+			#{id},			 
+			#{name},			 
+			#{integral},			 
+			#{integralCategoryId},
+			#{state},			 
+			#{isDelete},			 
+			#{creater},			 
+			#{createTime},			 
+			#{modifier},			 
+			#{modifyTime},			 
+			#{version},			 
+			#{remarks}			 
+		)
+	</insert>
+	
+	<select id="findById" resultType="Integral">
+		select
+		li.id as id,
+		li.name as name,
+		li.integral as integral,
+		li.integral_category_id as integralCategoryId,
+		li.state as state,
+		li.is_delete as isDelete,
+		li.creater as creater,
+		li.create_time as createTime,
+		li.modifier as modifier,
+		li.modify_time as modifyTime,
+		li.version as version,
+		li.remarks as remarks,
+		lic.category_name as integralCategoryName
+		from
+		liebao_integral li
+		LEFT JOIN liebao_integral_Category lic
+		ON li.integral_category_id = lic.id
+		<include refid="joinOthers"/>
+		where
+		li.id = #{id}
+	</select>
+	
+	<select id="checkNameUnique" resultType="Integral">
+		select name from liebao_integral where is_delete ='0'
+		and name=#{name}
+	</select>
+	
+	<select id="findOneByObject" resultType="Integral">
+		select
+		<include refid="allColumns"/>
+		from
+		liebao_integral li
+		<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+		count(li.id)
+		from
+		liebao_integral li
+		<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="Integral">
+		select
+		li.id as id,
+		li.name as name,
+		li.integral as integral,
+		li.integral_category_id as integralCategoryId,
+		li.state as state,
+		li.is_delete as isDelete,
+		li.creater as creater,
+		li.create_time as createTime,
+		li.modifier as modifier,
+		li.modify_time as modifyTime,
+		li.version as version,
+		li.remarks as remarks,
+		lic.category_name as integralCategoryName
+		from
+		liebao_integral li
+		LEFT JOIN liebao_integral_Category lic
+		ON li.integral_category_id = lic.id
+		<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		order by li.modify_time desc
+		<include refid="searchOrder"/>
+		<if test="limitStart != null and limitSize != null">
+			LIMIT #{limitStart},#{limitSize}
+		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_integral set
+			name=#{name},			
+			integral=#{integral},			
+			integral_category_id=#{integralCategoryId},			
+			is_delete=#{isDelete},
+			state=#{state},			
+			creater=#{creater},			
+			modifier=#{modifier},
+			modify_time=#{modifyTime},			
+			version=#{version},			
+			remarks=#{remarks}			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_integral where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_integral where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_integral set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_integral set is_delete = 1 where id in
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

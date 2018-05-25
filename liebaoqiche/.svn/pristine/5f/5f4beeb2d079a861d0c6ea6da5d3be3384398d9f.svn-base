@@ -1,0 +1,57 @@
+package com.ibest.rocketmq;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.alibaba.rocketmq.client.exception.MQBrokerException;
+import com.alibaba.rocketmq.client.exception.MQClientException;
+import com.alibaba.rocketmq.client.producer.DefaultMQProducer;
+import com.alibaba.rocketmq.client.producer.SendResult;
+import com.alibaba.rocketmq.common.message.Message;
+import com.alibaba.rocketmq.remoting.exception.RemotingException;
+import com.ibest.druid.controller.DruidController;
+import com.ibest.framework.common.persistence.BaseController;
+
+@Controller
+@RequestMapping(value="${adminPath}/producer")
+public class producerTest extends BaseController{
+
+	private static final Logger logger =LoggerFactory.getLogger(DruidController.class);
+	
+	@ResponseBody
+	@RequiresPermissions("userActivity:create")
+	@RequestMapping(value="/sendMessage")
+	public Map<String, Object> producer() throws MQClientException, RemotingException, MQBrokerException, InterruptedException{
+		Map<String, Object> rtnMap = new HashMap<String, Object>();
+		try{
+			String name = "测试"+UUID.randomUUID().toString();
+			String vinCode =System.currentTimeMillis()+"";
+			String msg="{\"users\":[{\"cars\":[{\"licensePlate\":\"鄂Asfsas\",\"vinCode\":\""+vinCode+"\"}],\"doflag\":\"1\",\"password\":\"123456\",\"phone\":\"13998843386\",\"realname\":\"barry\",\"username\":\""+name+"\"}]}";
+			DefaultMQProducer producer = new DefaultMQProducer("producer");
+			producer.setNamesrvAddr("172.24.102.60:9876");
+			producer.setInstanceName("pname"+new Date().getTime());
+			producer.start();
+			
+			Message usermsg = new Message("liebaoqiche",msg.getBytes());
+			SendResult sendResult = producer.send(usermsg);
+			System.out.println(sendResult);	
+			producer.shutdown();
+		}catch(Exception e){
+			e.printStackTrace();
+			setRtnCodeAndMsgByFailure(rtnMap, "发送失败");
+			return rtnMap;
+		}
+		setRtnCodeAndMsgBySuccess(rtnMap, "保存成功");
+		return rtnMap;
+		
+	}
+}

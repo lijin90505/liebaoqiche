@@ -1,0 +1,219 @@
+<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<!DOCTYPE>
+<html>
+<head>
+<title>SysUser</title>
+<%@ include file="/WEB-INF/views/include/head.jsp"%>
+<!-- 首页css文件 -->
+<link href="${ctxResources}/css/home.css" rel="stylesheet" />
+</head>
+<body>
+	<div class="easyui-layout" data-options="fit:true">
+		<div data-options="region:'center'">
+			<div class="home_statistics">
+				<div class="statistics_con">
+					<div class="statistics_con_left">
+						<img src="${ctxResources}/images/index01.png" />
+					</div>
+					<div class="statistics_con_right">
+						<p class="sta_right_mes">今日交易额</p>
+						<p id="countAmt" class="sta_right_num"></p>
+					</div>
+				</div>
+				<div class="statistics_con">
+					<div class="statistics_con_left">
+						<img src="${ctxResources}/images/index02.png" />
+					</div>
+					<div class="statistics_con_right">
+						<p class="sta_right_mes">今日交易量</p>
+						<p id="countNum" class="sta_right_num"></p>
+					</div>
+				</div>
+				<div class="statistics_con">
+					<div class="statistics_con_left">
+						<img src="${ctxResources}/images/index03.png" />
+					</div>
+					<div class="statistics_con_right">
+						<p class="sta_right_mes">平均完成时间</p>
+						<p id="countTime" class="sta_right_num"></p>
+					</div>
+				</div>
+				<div class="statistics_con">
+					<div class="statistics_con_left">
+						<img src="${ctxResources}/images/index04.png" />
+					</div>
+					<div class="statistics_con_right">
+						<p class="sta_right_mes">支付成功转换率</p>
+						<p id="countRate" class="sta_right_num"></p>
+					</div>
+				</div>
+			</div>
+			<select id="liebaoCount" class="easyui-combobox" editable="false"
+				name="liebaoCount" style="width: 200px;">
+				<option value="amt">周交易金额</option>
+				<option value="num">周交易量</option>
+				<option value="time">周平均完成时间</option>
+				<option value="rate">周成功转换率</option>
+			</select>
+			<div class="home_highcharts">
+				<div id="count" class="highcharts-cons"></div>
+				<div id="countNums" class="highcharts-cons"></div>
+				<div id="countTimes" class="highcharts-cons"></div>
+				<div id="countRates" class="highcharts-cons"></div>
+			</div>
+		</div>
+	</div>
+	<script>
+require(['jquery','common','highcharts'], function($){
+	$(function(){
+		//日统计
+		/*日交易额*/
+		dayAmount();
+		
+		/*日交易量*/
+		dayNum();
+		
+		/*日交易完成时间*/
+		dayTime();
+		
+		/*日转换率*/
+		dayRate();
+		
+		//柱状图
+		countAmounts($("#liebaoCount").val());
+	});
+	
+	$("#liebaoCount").combobox({  
+		onSelect: function (n) {   
+			countAmounts(n.value);
+		}  
+	});
+	
+	function dayAmount(){
+		$.post("${ctx}/pay/payInfo/countAmount",{beginTime:"",endTime:""},function(data){
+			if(data == ""){
+				data = 0;
+			}
+			$("#countAmt").html(data+"<b>元</b>");
+		});
+	}
+	function dayNum(){
+		$.post("${ctx}/pay/payInfo/countNum",{beginTime:"",endTime:""},function(data){
+			if(data == ""){
+				data = 0;
+			}
+			$("#countNum").html(data+"<b>单</b>");
+		});
+	}
+	function dayTime(){
+		$.post("${ctx}/pay/payInfo/countTime",{beginTime:"",endTime:""},function(data){
+			if(data == ""){
+				data = 0;
+			}
+			$("#countTime").html(data+"<b>秒</b>");
+		});
+	}
+	function dayRate(){
+		$.post("${ctx}/pay/payInfo/countRate",{beginTime:"",endTime:""},function(data){
+			if(data == ""){
+				data = 0;
+			}
+			$("#countRate").html(data+"<b>%</b>");
+		});
+	}
+	var yearData = ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
+	var quarterData = ['第一季度','第二季度','第三季度','第四季度'];
+	var weekData = ['周一','周二','周三','周四','周五','周六','周天'];
+	var dayData = ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
+	
+	function countAmounts(x){
+		var urls=''; 
+		var texts='';//大标题
+		var textu='';//副标题
+		var units='';//单位
+		var decimal='';//小数点
+		switch (x){
+		  //金额
+		  case 'amt':
+			  urls='countAmounts';
+			  texts='上周交易额';
+			  textu='总金额';
+			  units='元';
+			  decimal=2;
+		  break;
+		  //数量
+		  case 'num':
+			  urls='countNums';
+			  texts='上周交易量';
+			  textu='总交易量';
+			  units='单';
+			  decimal=0;
+		  break;
+		  //时间
+		  case 'time':
+			  urls='countTimes';
+			  texts='上周平均完成时间';
+			  textu='日均完成时间';
+			  units='秒';
+			  decimal=0;
+		  break;
+		  //转化率
+		  case 'rate':
+			  urls='countRates';
+			  texts='上周支付成功转换率';
+			  textu='日均转换率';
+			  units='%';
+			  decimal=2;
+		  break;
+		}	
+		$.ajax({
+			url:'${ctx}/pay/payInfo/'+urls,
+			data:{'liebaoCount':$("#liebaoCount").val()},
+			dataType:'json',
+			cache: false,
+			contentType: false,
+			processData: false,
+			success:function(json){
+				$('#count').highcharts({
+			        chart: {
+			            type: 'column'
+			        },
+			        title: {
+			            text: texts
+			        },
+			        subtitle: {
+			            text: '<span style="color:green">'+textu+':'+json.allCount+units+'</span>'
+			        },
+			        xAxis: {
+			            categories: weekData,
+			            crosshair: true
+			        },
+			        yAxis: {
+			            min: 0,
+			            title: {
+			                text: units
+			            }
+			        },
+			        tooltip: {
+			            headerFormat: '<span style="font-size:10px">{point.key}：<b>{point.y:.'+decimal+'f}'+units+'</b></span><table>',
+			            pointFormat: '<tr><td style="color:{series.color};padding:0"></td>' +
+			            '<td style="padding:0"></td></tr>',
+			            footerFormat: '</table>',
+			            shared: true,
+			            useHTML: true
+			        },
+			        plotOptions: {
+			            column: {
+			                borderWidth: 0
+			            }
+			        },
+			        series: [{name:'周报',data:json.data}]
+			    });
+			}
+		});
+	}
+});
+</script>
+</body>
+</html>

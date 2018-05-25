@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.accesssystem.dao.AccessSystemDao">
+
+    <sql id="allColumns">
+    	las.id as id,    	
+    	las.name as name,    	
+    	las.identification as identification,    	
+    	las.secret as secret,    	
+    	las.is_delete as isDelete,
+    	las.creater as creater,    	
+    	las.create_time as createTime,    	
+    	las.modifier as modifier,    	
+    	las.modify_time as modifyTime,    	
+    	las.version as version,    	
+    	las.remarks as remarks    	
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and las.id = #{id}
+		</if>
+		-->
+		<if test="name != null and name != ''">
+			and CONCAT(
+			IFNULL(las.name,'')
+			) LIKE CONCAT('%%', #{name}, '%%')
+		</if>
+	    <if test="identification != null and identification != ''">
+			and las.IDENTIFICATION = #{identification}
+		</if>
+	    <!-- <if test="secret != null and secret != ''">
+			and CANCAT(
+			IFNULL(las.secret,'')
+			) LIKE CONCAT('%%', #{secret}, '%%')
+		</if>
+		<if test="creater != null and creater != ''">
+			and las.creater = #{creater}
+		</if>
+		<if test="createTime != null">
+			and las.create_time = #{createTime}
+		</if>
+		<if test="modifier != null and modifier != ''">
+			and las.modifier = #{modifier}
+		</if>
+		<if test="modifyTime != null">
+			and las.modify_time = #{modifyTime}
+		</if>
+		<if test="version != null and version != ''">
+			and las.version = #{version}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and las.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and las.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and las.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and las.UPDATE_DATE = #{updateDate}
+		</if>
+		-->
+		<if test="isDelete != null">
+			and las.IS_DELETE = #{isDelete}
+		</if>
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by las.${order} ${desc}
+		</if>
+    </sql>
+	
+	<sql id="searchParam">
+		<if test="identification != null and identification != ''">
+			and binary las.IDENTIFICATION = #{identification}
+		</if>
+	</sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_access_system(
+			id,
+	    	name,	    	
+	    	identification,	    	
+	    	secret,	    	
+			is_delete,
+	    	creater,	    	
+	    	create_time,	    	
+	    	modifier,	    	
+	    	modify_time,	    	
+	    	version,	    	
+	    	remarks	    	
+		) values(
+			#{id},
+			#{name},
+			#{identification},
+			#{secret},			 
+			#{isDelete},
+			#{creater},			 
+			#{createTime},			 
+			#{modifier},			 
+			#{modifyTime},			 
+			#{version},			 
+			#{remarks}			 
+		)
+	</insert>
+	
+	<select id="countAccessSystemByObject" resultType="Integer">
+		select
+		count(las.id)
+		from
+		liebao_access_system las
+		<where>
+			<include refid="searchParam"/>
+		</where>
+	</select>
+	
+	<select id="findById" resultType="AccessSystem">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_access_system las
+			<include refid="joinOthers"/>
+		where
+			las.id = #{id} and las.is_delete = 0
+	</select>
+	
+	<select id="findOneByObject" resultType="AccessSystem">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_access_system las
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(las.id)
+		from
+			liebao_access_system las
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="AccessSystem">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_access_system las
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		order by modify_time desc
+		<include refid="searchOrder"/>
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_access_system set
+			name=#{name},			
+			secret=#{secret},
+			identification=#{identification},
+			creater=#{creater},
+			is_delete=#{isDelete},
+			modifier=#{modifier},
+			modify_time=#{modifyTime},			
+			version=#{version},			
+			remarks=#{remarks}			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_access_system where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_access_system where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_access_system set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_access_system set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+	
+	<select id="findByAll" resultType="AccessSystem">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_access_system las
+	</select>
+</mapper>

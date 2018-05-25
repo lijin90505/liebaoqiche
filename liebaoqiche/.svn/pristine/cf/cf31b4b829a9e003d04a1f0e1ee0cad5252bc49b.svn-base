@@ -1,0 +1,135 @@
+<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<!DOCTYPE>
+<html>
+<head>
+	<title>UserAuthApply</title>
+	<%@ include file="/WEB-INF/views/include/head.jsp"%>
+</head>
+<body>
+	<%@ include file="/WEB-INF/views/include/loading.jsp"%>
+	<div class="easyui-layout" data-options="fit:true">
+		<div data-options="region:'center'">
+	    	<form id="DataForm" method="post">
+	    		<table style="width: 100%;">
+	    			<tbody>
+	    				<tr>
+	    					<td colspan="2" class="chapter">
+	    						UserAuthApply基本信息
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="id" name="id" value="${userAuthApply.id}" labelWidth="100" label="主键UUID" required="true" data-options="prompt:'主键UUID'" style="width: 90%;">
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="userId" name="userId" value="${userAuthApply.userId}" labelWidth="100" label="用户ID" required="true" data-options="prompt:'用户ID'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="username" name="username" value="${userAuthApply.username}" labelWidth="100" label="用户名" required="true" data-options="prompt:'用户名'" style="width: 90%;">
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="realname" name="realname" value="${userAuthApply.realname}" labelWidth="100" label="用户姓名" required="true" data-options="prompt:'用户姓名'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-numberbox" id="levelId" name="levelId" value="${userAuthApply.levelId}" labelWidth="100" label="申请等级" required="true" data-options="prompt:'申请等级'" style="width: 90%;">
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="platform" name="platform" value="${userAuthApply.platform}" labelWidth="100" label="终端平台"  data-options="prompt:'终端平台'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-numberbox" id="status" name="status" value="${userAuthApply.status}" labelWidth="100" label="状态"  data-options="prompt:'状态'" style="width: 90%;">
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="detail" name="detail" value="${userAuthApply.detail}" labelWidth="100" label="详情"  data-options="prompt:'详情'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="outSystemId" name="outSystemId" value="${userAuthApply.outSystemId}" labelWidth="100" label="接入系统标识" required="true" data-options="prompt:'接入系统标识'" style="width: 90%;">
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="outSystemName" name="outSystemName" value="${userAuthApply.outSystemName}" labelWidth="100" label="接入系统名称"  data-options="prompt:'接入系统名称'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-datebox" id="createTime" name="createTime" value="${userAuthApply.createTime}" labelWidth="100" label="记录时间" required="true" data-options="prompt:'记录时间'" style="width: 90%;">
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-datebox" id="modifyTime" name="modifyTime" value="${userAuthApply.modifyTime}" labelWidth="100" label="操作时间"  data-options="prompt:'操作时间'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="modifyUserId" name="modifyUserId" value="${userAuthApply.modifyUserId}" labelWidth="100" label="操作人ID" required="true" data-options="prompt:'操作人ID'" style="width: 90%;">
+	    					</td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-textbox" id="modifyUserName" name="modifyUserName" value="${userAuthApply.modifyUserName}" labelWidth="100" label="操作人名称"  data-options="prompt:'操作人名称'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="easyui-numberbox" id="isDelete" name="isDelete" value="${userAuthApply.isDelete}" labelWidth="100" label="删除标识（0 未删除 1 已删除 2 删除审核）"  data-options="prompt:'删除标识（0 未删除 1 已删除 2 删除审核）'" style="width: 90%;">
+	    					</td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;" colspan="2">
+	    													<textarea class="easyui-textbox" name="remarks"
+									style="width: 95%; height: 80px;" labelWidth="70" label="备注"
+									data-options="validType:'length[1,300]',prompt:'备注'">${userAuthApply.remarks}</textarea>
+	    					</td>
+	    				</tr>
+	    			</tbody>
+	    		</table>
+			</form>
+		</div>
+		<div data-options="region:'south',border:false" style="text-align:left; padding:5px;">
+            <a id="btnSave" href="javascript:void(0)" class="easyui-linkbutton button-success" style="width: 80px;"><i class="fa fa-check fa-lg"></i>&nbsp;&nbsp;保存</a>
+            <a id="btnCancel" href="javascript:void(0)" class="easyui-linkbutton button-warning" style="width: 80px;"><i class="fa fa-remove fa-lg"></i>&nbsp;&nbsp;取消</a>
+        </div>
+   	</div>
+    
+    <!-- js脚本，必须写在body中，tab的url加载模式只会异步加载body中的内容到tab中 -->
+	<script type="text/javascript">
+		require(['jquery','common'], function($){
+			// 给保存按钮添加点击事件
+			$("#btnSave").on('click', function(){
+				
+				$("#btnSave").linkbutton('disable');
+			
+				$("#DataForm").form('submit',{
+					url:$("#id").val() == ''?'${ctx}/user/userAuthApply/create':'${ctx}/user/userAuthApply/update',
+					onSubmit:function(){
+						return $(this).form('enableValidation').form('validate');
+					},
+					success: function(data){
+						var json = $.parseJSON(data);
+						if(json && json.rtnCode == '00000000'){
+							$.messager.alert('提示', "保存成功", "success");
+							$("#btnSave").linkbutton('enable');
+						}else{
+							$.messager.alert('提示', json.rtnMsg, "error");
+							$("#btnSave").linkbutton('enable');
+						}
+					},
+					error: function(){
+						$("#btnSave").linkbutton('enable');
+					}
+				});
+			});
+			
+			// 给保存按钮添加点击事件
+			$("#btnCancel").on('click', function(){
+				history.go(-1);
+			});
+		});
+	</script>
+</body>
+</html>

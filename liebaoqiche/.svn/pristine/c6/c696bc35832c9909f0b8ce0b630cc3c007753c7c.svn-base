@@ -1,0 +1,136 @@
+package com.ibest.activity.entity;
+
+import java.util.Date;
+
+import com.ibest.framework.common.persistence.BaseEntity;
+
+public class Activity extends BaseEntity {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+					
+	// 活动名称
+	private String activityName;
+				
+	// 活动内容
+	private String activityContent;
+
+	//积分规则编号
+	private String ruleId;
+				
+	// 生效时间
+	private Date startTime;
+				
+	// 截止时间
+	private Date endTime;
+	
+	// 创建人
+	private String creater;
+				
+	// 创建时间
+	private Date createTime;
+				
+	// 修改人
+	private String modifier;
+				
+	// 修改时间
+	private Date modifyTime;
+				
+	// 版本
+	private String version;
+				
+	// 标签
+	private String remarks;
+							
+	public String getActivityName(){
+		return activityName;
+	}
+
+	public String getRuleId() {
+		return ruleId;
+	}
+
+	public void setRuleId(String ruleId) {
+		this.ruleId = ruleId;
+	}
+
+	public void setActivityName(String activityName){
+		this.activityName = activityName;
+	}
+				
+	public String getActivityContent(){
+		return activityContent;
+	}
+	
+	public void setActivityContent(String activityContent){
+		this.activityContent = activityContent;
+	}
+				
+	public Date getStartTime(){
+		return startTime;
+	}
+	
+	public void setStartTime(Date startTime){
+		this.startTime = startTime;
+	}
+				
+	public Date getEndTime(){
+		return endTime;
+	}
+	
+	public void setEndTime(Date endTime){
+		this.endTime = endTime;
+	}
+						
+	public String getCreater(){
+		return creater;
+	}
+	
+	public void setCreater(String creater){
+		this.creater = creater;
+	}
+				
+	public Date getCreateTime(){
+		return createTime;
+	}
+	
+	public void setCreateTime(Date createTime){
+		this.createTime = createTime;
+	}
+				
+	public String getModifier(){
+		return modifier;
+	}
+	
+	public void setModifier(String modifier){
+		this.modifier = modifier;
+	}
+				
+	public Date getModifyTime(){
+		return modifyTime;
+	}
+	
+	public void setModifyTime(Date modifyTime){
+		this.modifyTime = modifyTime;
+	}
+				
+	public String getVersion(){
+		return version;
+	}
+	
+	public void setVersion(String version){
+		this.version = version;
+	}
+				
+	public String getRemark(){
+		return remarks;
+	}
+	
+	public void setRemark(String remark){
+		this.remarks = remark;
+	}
+			
+}

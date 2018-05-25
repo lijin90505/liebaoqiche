@@ -1,0 +1,137 @@
+<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<!DOCTYPE>
+<html>
+<head>
+	<title>AccessSystem</title>
+	<%@ include file="/WEB-INF/views/include/head.jsp"%>
+</head>
+<body>
+	<%@ include file="/WEB-INF/views/include/loading.jsp"%>
+	<div class="easyui-layout" data-options="fit:true">
+		<div data-options="region:'center'">
+	    	<form id="DataForm" method="post">
+	    		<table style="width: 100%;">
+	    			<tbody>
+					    <tr>
+						    <td style="width: 50%; padding: 5px; text-align: center;">
+							    <input class="easyui-textbox" id="name" name="name" required="true" maxlength="100" value="${accessSystem.name}" labelWidth="100" label="系统名称"
+							           data-options="prompt:'系统名称',
+				    						validType:['length[1,100]','special']" style="width: 90%;">
+						    </td>
+						    <td style="width: 50%; padding: 5px; text-align: center;">
+							    <%--<input class="easyui-textbox" id="identification" name="identification" required="true" MAXLENGTH="100" value="${accessSystem.identification}" labelWidth="100" label="系统标识"  data-options="prompt:'系统标识'" style="width: 90%;">--%>
+								    <input class="easyui-textbox" id="identification" name="identification" value="${accessSystem.identification}" labelWidth="100" label="系统标识" placeholder="系统标识" required="true" style="width: 90%;"
+								           data-options="prompt:'系统标识',
+				    						validType:['length[1,50]','special','checkIdentification']">
+						    </td>
+					    </tr>
+					    <tr>
+						    <td style="width: 50%; padding: 5px; text-align: center;" colspan="2">
+								<textarea class="easyui-textbox" name="remarks" maxlength="1200"
+						               style="width: 95%; height: 80px;" labelWidth="100" label="备注"
+						                 data-options="validType:'length[1,1200]',multiline:true,prompt:'备注',tipPosition:'bottom'">${accessSystem.remarks}</textarea>
+						    </td>
+					    </tr>
+	    				<tr>
+						    <td style="width: 50%; padding: 5px; text-align: center;">
+							    <input class="" hidden="true" id="creater" name="creater" value="${accessSystem.creater}" labelWidth="100" label="创建人"  data-options="prompt:'创建人'" style="width: 90%;">
+						    </td>
+						    <td style="width: 50%; padding: 5px; text-align: center;">
+							    <input class="" hidden="true" id="createTime" name="createTime" value="${accessSystem.createTime}" labelWidth="100" label="创建时间"  data-options="prompt:'创建时间'" style="width: 90%;">
+						    </td>
+	    				</tr>
+	    				<tr>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="" hidden="true" id="modifier" name="modifier" value="${accessSystem.modifier}" labelWidth="100" label="修改人"  data-options="prompt:'修改人'" style="width: 90%;">
+	    					</td>
+						    <td style="width: 50%; padding: 5px; text-align: center;">
+							    <input class="" hidden="true" id="modifyTime" name="modifyTime" value="${accessSystem.modifyTime}" labelWidth="100" label="修改时间"  data-options="prompt:'修改时间'" style="width: 90%;">
+						    </td>
+	    				</tr>
+					    <tr>
+						    <td style="width: 50%; padding: 5px; text-align: center;">
+							    <input class="" hidden="true" id="id" name="id" value="${accessSystem.id}" labelWidth="100" label="id" required="true" data-options="prompt:'id'" style="width: 90%;">
+						    </td>
+						    <td style="width: 50%; padding: 5px; text-align: center;">
+							    <input class="" hidden="true" id="secret" name="secret" value="${accessSystem.secret}" labelWidth="100" label="密钥"  data-options="prompt:'密钥'" style="width: 90%;">
+						    </td>
+	    					<td style="width: 50%; padding: 5px; text-align: center;">
+	    						<input class="" hidden="true" id="version" name="version" value="${accessSystem.version}" labelWidth="100" label="版本"  data-options="prompt:'版本'" style="width: 90%;">
+	    					</td>
+					    </tr>
+	    			</tbody>
+	    		</table>
+			</form>
+		</div>
+		<div data-options="region:'south',border:false" style="text-align:left; padding:5px;">
+            <a id="btnSave" href="javascript:void(0)" class="easyui-linkbutton button-success" style="width: 80px;"><i class="fa fa-check fa-lg"></i>&nbsp;&nbsp;保存</a>
+            <a id="btnCancel" href="javascript:void(0)" class="easyui-linkbutton button-warning" style="width: 80px;"><i class="fa fa-remove fa-lg"></i>&nbsp;&nbsp;取消</a>
+        </div>
+   	</div>
+    
+    <!-- js脚本，必须写在body中，tab的url加载模式只会异步加载body中的内容到tab中 -->
+	<script type="text/javascript">
+		require(['jquery','common'], function($){
+			// 给保存按钮添加点击事件
+			$("#btnSave").on('click', function(){
+				var createTime = $("#createTime").val().replace(/\-/g, "\/");
+				var modifyTime = $("#modifyTime").val().replace(/\-/g, "\/");
+				if (modifyTime >= createTime) {
+
+					$("#DataForm").form('submit',{
+						url:$("#id").val() == ''?'${ctx}/accesssystem/accessSystem/create':'${ctx}/accesssystem/accessSystem/update',
+						onSubmit:function(){
+							return $(this).form('enableValidation').form('validate');
+						},
+						success: function(data){
+							var json = $.parseJSON(data);
+							if(json && json.rtnCode == '00000000'){
+								$.messager.alert('提示', "保存成功", "success",function(){
+									$("#btnSave").linkbutton('enable');
+									hideDialog();
+								});
+							}else{
+								$.messager.alert('提示', json.rtnMsg, "error",function(){
+									$("#btnSave").linkbutton('enable');
+									hideDialog();
+								});
+							}
+						},
+						error: function(){
+							$("#btnSave").linkbutton('enable');
+						}
+					});
+				} else {
+					$.messager.alert('提示', "修改时间不可小于创建时间", "error");
+					$("#btnSave").linkbutton('enable');
+				}
+			});
+			
+			// 给保存按钮添加点击事件
+			$("#btnCancel").on('click', function(){
+				hideDialog();
+			});
+
+			//新增表单设置
+			if($("#id").val() != ''){
+				$("#identification").removeAttr("data-options");
+				$("#identification").attr("disabled","disabled");
+			}
+
+			//验证用户名是否存在
+			$.extend($.fn.textbox.defaults.rules, {
+				checkIdentification : {
+					validator : function(value) {
+
+						var url = '${ctx}/accesssystem/accessSystem/checkIdentification?identification='+encodeURI(encodeURI(value));
+						var ret = $.ajax({url:url,async:false,cache:false,type:"post"}).responseText;
+						return ret=='true';
+					},
+					message : '该系统标识已存在'
+				}
+			});
+		});
+	</script>
+</body>
+</html>

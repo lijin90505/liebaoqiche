@@ -1,0 +1,35 @@
+package com.ibest.pay.dto.input;
+
+import java.util.Date;
+/**
+ * @author chenjun
+ *	用于查询订单的时间条件
+ */
+public class PayInfoTime {
+	/**
+	 * 开始时间
+	 */
+	private Date beginDate;
+	
+	/**
+	 * 结束时间
+	 */
+	private Date endDate;
+
+	public Date getBeginDate() {
+		return beginDate;
+	}
+
+	public void setBeginDate(Date beginDate) {
+		this.beginDate = beginDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+	
+}

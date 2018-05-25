@@ -1,0 +1,232 @@
+package com.ibest.activity.entity;
+
+import com.ibest.accesssystem.enums.EnumsIsDelete;
+import com.ibest.activity.enums.EnumsActivityStatus;
+import com.ibest.card.entity.Card;
+import com.ibest.experience.entity.Experience;
+import com.ibest.framework.common.persistence.BaseEntity;
+import com.ibest.framework.common.utils.DateUtil;
+import com.ibest.integral.entity.Integral;
+
+import java.util.Date;
+import java.util.List;
+
+public class ActivityDetails extends BaseEntity {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+					
+	// 活动名称
+	private String activityName;
+				
+	// 活动内容
+	private String activityContent;
+				
+	// 图片地址
+	private String imageUrl;
+				
+	// 生效时间
+	private Date startTime;
+				
+	// 截止时间
+	private Date endTime;
+
+	private String startDate;
+	private String endDate;
+	private String state;
+	private String stateDesc;
+	
+	// 创建人
+	private String creater;
+				
+	// 创建时间
+	private Date createTime;
+				
+	// 修改人
+	private String modifier;
+				
+	// 修改时间
+	private Date modifyTime;
+				
+	// 版本
+	private String version;
+
+	private List<Integral> activityDetailsChooseIntegralList;
+	private List<Integral> activityDetailsUnChooseIntegralList;
+
+	private List<Card> activityDetailsChooseCardList;
+	private List<Card> activityDetailsUnChooseCardList;
+
+	private List<Experience> activityDetailsChooseExperienceList;
+	private List<Experience> activityDetailsUnChooseExperienceList;
+
+	public String getActivityName(){
+		return activityName;
+	}
+	
+	public void setActivityName(String activityName){
+		this.activityName = activityName;
+	}
+				
+	public String getActivityContent(){
+		return activityContent;
+	}
+	
+	public void setActivityContent(String activityContent){
+		this.activityContent = activityContent;
+	}
+				
+	public String getImageUrl(){
+		return imageUrl;
+	}
+	
+	public void setImageUrl(String imageUrl){
+		this.imageUrl = imageUrl;
+	}
+				
+	public String getStartTime() {
+		if(startTime != null) {
+			return DateUtil.formatDate(startTime, "yyyy-MM-dd HH:mm:ss");
+		}
+		return null;
+	}
+	
+	public void setStartTime(Date startTime){
+		this.startTime = startTime;
+	}
+				
+	public String getEndTime() {
+		if(startTime != null) {
+			return DateUtil.formatDate(endTime, "yyyy-MM-dd HH:mm:ss");
+		}
+		return null;
+	}
+	
+	public void setEndTime(Date endTime){
+		this.endTime = endTime;
+	}
+
+	public String getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(String startDate) {
+		this.startDate = startDate;
+	}
+
+	public String getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(String endDate) {
+		this.endDate = endDate;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
+
+	public String getStateDesc() {
+		return stateDesc = EnumsActivityStatus.getLabel(this.state);
+	}
+
+	private String isDeleteDesc;
+	public String getIsDeleteDesc() {
+		return isDeleteDesc = EnumsIsDelete.getLable(super.getIsDelete().toString());
+	}
+	
+	public String getCreater(){
+		return creater;
+	}
+	
+	public void setCreater(String creater){
+		this.creater = creater;
+	}
+				
+	public Date getCreateTime(){
+		return createTime;
+	}
+	
+	public void setCreateTime(Date createTime){
+		this.createTime = createTime;
+	}
+				
+	public String getModifier(){
+		return modifier;
+	}
+	
+	public void setModifier(String modifier){
+		this.modifier = modifier;
+	}
+				
+	public Date getModifyTime(){
+		return modifyTime;
+	}
+	
+	public void setModifyTime(Date modifyTime){
+		this.modifyTime = modifyTime;
+	}
+				
+	public String getVersion(){
+		return version;
+	}
+	
+	public void setVersion(String version){
+		this.version = version;
+	}
+
+	public List<Integral> getActivityDetailsChooseIntegralList() {
+		return activityDetailsChooseIntegralList;
+	}
+
+	public void setActivityDetailsChooseIntegralList(List<Integral> activityDetailsChooseIntegralList) {
+		this.activityDetailsChooseIntegralList = activityDetailsChooseIntegralList;
+	}
+
+	public List<Integral> getActivityDetailsUnChooseIntegralList() {
+		return activityDetailsUnChooseIntegralList;
+	}
+
+	public void setActivityDetailsUnChooseIntegralList(List<Integral> activityDetailsUnChooseIntegralList) {
+		this.activityDetailsUnChooseIntegralList = activityDetailsUnChooseIntegralList;
+	}
+
+	public List<Card> getActivityDetailsChooseCardList() {
+		return activityDetailsChooseCardList;
+	}
+
+	public void setActivityDetailsChooseCardList(List<Card> activityDetailsChooseCardList) {
+		this.activityDetailsChooseCardList = activityDetailsChooseCardList;
+	}
+
+	public List<Card> getActivityDetailsUnChooseCardList() {
+		return activityDetailsUnChooseCardList;
+	}
+
+	public void setActivityDetailsUnChooseCardList(List<Card> activityDetailsUnChooseCardList) {
+		this.activityDetailsUnChooseCardList = activityDetailsUnChooseCardList;
+	}
+
+	public List<Experience> getActivityDetailsChooseExperienceList() {
+		return activityDetailsChooseExperienceList;
+	}
+
+	public void setActivityDetailsChooseExperienceList(List<Experience> activityDetailsChooseExperienceList) {
+		this.activityDetailsChooseExperienceList = activityDetailsChooseExperienceList;
+	}
+
+	public List<Experience> getActivityDetailsUnChooseExperienceList() {
+		return activityDetailsUnChooseExperienceList;
+	}
+
+	public void setActivityDetailsUnChooseExperienceList(List<Experience> activityDetailsUnChooseExperienceList) {
+		this.activityDetailsUnChooseExperienceList = activityDetailsUnChooseExperienceList;
+	}
+}

@@ -1,0 +1,11 @@
+package com.ibest.experience.dto.input;
+
+import com.ibest.framework.common.persistence.BaseInputDTO;
+
+public class UserExperienceCountInputDTO extends BaseInputDTO {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+}

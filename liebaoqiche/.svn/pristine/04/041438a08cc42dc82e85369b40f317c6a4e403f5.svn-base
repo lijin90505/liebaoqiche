@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.experience.dao.ExperienceGradeDao">
+
+    <sql id="allColumns">
+    	leg.id as id,    	
+    	leg.name as name,    	
+    	leg.pre_exp as preExp,    	
+    	leg.next_exp as nextExp,    	
+    	leg.is_delete as isDelete,
+    	leg.creater as creater,    	
+    	leg.create_time as createTime,    	
+    	leg.modifier as modifier,    	
+    	leg.modify_time as modifyTime,    	
+    	leg.version as version,    	
+    	leg.remarks as remarks
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and leg.id = #{id}
+		</if>-->
+	    <if test="name != null and name != ''">
+		    and CONCAT(
+		    IFNULL(leg.name,'')
+		    ) LIKE CONCAT('%%', #{name},'%%')
+	    </if>
+		<!--<if test="preExp != null">
+			and leg.pre_exp = #{preExp}
+		</if>
+		<if test="nextExp != null">
+			and leg.next_exp = #{nextExp}
+		</if>
+		<if test="creater != null and creater != ''">
+			and leg.creater = #{creater}
+		</if>
+		<if test="createTime != null">
+			and leg.create_time = #{createTime}
+		</if>
+		<if test="modifier != null and modifier != ''">
+			and leg.modifier = #{modifier}
+		</if>
+		<if test="modifyTime != null">
+			and leg.modify_time = #{modifyTime}
+		</if>
+		<if test="version != null and version != ''">
+			and leg.version = #{version}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and leg.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and leg.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and leg.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and leg.UPDATE_DATE = #{updateDate}
+		</if>
+		-->
+		<if test="isDelete != null">
+			and leg.IS_DELETE = #{isDelete}
+		</if>
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by leg.${order} ${desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_experience_grade(
+			id,
+	    	name,	    	
+	    	pre_exp,	    	
+	    	next_exp,	    	
+	    	is_delete,
+	    	creater,	    	
+	    	create_time,	    	
+	    	modifier,	    	
+	    	modify_time,	    	
+	    	version,	    	
+	    	remarks	    	
+		) values(
+			#{id},			 
+			#{name},			 
+			#{preExp},			 
+			#{nextExp},			 
+			#{isDelete},
+			#{creater},			 
+			#{createTime},			 
+			#{modifier},			 
+			#{modifyTime},			 
+			#{version},			 
+			#{remarks}			 
+		)
+	</insert>
+	
+	<select id="findById" resultType="ExperienceGrade">
+		select
+		leg.id as id,
+		leg.name as name,
+		leg.pre_exp as preExp,
+		leg.next_exp as nextExp,
+		leg.is_delete as isDelete,
+		leg.creater as creater,
+		leg.create_time as createTime,
+		leg.modifier as modifier,
+		leg.modify_time as modifyTime,
+		leg.version as version,
+		leg.remarks as remarks
+		from
+			liebao_experience_grade leg
+			<include refid="joinOthers"/>
+		where
+			leg.id = #{id}
+	</select>
+	
+	<select id="checkNameUnique" resultType="ExperienceGrade">
+		select name from liebao_experience_grade where is_delete ='0'
+		and name = #{name}
+	</select>
+	
+	<select id="findOneByObject" resultType="ExperienceGrade">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_experience_grade leg
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(leg.id)
+		from
+			liebao_experience_grade leg
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="ExperienceGrade">
+		select
+		leg.id as id,
+		leg.name as name,
+		leg.pre_exp as preExp,
+		leg.next_exp as nextExp,
+		leg.is_delete as isDelete,
+		leg.creater as creater,
+		leg.create_time as createTime,
+		leg.modifier as modifier,
+		leg.modify_time as modifyTime,
+		leg.version as version,
+		leg.remarks as remarks
+		from
+			liebao_experience_grade leg
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		order by leg.modify_time desc
+		<include refid="searchOrder"/>
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_experience_grade set
+			name=#{name},			
+			pre_exp=#{preExp},			
+			next_exp=#{nextExp},			
+			is_delete=#{isDelete},
+			creater=#{creater},			
+			modifier=#{modifier},
+			modify_time=#{modifyTime},			
+			version=#{version},			
+			remarks=#{remarks}			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_experience_grade where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_experience_grade where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_experience_grade set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_experience_grade set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

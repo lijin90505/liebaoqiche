@@ -1,0 +1,88 @@
+package com.ibest.activity.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.ibest.framework.common.utils.StringUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ibest.framework.common.utils.PageList;
+
+import com.ibest.activity.dao.SystemActivityStatisticsDao;
+import com.ibest.activity.entity.SystemActivityStatistics;
+import com.ibest.activity.dto.input.SystemActivityStatisticsInputDTO;
+
+@Service
+@Transactional(readOnly=true)
+public class SystemActivityStatisticsService {
+
+	@Autowired
+	protected SystemActivityStatisticsDao systemActivityStatisticsDao;
+	
+	public SystemActivityStatistics findById(String id) throws Exception{
+		return systemActivityStatisticsDao.findById(id);
+	}
+	
+	@Transactional(readOnly=false)
+	public int insert(SystemActivityStatistics systemActivityStatistics) throws Exception{
+		systemActivityStatistics.preInsert();
+		int result = systemActivityStatisticsDao.insert(systemActivityStatistics);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteById(String id) throws Exception{
+		int result = systemActivityStatisticsDao.deleteById(id);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteByIds(String ids) throws Exception{
+		int result = systemActivityStatisticsDao.deleteByIds(StringUtils.tokenizeToList(ids));
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int update(SystemActivityStatistics systemActivityStatistics) throws Exception{
+		systemActivityStatistics.preUpdate();
+		int result = systemActivityStatisticsDao.update(systemActivityStatistics);
+		return result;
+	}
+	
+	/**
+	 * 分页查询
+	 * @param page
+	 * @param inputDto
+	 * @return
+	 * @throws Exception
+	 */
+	public PageList<SystemActivityStatistics> findByPage(PageList<SystemActivityStatistics> page, SystemActivityStatisticsInputDTO inputDto) throws Exception{
+		
+		if(page == null){
+			page = new PageList<SystemActivityStatistics>();
+		}
+		
+		long totalCount = systemActivityStatisticsDao.countByObject(inputDto);
+		if(totalCount > 0){
+			// 设置记录总条数
+			page.setTotal(totalCount);
+			
+			// 设置分页参数，查询数据
+			inputDto.setLimitStart((page.getPage() - 1) * page.getPageSize());
+			inputDto.setLimitSize(page.getPageSize());
+			page.setRows(systemActivityStatisticsDao.findByObject(inputDto));
+		}
+		
+		return page;
+	}
+	
+	/**
+	* 查询列表
+	*/
+	public SystemActivityStatistics findByObject(SystemActivityStatisticsInputDTO inputDto) throws Exception{
+		return systemActivityStatisticsDao.findOneByObject(inputDto);
+	}
+
+}

@@ -1,0 +1,88 @@
+package com.ibest.integral.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.ibest.framework.common.utils.StringUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ibest.framework.common.utils.PageList;
+
+import com.ibest.integral.dao.UserIntegralDao;
+import com.ibest.integral.entity.UserIntegral;
+import com.ibest.integral.dto.input.UserIntegralInputDTO;
+
+@Service
+@Transactional(readOnly=true)
+public class UserIntegralService {
+
+	@Autowired
+	protected UserIntegralDao userIntegralDao;
+	
+	public UserIntegral findById(String id) throws Exception{
+		return userIntegralDao.findById(id);
+	}
+	
+	@Transactional(readOnly=false)
+	public int insert(UserIntegral userIntegral) throws Exception{
+		userIntegral.preInsert();
+		int result = userIntegralDao.insert(userIntegral);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteById(String id) throws Exception{
+		int result = userIntegralDao.deleteById(id);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteByIds(String ids) throws Exception{
+		int result = userIntegralDao.deleteByIds(StringUtils.tokenizeToList(ids));
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int update(UserIntegral userIntegral) throws Exception{
+		userIntegral.preUpdate();
+		int result = userIntegralDao.update(userIntegral);
+		return result;
+	}
+	
+	/**
+	 * 分页查询
+	 * @param page
+	 * @param inputDto
+	 * @return
+	 * @throws Exception
+	 */
+	public PageList<UserIntegral> findByPage(PageList<UserIntegral> page, UserIntegralInputDTO inputDto) throws Exception{
+		
+		if(page == null){
+			page = new PageList<UserIntegral>();
+		}
+		
+		long totalCount = userIntegralDao.countByObject(inputDto);
+		if(totalCount > 0){
+			// 设置记录总条数
+			page.setTotal(totalCount);
+			
+			// 设置分页参数，查询数据
+			inputDto.setLimitStart((page.getPage() - 1) * page.getPageSize());
+			inputDto.setLimitSize(page.getPageSize());
+			page.setRows(userIntegralDao.findByObject(inputDto));
+		}
+		
+		return page;
+	}
+	
+	/**
+	* 查询列表
+	*/
+	public UserIntegral findByObject(UserIntegralInputDTO inputDto) throws Exception{
+		return userIntegralDao.findOneByObject(inputDto);
+	}
+
+}

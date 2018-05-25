@@ -1,0 +1,135 @@
+package com.ibest.activity.entity;
+
+import java.util.Date;
+
+import com.ibest.framework.common.persistence.BaseEntity;
+
+public class SystemActivityManage extends BaseEntity {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+					
+	// 系统活动id
+	private String systemActivityId;
+				
+	// 系统id
+	private String systemId;
+				
+	// 活动id
+	private String activityId;
+	
+	private String activityDetailsName;
+				
+	// 过期天数
+	private Integer overdueTime;
+				
+	// 参与人数
+	private Integer joinPeopleNum;
+				
+	// 创建人
+	private String creater;
+				
+	// 创建时间
+	private Date createTime;
+				
+	// 修改人
+	private String modifier;
+				
+	// 修改时间
+	private Date modifyTime;
+				
+	// 备注
+	private String version;
+									
+	public String getSystemActivityId(){
+		return systemActivityId;
+	}
+	
+	public void setSystemActivityId(String systemActivityId){
+		this.systemActivityId = systemActivityId;
+	}
+				
+	public String getSystemId(){
+		return systemId;
+	}
+	
+	public void setSystemId(String systemId){
+		this.systemId = systemId;
+	}
+				
+	public String getActivityId(){
+		return activityId;
+	}
+	
+	public void setActivityId(String activityId){
+		this.activityId = activityId;
+	}
+	
+	public String getActivityDetailsName() {
+		return activityDetailsName;
+	}
+
+	public void setActivityDetailsName(String activityDetailsName) {
+		this.activityDetailsName = activityDetailsName;
+	}
+
+	public Integer getOverdueTime(){
+		return overdueTime;
+	}
+	
+	public void setOverdueTime(Integer overdueTime){
+		this.overdueTime = overdueTime;
+	}
+				
+	public Integer getJoinPeopleNum(){
+		return joinPeopleNum;
+	}
+	
+	public void setJoinPeopleNum(Integer joinPeopleNum){
+		this.joinPeopleNum = joinPeopleNum;
+	}
+				
+	public String getCreater(){
+		return creater;
+	}
+	
+	public void setCreater(String creater){
+		this.creater = creater;
+	}
+				
+	public Date getCreateTime(){
+		return createTime;
+	}
+	
+	public void setCreateTime(Date createTime){
+		this.createTime = createTime;
+	}
+				
+	public String getModifier(){
+		return modifier;
+	}
+	
+	public void setModifier(String modifier){
+		this.modifier = modifier;
+	}
+				
+	public Date getModifyTime(){
+		return modifyTime;
+	}
+	
+	public void setModifyTime(Date modifyTime){
+		this.modifyTime = modifyTime;
+	}
+				
+	public String getVersion(){
+		return version;
+	}
+	
+	public void setVersion(String version){
+		this.version = version;
+	}
+					
+}

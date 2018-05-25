@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.user.dao.UserLogDao">
+
+    <sql id="allColumns">
+    	lul.id as id,    	
+    	lul.url as url,    	
+    	lul.ip as ip,    	
+    	lul.event as event,    	
+    	lul.detail as detail,    	
+    	lul.create_time as createTime,    	
+    	lul.user_id as userId,    	
+    	lul.username as username,    	
+    	lul.is_delete as isDelete    	
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and lul.id = #{id}
+		</if>
+		<if test="url != null and url != ''">
+			and lul.url = #{url}
+		</if>
+		<if test="ip != null and ip != ''">
+			and lul.ip = #{ip}
+		</if>
+		<if test="event != null and event != ''">
+			and lul.event = #{event}
+		</if>
+		<if test="detail != null and detail != ''">
+			and lul.detail = #{detail}
+		</if>
+		<if test="createTime != null">
+			and lul.create_time = #{createTime}
+		</if>
+		<if test="userId != null and userId != ''">
+			and lul.user_id = #{userId}
+		</if>
+		<if test="username != null and username != ''">
+			and lul.username = #{username}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lul.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lul.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lul.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lul.UPDATE_DATE = #{updateDate}
+		</if>
+		<if test="isDelete != null">
+			and lul.IS_DELETE = #{isDelete}
+		</if>
+		-->
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lul.${order} ${desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_user_log(
+	    	url,	    	
+	    	ip,	    	
+	    	event,	    	
+	    	detail,	    	
+	    	create_time,	    	
+	    	user_id,	    	
+	    	username,	    	
+	    	is_delete	    	
+		) values(
+			#{url},			 
+			#{ip},			 
+			#{event},			 
+			#{detail},			 
+			#{createTime},			 
+			#{userId},			 
+			#{username},			 
+			#{isDelete}			 
+		)
+	</insert>
+	
+	<select id="findById" resultType="UserLog">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_user_log lul
+			<include refid="joinOthers"/>
+		where
+			lul.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="UserLog">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_user_log lul
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(lul.id)
+		from
+			liebao_user_log lul
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="UserLog">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_user_log lul
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		order by create_time desc
+		<include refid="searchOrder"/>
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_user_log set
+			url=#{url},			
+			ip=#{ip},			
+			event=#{event},			
+			detail=#{detail},			
+			create_time=#{createTime},			
+			user_id=#{userId},			
+			username=#{username},			
+			is_delete=#{isDelete}			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_user_log where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_user_log where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_user_log set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_user_log set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

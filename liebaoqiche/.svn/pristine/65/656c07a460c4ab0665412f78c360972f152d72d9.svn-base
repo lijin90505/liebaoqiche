@@ -1,0 +1,115 @@
+package com.ibest.card.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.ibest.framework.common.utils.StringUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ibest.framework.common.utils.PageList;
+
+import com.ibest.card.dao.UserCardCountDao;
+import com.ibest.card.entity.UserCard;
+import com.ibest.card.entity.UserCardCount;
+import com.ibest.card.dto.input.UserCardCountInputDTO;
+
+@Service
+@Transactional(readOnly=true)
+public class UserCardCountService {
+
+	@Autowired
+	protected UserCardCountDao userCardCountDao;
+	
+	public UserCardCount findById(String id) throws Exception{
+		return userCardCountDao.findById(id);
+	}
+	
+	@Transactional(readOnly=false)
+	public int insert(UserCardCount userCardCount) throws Exception{
+		userCardCount.preInsert();
+		int result = userCardCountDao.insert(userCardCount);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteById(String id) throws Exception{
+		int result = userCardCountDao.deleteById(id);
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int deleteByIds(String ids) throws Exception{
+		int result = userCardCountDao.deleteByIds(StringUtils.tokenizeToList(ids));
+		return result;
+	}
+	
+	@Transactional(readOnly=false)
+	public int update(UserCardCount userCardCount) throws Exception{
+		userCardCount.preUpdate();
+		int result = userCardCountDao.update(userCardCount);
+		return result;
+	}
+	
+	/**
+	 * 修改应用程序标识
+	 * @param findByObject
+	 */
+	public void showAppId(List<UserCardCount> findByObject){
+		for (UserCardCount userCardCount : findByObject) {
+			if(userCardCount.getAppId().equals("00")){
+				userCardCount.setAppId("APP");
+			}
+			if(userCardCount.getAppId().equals("01")){
+				userCardCount.setAppId("PC");
+			}
+			if(userCardCount.getAppId().equals("02")){
+				userCardCount.setAppId("Android");
+			}
+		}
+	}
+	
+	/**
+	 * 分页查询
+	 * @param page
+	 * @param inputDto
+	 * @return
+	 * @throws Exception
+	 */
+	public PageList<UserCardCount> findByPage(PageList<UserCardCount> page, UserCardCountInputDTO inputDto) throws Exception{
+		
+		if(page == null){
+			page = new PageList<UserCardCount>();
+		}
+		List<UserCardCount> findByObject = userCardCountDao.findByObject(inputDto);
+		this.showAppId(findByObject);
+		long totalCount = userCardCountDao.countByObject(inputDto);
+		if(totalCount > 0){
+			// 设置记录总条数
+			page.setTotal(totalCount);
+			
+			// 设置分页参数，查询数据
+			inputDto.setLimitStart((page.getPage() - 1) * page.getPageSize());
+			inputDto.setLimitSize(page.getPageSize());
+			page.setRows(findByObject);
+		}
+		
+		return page;
+	}
+	
+	/**
+	* 查询列表
+	*/
+	public List<UserCardCount> findByObject(UserCardCountInputDTO inputDto) throws Exception{
+		return userCardCountDao.findByObject(inputDto);
+	}
+
+	/**
+	 * 查询列表
+	 */
+	public UserCardCount findOneByObject(UserCardCountInputDTO inputDto) throws Exception{
+		return userCardCountDao.findOneByObject(inputDto);
+	}
+
+}

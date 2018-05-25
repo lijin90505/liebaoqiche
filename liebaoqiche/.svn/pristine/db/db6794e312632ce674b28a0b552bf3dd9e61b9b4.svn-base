@@ -1,0 +1,226 @@
+package com.ibest.pay.entity;
+
+
+import com.ibest.framework.common.persistence.BaseEntity;
+
+public class PayAliPayInfo extends BaseEntity {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+					
+	// 原支付请求的商户订单号
+	private String outTradeNo;
+				
+	// 订单标题
+	private String subject;
+				
+	// 订单金额
+	private String totalAmount;
+				
+	/**WAIT_BUYER_PAY	交易创建，等待买家付款
+	TRADE_CLOSED	未付款交易超时关闭，或支付完成后全额退款
+	TRADE_SUCCESS	交易支付成功
+	TRADE_FINISHED	交易结束，不可退款*/
+	private String tradeStatus;
+				
+	// 实收金额
+	private String receiptAmount;
+				
+	// 支付金额
+	private String amount;
+				
+	// 支付渠道
+	private String fundChannel;
+				
+	// 该笔交易的买家付款时间
+	private String gmtCreate;
+				
+	// 该笔交易的买家付款时间
+	private String gmtPayment;
+				
+	// 该笔交易的退款时间
+	private String gmtRefund;
+				
+	// 该笔交易结束时间
+	private String gmtClose;
+				
+	// 总退款金额
+	private String refundFee;
+				
+	// 开票金额
+	private String invoiceAmount;
+				
+	// 优惠券信息
+	private String voucherDetailList;
+				
+	// 公共回传参数
+	private String passbackParams;
+				
+	// 支付宝交易号
+	private String tradeNo;
+				
+	// 商户业务号
+	private String outBizNo;
+				
+	// 买家支付宝用户号
+	private String buyerId;
+				
+	// 备注
+	private String remark;
+							
+	public String getOutTradeNo(){
+		return outTradeNo;
+	}
+	
+	public void setOutTradeNo(String outTradeNo){
+		this.outTradeNo = outTradeNo;
+	}
+				
+	public String getSubject(){
+		return subject;
+	}
+	
+	public void setSubject(String subject){
+		this.subject = subject;
+	}
+				
+	public String getTotalAmount(){
+		return totalAmount;
+	}
+	
+	public void setTotalAmount(String totalAmount){
+		this.totalAmount = totalAmount;
+	}
+				
+	public String getTradeStatus(){
+		return tradeStatus;
+	}
+	
+	public void setTradeStatus(String tradeStatus){
+		this.tradeStatus = tradeStatus;
+	}
+				
+	public String getReceiptAmount(){
+		return receiptAmount;
+	}
+	
+	public void setReceiptAmount(String receiptAmount){
+		this.receiptAmount = receiptAmount;
+	}
+				
+	public String getAmount(){
+		return amount;
+	}
+	
+	public void setAmount(String amount){
+		this.amount = amount;
+	}
+				
+	public String getFundChannel(){
+		return fundChannel;
+	}
+	
+	public void setFundChannel(String fundChannel){
+		this.fundChannel = fundChannel;
+	}
+				
+	public String getGmtCreate(){
+		return gmtCreate;
+	}
+	
+	public void setGmtCreate(String gmtCreate){
+		this.gmtCreate = gmtCreate;
+	}
+				
+	public String getGmtPayment(){
+		return gmtPayment;
+	}
+	
+	public void setGmtPayment(String gmtPayment){
+		this.gmtPayment = gmtPayment;
+	}
+				
+	public String getGmtRefund(){
+		return gmtRefund;
+	}
+	
+	public void setGmtRefund(String gmtRefund){
+		this.gmtRefund = gmtRefund;
+	}
+				
+	public String getGmtClose(){
+		return gmtClose;
+	}
+	
+	public void setGmtClose(String gmtClose){
+		this.gmtClose = gmtClose;
+	}
+				
+	public String getRefundFee(){
+		return refundFee;
+	}
+	
+	public void setRefundFee(String refundFee){
+		this.refundFee = refundFee;
+	}
+				
+	public String getInvoiceAmount(){
+		return invoiceAmount;
+	}
+	
+	public void setInvoiceAmount(String invoiceAmount){
+		this.invoiceAmount = invoiceAmount;
+	}
+				
+	public String getVoucherDetailList(){
+		return voucherDetailList;
+	}
+	
+	public void setVoucherDetailList(String voucherDetailList){
+		this.voucherDetailList = voucherDetailList;
+	}
+				
+	public String getPassbackParams(){
+		return passbackParams;
+	}
+	
+	public void setPassbackParams(String passbackParams){
+		this.passbackParams = passbackParams;
+	}
+				
+	public String getTradeNo(){
+		return tradeNo;
+	}
+	
+	public void setTradeNo(String tradeNo){
+		this.tradeNo = tradeNo;
+	}
+				
+	public String getOutBizNo(){
+		return outBizNo;
+	}
+	
+	public void setOutBizNo(String outBizNo){
+		this.outBizNo = outBizNo;
+	}
+				
+	public String getBuyerId(){
+		return buyerId;
+	}
+	
+	public void setBuyerId(String buyerId){
+		this.buyerId = buyerId;
+	}
+				
+	public String getRemark(){
+		return remark;
+	}
+	
+	public void setRemark(String remark){
+		this.remark = remark;
+	}
+			
+}

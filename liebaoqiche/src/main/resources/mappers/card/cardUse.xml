@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ibest.card.dao.CardUseDao">
+
+    <sql id="allColumns">
+    	lcu.id as id,    	
+    	lcu.name as name,    	
+    	lcu.is_delete as isDelete,    	
+    	lcu.creater as creater,    	
+    	lcu.create_time as createTime,    	
+    	lcu.modifier as modifier,    	
+    	lcu.modify_time as modifyTime,    	
+    	lcu.version as version,    	
+    	lcu.remarks as remarks    	
+    </sql>
+    
+    <sql id="joinOthers">
+    </sql>
+    
+    <sql id="searchWhere">
+    	<!-- 根据需要自行设置，同时同步InputDTO中的参数
+		<if test="id != null and id != ''">
+			and lcu.id = #{id}
+		</if>-->
+	    <if test="name != null and name != ''">
+		    and CONCAT(
+		    IFNULL(lcu.name,'')
+		    ) LIKE CONCAT('%%', #{name},'%%')
+	    </if>
+		<!--<if test="creater != null and creater != ''">
+			and lcu.creater = #{creater}
+		</if>
+		<if test="createTime != null">
+			and lcu.create_time = #{createTime}
+		</if>
+		<if test="modifier != null and modifier != ''">
+			and lcu.modifier = #{modifier}
+		</if>
+		<if test="modifyTime != null">
+			and lcu.modify_time = #{modifyTime}
+		</if>
+		<if test="version != null and version != ''">
+			and lcu.version = #{version}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and lcu.CREATE_BY = #{createBy}
+		</if>
+		<if test="createDate != null">
+			and lcu.CREATE_DATE = #{createDate}
+		</if>
+		<if test="updateBy != null and updateBy != ''">
+			and lcu.UPDATE_BY = #{updateBy}
+		</if>
+		<if test="updateDate != null">
+			and lcu.UPDATE_DATE = #{updateDate}
+		</if>
+		-->
+		<if test="isDelete != null">
+			and lcu.IS_DELETE = #{isDelete}
+		</if>
+    </sql>
+    
+    <sql id="searchOrder">
+    	<if test="order != null and order != '' and desc != null and desc != ''">
+			order by lcu.${order} ${desc}
+		</if>
+    </sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into liebao_card_use(
+			id,
+	    	name,	    	
+	    	is_delete,	    	
+	    	creater,	    	
+	    	create_time,	    	
+	    	modifier,	    	
+	    	modify_time,	    	
+	    	version,	    	
+	    	remarks	    	
+		) values(
+			#{id},			 
+			#{name},			 
+			#{isDelete},			 
+			#{creater},			 
+			#{createTime},			 
+			#{modifier},			 
+			#{modifyTime},			 
+			#{version},			 
+			#{remarks}			 
+		)
+	</insert>
+	
+	<select id="checkNameUnique" resultType="CardUse">
+		select name from liebao_card_use where is_delete = '0'
+		and name = #{name}
+	</select>
+	
+	<select id="findById" resultType="CardUse">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_card_use lcu
+			<include refid="joinOthers"/>
+		where
+			lcu.id = #{id}
+	</select>
+	
+	<select id="findOneByObject" resultType="CardUse">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_card_use lcu
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="countByObject" resultType="Long">
+		select
+			count(lcu.id)
+		from
+			liebao_card_use lcu
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+	</select>
+	
+	<select id="findByObject" resultType="CardUse">
+		select
+			<include refid="allColumns"/>
+		from
+			liebao_card_use lcu
+			<include refid="joinOthers"/>
+		<where>
+			<include refid="searchWhere"/>
+		</where>
+		order by modify_time desc
+		<include refid="searchOrder"/>
+  		<if test="limitStart != null and limitSize != null">
+         	LIMIT #{limitStart},#{limitSize}
+ 		</if>
+	</select>
+	
+	<update id="update">
+		update liebao_card_use set
+			name=#{name},			
+			is_delete=#{isDelete},			
+			creater=#{creater},			
+			modifier=#{modifier},
+			modify_time=#{modifyTime},			
+			version=#{version},			
+			remarks=#{remarks}			
+		where
+			id = #{id}
+	</update>
+	
+	<!-- 物理删除 
+	<delete id="deleteById">
+		delete from liebao_card_use where id = #{id}
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from liebao_card_use where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	-->
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteById">
+		update liebao_card_use set is_delete = 1 where id = #{id}
+	</update>
+	
+	<update id="deleteByIds">
+		update liebao_card_use set is_delete = 1 where id in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

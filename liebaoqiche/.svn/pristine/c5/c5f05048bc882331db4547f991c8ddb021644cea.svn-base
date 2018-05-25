@@ -1,0 +1,140 @@
+package com.ibest.user.dao;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.ibest.framework.common.persistence.MyBatisDao;
+import com.ibest.user.entity.User;
+
+import com.ibest.user.dto.input.UserInputDTO;
+
+@MyBatisDao
+public interface UserDao {
+
+	/**
+	 * 根据条件对象查询个数
+	 * @param inputDTO
+	 * @return
+	 */
+	public int countUserByObject(UserInputDTO inputDTO);
+
+	public User findExpById(String id);
+	
+	public User findInteById(String id);
+	
+	/**
+	 * 新增
+	 * @param entity
+	 * @return
+	 */
+	public int insert(User user);
+	
+	/**
+	 * 根据主键ID删除
+	 * @param id
+	 * @return
+	 */
+	public int deleteById(String id);
+	
+	/**
+	 * 批量删除
+	 * @param ids
+	 * @return
+	 */
+	public int deleteByIds(@Param("ids") List<String> ids); 
+	
+	/**
+	 * 修改
+	 * @param entity
+	 * @return
+	 */
+	public int update(User user);
+	
+	/**
+	 * 根据Id获取唯一记录
+	 * @param id
+	 * @return
+	 */
+	public User findById(String id);
+	
+	/**
+	 * 根据指定对象查询唯一结果
+	 * @param entity
+	 * @return
+	 */
+	public User findOneByObject(UserInputDTO userInputDto);
+	
+	/**
+	 * 根据对象查询符合条件结果列表
+	 * @param entity
+	 * @return
+	 */
+	public List<User> findByObject(UserInputDTO userInputDto);
+
+	
+	/**
+	 * 根据对象查询符合条件结果列表
+	 * @param entity
+	 * @return
+	 */
+	public List<User> findAllUsers(UserInputDTO userInputDto);
+	
+	/**
+	 * 根据对象查询符合条件carVin
+	 * @param userInputDto
+	 * @return
+	 */
+	public List<User> findCarVinsByObject(UserInputDTO userInputDto);
+	
+	
+	/**
+	 * 根据对象查询符合条件记录总条数
+	 * @param entity
+	 * @return
+	 */
+	public long countByObject(UserInputDTO userInputDto);
+	
+	/**
+	 * 根据手机号查询
+	 * @Title: findByPhone  
+	 * @param: @param phone
+	 * @author: WeiJia
+	 * @date:2018年3月27日 下午7:28:16
+	 */
+	public User findByPhone(String phone);
+	
+	/**
+	 * 根据邮箱查询
+	 * @Title: findByEmail  
+	 * @param: @param email
+	 * @param: @return
+	 * @return:User
+	 * @throws:
+	 * @author: WeiJia
+	 * @date:2018年3月27日 下午8:53:46
+	 */
+	public User findByEmail(String email);
+	
+	/**
+	 * 根据username查询
+	 * @Title: findByUserName  
+	 * @param: @param username
+	 * @param: @return
+	 * @return:User
+	 * @throws:
+	 * @author: WeiJia
+	 * @date:2018年3月27日 下午8:54:00
+	 */
+	public User findByUserName(String username);
+
+	/**
+	 * 解锁/锁定
+	 * @param ids
+	 * @param locked
+	 * @return
+	 */
+	int handle(@Param("ids") List<String> ids, @Param("locked") Integer locked);
+
+	public List<User> findAllUsers();
+}
