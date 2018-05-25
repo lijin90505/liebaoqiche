@@ -2,13 +2,13 @@ liebaiqiche信息化平台项目地址：https://github.com/papafly123/liebaoqic
 
 
 平台总体架构设计
-! [加载图片失败 ] (https://github.com/papafly123/img-floder/blob/master/%E9%A1%B9%E7%9B%AE%E6%80%BB%E4%BD%93%E8%AE%BE%E8%AE%A1.png)
+! [加载图片失败 ] (https://github.com/papafly123/img-floder/blob/master/ItemDesign.png)
 
 NGTP架构精要
-! [加载图片失败 ] (https://github.com/papafly123/img-floder/blob/master/%E6%9E%B6%E6%9E%84%E7%B2%BE%E8%A6%81.png)
+! [加载图片失败 ] (https://github.com/papafly123/img-floder/blob/master/essenceOfArchitecture.png)
 
 平台内部各个系统均采用统一的数据安全策略和流程，对于敏感数据我们采用业界标准的加密算法进行加密包括RSA/AES/MD5。对于敏感数据的传输保护，我们采用VPN，IPSEC，SSL等方式。在数据库层次上，我们针对敏感数据列和表进行加密处理以降低内部和外部的威胁。
-! [加载图片失败 ] (https://github.com/papafly123/img-floder/blob/master/%E5%8A%A0%E5%AF%86.jpg)
+! [加载图片失败 ] (https://github.com/papafly123/img-floder/blob/master/Secret.jpg)
 
 #技术栈
 
